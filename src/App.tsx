@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 import { flowLabels, ui } from "./i18n";
-import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode } from "./types";
+import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState } from "./types";
 
 const SESSION_KEY = "tokenizart.demo-atelier.session.v1";
 
@@ -121,6 +121,21 @@ const errors: Record<string, Record<Language, { title: string; body: string }>> 
     en: { title: "This is not a Tokenizart tag", body: "The simulated reading says ‘This is not a Tokenizart NFC tag’. Do not try to link it as a valid tag." },
     pt: { title: "Este tag não é da Tokenizart", body: "A leitura simulada mostra ‘This is not a Tokenizart NFC tag’. Não tente vinculá-lo como tag válido." },
   },
+  nfc_already_linked: {
+    es: { title: "Este tag ya está vinculado", body: "La lectura abre una obra Tokenizart existente. No lo reutilices: verifica que sea la obra esperada o utiliza otro tag Ready to link." },
+    en: { title: "This tag is already linked", body: "The scan opens an existing Tokenizart artwork. Do not reuse it: verify the artwork or use another Ready to link tag." },
+    pt: { title: "Este tag já está vinculado", body: "A leitura abre uma obra Tokenizart existente. Não reutilize: confira a obra ou use outro tag Ready to link." },
+  },
+  nfc_scan_required: {
+    es: { title: "Falta confirmar la lectura móvil", body: "Acerca el teléfono al tag de práctica y confirma la lectura. La demo no usa el NFC real del dispositivo." },
+    en: { title: "Mobile scan confirmation is missing", body: "Bring the phone close to the practice tag and confirm the scan. The demo does not use the device's real NFC." },
+    pt: { title: "Falta confirmar a leitura móvel", body: "Aproxime o celular do tag de prática e confirme a leitura. A demo não usa o NFC real do aparelho." },
+  },
+  nfc_confirmation_required: {
+    es: { title: "Falta la firma simulada", body: "Confirma el cierre de wallet de práctica. Nunca ingreses una contraseña, clave privada o seed phrase en la demo." },
+    en: { title: "Simulated signature is missing", body: "Confirm the practice wallet closure. Never enter a password, private key, or seed phrase in the demo." },
+    pt: { title: "Falta a assinatura simulada", body: "Confirme o fechamento da wallet de prática. Nunca insira senha, chave privada ou seed phrase na demo." },
+  },
 };
 
 const certifyActors: Record<CertifyActorId, Record<Language, { name: string; description: string }>> = {
@@ -164,6 +179,37 @@ const mintModes: Record<MintMode, Record<Language, { name: string; description: 
     es: { name: "Lote de 2 obras", description: "Simula dos obras revisadas y dos vouchers Mint." },
     en: { name: "Batch of 2 artworks", description: "Simulates two reviewed artworks and two Mint vouchers." },
     pt: { name: "Lote de 2 obras", description: "Simula duas obras revisadas e dois vouchers Mint." },
+  },
+};
+
+const nfcActors: Record<NfcActorId, Record<Language, { name: string; description: string }>> = {
+  owner_artist: {
+    es: { name: "Alex Rivera · owner/artista", description: "Solicita y completa la vinculación de su obra dentro de la práctica." },
+    en: { name: "Alex Rivera · owner/artist", description: "Requests and completes the artwork link inside the practice flow." },
+    pt: { name: "Alex Rivera · owner/artista", description: "Solicita e conclui a vinculação da obra no fluxo de prática." },
+  },
+  authorized_certifier: {
+    es: { name: "Certificador Demo autorizado", description: "Recibe la solicitud y acerca el teléfono al tag asignado." },
+    en: { name: "Authorized Demo Certifier", description: "Receives the request and brings the phone close to the assigned tag." },
+    pt: { name: "Certificador Demo autorizado", description: "Recebe a solicitação e aproxima o celular do tag atribuído." },
+  },
+};
+
+const nfcTagStates: Record<NfcTagState, Record<Language, { name: string; description: string; systemMessage: string }>> = {
+  ready_to_link: {
+    es: { name: "Tag disponible", description: "Es un tag Tokenizart vacío y puede vincularse.", systemMessage: "Ready to link" },
+    en: { name: "Available tag", description: "This is an empty Tokenizart tag and it can be linked.", systemMessage: "Ready to link" },
+    pt: { name: "Tag disponível", description: "É um tag Tokenizart vazio e pode ser vinculado.", systemMessage: "Ready to link" },
+  },
+  linked_artwork: {
+    es: { name: "Obra ya vinculada", description: "La lectura abre la obra asociada; el tag no debe reutilizarse.", systemMessage: "Obra Tokenizart vinculada" },
+    en: { name: "Artwork already linked", description: "The scan opens the associated artwork; do not reuse the tag.", systemMessage: "Linked Tokenizart artwork" },
+    pt: { name: "Obra já vinculada", description: "A leitura abre a obra associada; não reutilize o tag.", systemMessage: "Obra Tokenizart vinculada" },
+  },
+  not_tokenizart: {
+    es: { name: "Tag no válido", description: "La plataforma no lo reconoce como un tag Tokenizart.", systemMessage: "This is not a Tokenizart NFC tag" },
+    en: { name: "Invalid tag", description: "The platform does not recognize it as a Tokenizart tag.", systemMessage: "This is not a Tokenizart NFC tag" },
+    pt: { name: "Tag inválido", description: "A plataforma não o reconhece como tag Tokenizart.", systemMessage: "This is not a Tokenizart NFC tag" },
   },
 };
 
@@ -259,10 +305,34 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
   }
 
   if (context.flow === "chip") {
+    const draft = context.world.nfcDraft;
+    const completed = context.world.events.includes("chip.completed");
+    const selectedTag = nfcTagStates[draft.tagState][lang];
     return (
-      <div className="practice-fields">
-        <div className="phone-simulation"><Nfc size={38} /><strong>Ready to link</strong><small>Tag de práctica vacío y listo</small></div>
-        <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "nfc_not_tokenizart" })}><CircleAlert size={17} />{t.errorPractice}</button>
+      <div className="practice-fields nfc-config">
+        <fieldset>
+          <legend>{t.nfcActor}</legend>
+          <div className="actor-selector">
+            {(Object.keys(nfcActors) as NfcActorId[]).map((actorId) => {
+              const actor = nfcActors[actorId][lang];
+              return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => send({ type: "SET_NFC_DRAFT", actorId })}><Nfc size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
+            })}
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>{t.nfcTagReading}</legend>
+          <div className="nfc-state-selector">
+            {(Object.keys(nfcTagStates) as NfcTagState[]).map((tagState) => {
+              const tag = nfcTagStates[tagState][lang];
+              return <button type="button" key={tagState} disabled={completed} className={draft.tagState === tagState ? "selected" : ""} onClick={() => send({ type: "SET_NFC_DRAFT", tagState, scanConfirmed: false, signatureConfirmed: false })}><Nfc size={17} /><span><strong>{tag.name}</strong><small>{tag.description}</small></span></button>;
+            })}
+          </div>
+        </fieldset>
+        <div className={`phone-simulation nfc-${draft.tagState}`}><Nfc size={38} /><strong>{selectedTag.systemMessage}</strong><small>{selectedTag.description}</small></div>
+        <label className="confirmation-check"><input type="checkbox" disabled={completed || draft.tagState !== "ready_to_link"} checked={draft.scanConfirmed} onChange={(event) => send({ type: "SET_NFC_DRAFT", scanConfirmed: event.target.checked })} /><span>{t.confirmNfcScan}<small>{t.nfcScanHelp}</small></span></label>
+        <label className="confirmation-check"><input type="checkbox" disabled={completed || draft.tagState !== "ready_to_link"} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_NFC_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmNfcSignature}<small>{t.signatureHelp}</small></span></label>
+        <div className="transaction-preview"><Nfc size={25} /><span><strong>NFC {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherCost}: 1 · {t.voucherAvailable}: {context.world.vouchers.nfc}</small></span></div>
+        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: draft.tagState === "linked_artwork" ? "nfc_already_linked" : draft.tagState === "not_tokenizart" ? "nfc_not_tokenizart" : "nfc_scan_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}
       </div>
     );
   }
@@ -418,6 +488,38 @@ function CertifyCompletion({ context }: { context: DemoContext }) {
   );
 }
 
+function NfcCompletion({ context }: { context: DemoContext }) {
+  if (context.flow !== "chip" || !context.world.events.includes("chip.completed")) return null;
+  const receipt = context.world.nfcReceipts.at(-1);
+  if (!receipt) return null;
+  const lang = context.language;
+  const t = ui[lang];
+  const actor = nfcActors[receipt.actorId][lang];
+  const timeline = {
+    es: ["Identidad digital", "Tag leído", "Obra y tag vinculados"],
+    en: ["Digital identity", "Tag scanned", "Artwork and tag linked"],
+    pt: ["Identidade digital", "Tag lido", "Obra e tag vinculados"],
+  }[lang];
+
+  return (
+    <section className="completion-result nfc-result" aria-live="polite">
+      <div className="completion-heading"><Nfc size={28} /><div><strong>{t.nfcCompleted}</strong><span>{receipt.receiptId}</span></div></div>
+      <dl>
+        <div><dt>{t.nfcLinkedBy}</dt><dd>{actor.name}</dd></div>
+        <div><dt>{t.nfcFinalState}</dt><dd>{nfcTagStates[receipt.tagState][lang].name}</dd></div>
+        <div><dt>{t.networkLabel}</dt><dd>Gnosis Chain · {t.simulated.toLowerCase()}</dd></div>
+        <div><dt>{t.vouchersConsumed}</dt><dd>{receipt.vouchersConsumed}</dd></div>
+        <div><dt>{t.nfcTagReference}</dt><dd>{receipt.tagRef}</dd></div>
+        <div><dt>{t.nfcCertificationReference}</dt><dd>{receipt.certificationRef}</dd></div>
+        <div><dt>{t.tokenReference}</dt><dd>{receipt.tokenRef}</dd></div>
+        <div><dt>{t.transactionReference}</dt><dd>{receipt.transactionRef}</dd></div>
+      </dl>
+      <div className="provenance-timeline">{timeline.map((item) => <span key={item}><Check size={15} />{item}</span>)}</div>
+      <p>{t.noRealNfc}</p>
+    </section>
+  );
+}
+
 function VoucherBalances({ context, compact = false }: { context: DemoContext; compact?: boolean }) {
   return (
     <div className={compact ? "voucher-row compact" : "voucher-row"}>
@@ -525,6 +627,7 @@ function App() {
               <PracticeFields context={context} send={send} />
               <MintCompletion context={context} />
               <CertifyCompletion context={context} />
+              <NfcCompletion context={context} />
               {activeError && <div className="error-panel"><CircleAlert size={22} /><div><strong>{activeError.title}</strong><p>{activeError.body}</p><button onClick={() => send({ type: "RESOLVE_ERROR" })}><Check size={17} />{t.resolve}</button></div></div>}
             </div>
           </section>

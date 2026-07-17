@@ -115,3 +115,53 @@ test("completes a synthetic batch Mint with deterministic references", async ({ 
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("mint-result.png"), fullPage: true });
 });
+
+test("interprets NFC tag states and completes a safe synthetic link", async ({ page }, testInfo) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
+      language: "es",
+      flow: "chip",
+      stepIndex: 0,
+      scenarioId: "first-artwork",
+      fixtureId: "painting-river-001",
+      errorCode: null,
+      world: {
+        accountStatus: "active",
+        walletStatus: "backed_up",
+        artworkStatus: "certified",
+        artworkTitle: "Ecos del río",
+        artworkAuthor: "Alex Rivera",
+        artworkType: "painting",
+        galleryVisible: false,
+        certifyVisible: true,
+        mintDraft: { actorId: "owner_artist", mode: "single", reviewConfirmed: true, signatureConfirmed: true },
+        mintReceipts: [],
+        nfcDraft: { actorId: "owner_artist", tagState: "ready_to_link", scanConfirmed: false, signatureConfirmed: false },
+        nfcReceipts: [],
+        certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
+        certifications: [],
+        vouchers: { mint: 1, certify: 1, nfc: 1 },
+        events: ["onboarding.completed", "account_wallet.completed", "carga_obra.completed", "mint.completed", "certify.completed"],
+      },
+    }));
+  });
+
+  await page.goto("/?flow=chip&step=chip.interpret-reading-states&lang=es&scenario=first-artwork");
+  await page.getByRole("button", { name: /Certificador Demo autorizado/ }).click();
+  await page.getByRole("button", { name: /Tag no válido/ }).click();
+  await expect(page.getByText("This is not a Tokenizart NFC tag", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: /Tag disponible/ }).click();
+  await expect(page.getByText("Ready to link", { exact: true })).toBeVisible();
+  await page.getByLabel("Confirmo la lectura móvil simulada").check();
+  await page.getByLabel("Confirmo el cierre con firma simulada").check();
+  await page.getByRole("button", { name: /Completar paso/ }).click();
+
+  const result = page.locator(".nfc-result");
+  await expect(result.getByText("Obra y tag NFC vinculados en la simulación")).toBeVisible();
+  await expect(result.getByText("Certificador Demo autorizado", { exact: true })).toBeVisible();
+  await expect(result.getByText("TAG-DEMO-001", { exact: true })).toBeVisible();
+  await expect(result.getByText("CERT-NFC-DEMO-001", { exact: true })).toBeVisible();
+  await expect(result.getByText("TX-DEMO-NFC-001", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
+  await page.screenshot({ path: testInfo.outputPath("nfc-result.png"), fullPage: true });
+});

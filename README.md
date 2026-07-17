@@ -9,6 +9,7 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Simulates account activation, Smart Wallet, artwork preload, Mint, Certify, NFC, transfer, privacy, vouchers and public traceability.
 - Shows controlled failure scenarios and recovery guidance.
 - Lets the user configure a synthetic Certify actor, supported fact, evidence and owner/public visibility, then renders the completed provenance state.
+- Teaches the three NFC readings, the mobile scan, voucher/signature gates and the final linked-tag receipt without touching a physical tag.
 - Keeps state only in browser `sessionStorage`.
 - Deep-links the current step to Tokenizart Companion.
 
@@ -30,7 +31,7 @@ Current IDs -> Companion deep link / A2UI integration
 
 ## Phase 2 status
 
-Specialized actor/result verticals are available for `Certify` and `Mint`.
+Specialized actor/result verticals are available for `Certify`, `Mint` and `NFC`.
 
 `Certify` includes:
 
@@ -48,7 +49,15 @@ Specialized actor/result verticals are available for `Certify` and `Mint`.
 - Deterministic Gnosis, token, transaction, and IPFS references that are clearly marked as simulations.
 - Idempotent voucher consumption and a final digital-identity timeline in Spanish, English and Portuguese.
 
-NFC and transfer still use their generic deterministic completion state and will receive the same actor/result treatment incrementally.
+`NFC` includes:
+
+- Synthetic owner/artist and authorized-certifier actors.
+- Explicit `Ready to link`, already-linked artwork and non-Tokenizart tag readings.
+- Mobile-scan, voucher and simulated-wallet-signature gates.
+- Deterministic tag, Certify, token and transaction references.
+- Idempotent voucher consumption and a final physical/digital-link timeline in Spanish, English and Portuguese.
+
+Transfer still uses its generic deterministic completion state and will receive the same actor/result treatment incrementally.
 
 ## Local development
 

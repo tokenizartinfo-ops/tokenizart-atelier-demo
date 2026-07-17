@@ -4,6 +4,8 @@ export type CertifyTypeId = "authenticity" | "condition" | "exhibition" | "addit
 export type CertifyVisibility = "public" | "owner";
 export type MintActorId = "owner_artist" | "authorized_manager";
 export type MintMode = "single" | "batch";
+export type NfcActorId = "owner_artist" | "authorized_certifier";
+export type NfcTagState = "ready_to_link" | "linked_artwork" | "not_tokenizart";
 
 export interface LocalizedCopy {
   title: string;
@@ -62,6 +64,19 @@ export interface DemoMintReceipt {
   completedAt: string;
 }
 
+export interface DemoNfcReceipt {
+  receiptId: string;
+  actorId: NfcActorId;
+  tagState: "linked_artwork";
+  vouchersConsumed: 1;
+  networkRef: "gnosis-simulated";
+  tagRef: string;
+  certificationRef: string;
+  tokenRef: string;
+  transactionRef: string;
+  completedAt: string;
+}
+
 export interface DemoWorld {
   accountStatus: "not_created" | "email_pending" | "active";
   walletStatus: "not_created" | "created" | "backed_up";
@@ -78,6 +93,13 @@ export interface DemoWorld {
     signatureConfirmed: boolean;
   };
   mintReceipts: DemoMintReceipt[];
+  nfcDraft: {
+    actorId: NfcActorId;
+    tagState: NfcTagState;
+    scanConfirmed: boolean;
+    signatureConfirmed: boolean;
+  };
+  nfcReceipts: DemoNfcReceipt[];
   certifyDraft: {
     actorId: CertifyActorId;
     typeId: CertifyTypeId;

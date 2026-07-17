@@ -1,7 +1,7 @@
 import { assign, setup } from "xstate";
 import manual from "./data/atelier-manual-native-microsteps.v1.json";
 import iconAtlas from "./data/atelier-manual-native-icon-atlas.v1.json";
-import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, DemoMintReceipt, Language, ManualContract, MintActorId, MintMode } from "./types";
+import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, DemoMintReceipt, DemoNfcReceipt, Language, ManualContract, MintActorId, MintMode, NfcActorId, NfcTagState } from "./types";
 
 const manualBase = manual as ManualContract;
 const actionIcons = iconAtlas.icons.filter((icon) => icon.context === "atelier_action");
@@ -48,6 +48,13 @@ export const initialContext: DemoContext = {
       signatureConfirmed: false,
     },
     mintReceipts: [],
+    nfcDraft: {
+      actorId: "owner_artist",
+      tagState: "ready_to_link",
+      scanConfirmed: false,
+      signatureConfirmed: false,
+    },
+    nfcReceipts: [],
     certifyDraft: {
       actorId: "expert",
       typeId: "authenticity",
@@ -67,6 +74,7 @@ type DemoEvent =
   | { type: "SET_FIXTURE"; fixtureId: string; artworkType: DemoContext["world"]["artworkType"] }
   | { type: "UPDATE_ARTWORK"; title?: string; author?: string }
   | { type: "SET_MINT_DRAFT"; actorId?: MintActorId; mode?: MintMode; reviewConfirmed?: boolean; signatureConfirmed?: boolean }
+  | { type: "SET_NFC_DRAFT"; actorId?: NfcActorId; tagState?: NfcTagState; scanConfirmed?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_CERTIFY_DRAFT"; actorId?: CertifyActorId; typeId?: CertifyTypeId; visibility?: CertifyVisibility }
   | { type: "INJECT_ERROR"; code: string }
   | { type: "RESOLVE_ERROR" }
@@ -97,7 +105,11 @@ function completionError(context: DemoContext): string | null {
   if (flow === "mint" && world.vouchers.mint < mintVoucherRequirement(context)) return "missing_voucher";
   if (flow === "mint" && !world.mintDraft.signatureConfirmed) return "mint_confirmation_required";
   if (flow === "certify" && world.vouchers.certify <= 0) return "missing_voucher";
+  if (flow === "chip" && world.nfcDraft.tagState === "not_tokenizart") return "nfc_not_tokenizart";
+  if (flow === "chip" && world.nfcDraft.tagState === "linked_artwork") return "nfc_already_linked";
+  if (flow === "chip" && !world.nfcDraft.scanConfirmed) return "nfc_scan_required";
   if (flow === "chip" && world.vouchers.nfc <= 0) return "missing_voucher";
+  if (flow === "chip" && !world.nfcDraft.signatureConfirmed) return "nfc_confirmation_required";
   return null;
 }
 
@@ -149,6 +161,20 @@ function completeFlow(context: DemoContext): DemoContext {
   if (context.flow === "chip") {
     world.artworkStatus = "tagged";
     world.vouchers.nfc -= 1;
+    const sequence = String(world.nfcReceipts.length + 1).padStart(3, "0");
+    const receipt: DemoNfcReceipt = {
+      receiptId: `NFC-DEMO-${sequence}`,
+      actorId: world.nfcDraft.actorId,
+      tagState: "linked_artwork",
+      vouchersConsumed: 1,
+      networkRef: "gnosis-simulated",
+      tagRef: `TAG-DEMO-${sequence}`,
+      certificationRef: `CERT-NFC-DEMO-${sequence}`,
+      tokenRef: `TOKEN-DEMO-${sequence}`,
+      transactionRef: `TX-DEMO-NFC-${sequence}`,
+      completedAt: "2026-07-17T12:00:00.000Z",
+    };
+    world.nfcReceipts = [...world.nfcReceipts, receipt];
   }
   if (context.flow === "transferencia") world.artworkStatus = "transferred";
   world.events.push(completionEvent);
@@ -206,6 +232,20 @@ export const demoMachine = setup({
                 mode: event.mode ?? context.world.mintDraft.mode,
                 reviewConfirmed: event.reviewConfirmed ?? context.world.mintDraft.reviewConfirmed,
                 signatureConfirmed: event.signatureConfirmed ?? context.world.mintDraft.signatureConfirmed,
+              },
+            },
+          })),
+        },
+        SET_NFC_DRAFT: {
+          actions: assign(({ context, event }) => ({
+            ...context,
+            world: {
+              ...context.world,
+              nfcDraft: {
+                actorId: event.actorId ?? context.world.nfcDraft.actorId,
+                tagState: event.tagState ?? context.world.nfcDraft.tagState,
+                scanConfirmed: event.scanConfirmed ?? context.world.nfcDraft.scanConfirmed,
+                signatureConfirmed: event.signatureConfirmed ?? context.world.nfcDraft.signatureConfirmed,
               },
             },
           })),
@@ -270,6 +310,8 @@ function normalizeContext(context: DemoContext): DemoContext {
   const next = structuredClone(context);
   const mintActorIds: MintActorId[] = ["owner_artist", "authorized_manager"];
   const mintModes: MintMode[] = ["single", "batch"];
+  const nfcActorIds: NfcActorId[] = ["owner_artist", "authorized_certifier"];
+  const nfcTagStates: NfcTagState[] = ["ready_to_link", "linked_artwork", "not_tokenizart"];
   const actorIds: CertifyActorId[] = ["owner_artist", "expert", "gallery_museum"];
   const typeIds: CertifyTypeId[] = ["authenticity", "condition", "exhibition", "additional_report"];
   const visibilities: CertifyVisibility[] = ["public", "owner"];
@@ -286,6 +328,21 @@ function normalizeContext(context: DemoContext): DemoContext {
       typeof item?.receiptId === "string"
       && mintActorIds.includes(item.actorId)
       && mintModes.includes(item.mode)
+      && item.networkRef === "gnosis-simulated"
+    ))
+    : [];
+  const nfcDraft = next.world.nfcDraft;
+  next.world.nfcDraft = {
+    actorId: nfcActorIds.includes(nfcDraft?.actorId) ? nfcDraft.actorId : "owner_artist",
+    tagState: nfcTagStates.includes(nfcDraft?.tagState) ? nfcDraft.tagState : "ready_to_link",
+    scanConfirmed: nfcDraft?.scanConfirmed === true,
+    signatureConfirmed: nfcDraft?.signatureConfirmed === true,
+  };
+  next.world.nfcReceipts = Array.isArray(next.world.nfcReceipts)
+    ? next.world.nfcReceipts.filter((item) => (
+      typeof item?.receiptId === "string"
+      && nfcActorIds.includes(item.actorId)
+      && item.tagState === "linked_artwork"
       && item.networkRef === "gnosis-simulated"
     ))
     : [];

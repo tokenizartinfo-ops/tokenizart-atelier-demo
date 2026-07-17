@@ -149,10 +149,12 @@ describe("Demo Atelier contracts", () => {
     expect(actor.getSnapshot().context.world.artworkStatus).toBe("loaded");
   });
 
-  it("normalizes legacy sessions without Mint or Certify result fields", () => {
+  it("normalizes legacy sessions without Mint, NFC or Certify result fields", () => {
     const legacy = structuredClone(initialContext) as any;
     delete legacy.world.mintDraft;
     delete legacy.world.mintReceipts;
+    delete legacy.world.nfcDraft;
+    delete legacy.world.nfcReceipts;
     delete legacy.world.certifyDraft;
     delete legacy.world.certifications;
     const restored = safeRestore(JSON.stringify(legacy));
@@ -164,6 +166,13 @@ describe("Demo Atelier contracts", () => {
       signatureConfirmed: false,
     });
     expect(restored?.world.mintReceipts).toEqual([]);
+    expect(restored?.world.nfcDraft).toEqual({
+      actorId: "owner_artist",
+      tagState: "ready_to_link",
+      scanConfirmed: false,
+      signatureConfirmed: false,
+    });
+    expect(restored?.world.nfcReceipts).toEqual([]);
     expect(restored?.world.certifyDraft).toEqual({ actorId: "expert", typeId: "authenticity", visibility: "public" });
     expect(restored?.world.certifications).toEqual([]);
   });
@@ -195,6 +204,76 @@ describe("Demo Atelier contracts", () => {
       visibility: "owner",
       evidenceAssetId: "evidence-exhibition-demo",
     })]);
+  });
+
+  it("requires a mobile scan and simulated signature before NFC linking", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "chip";
+    context.stepIndex = manualContract.flows.chip.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.artworkStatus = "minted";
+    const actor = createActor(demoMachine, { input: context }).start();
+
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("nfc_scan_required");
+    actor.send({ type: "SET_NFC_DRAFT", scanConfirmed: true });
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("nfc_confirmation_required");
+    expect(actor.getSnapshot().context.world.artworkStatus).toBe("minted");
+  });
+
+  it.each([
+    ["linked_artwork", "nfc_already_linked"],
+    ["not_tokenizart", "nfc_not_tokenizart"],
+  ] as const)("blocks the %s NFC state without consuming a voucher", (tagState, errorCode) => {
+    const context = structuredClone(initialContext);
+    context.flow = "chip";
+    context.stepIndex = manualContract.flows.chip.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.artworkStatus = "minted";
+    context.world.nfcDraft = { actorId: "owner_artist", tagState, scanConfirmed: true, signatureConfirmed: true };
+    const actor = createActor(demoMachine, { input: context }).start();
+
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe(errorCode);
+    expect(actor.getSnapshot().context.world.vouchers.nfc).toBe(1);
+    expect(actor.getSnapshot().context.world.nfcReceipts).toHaveLength(0);
+  });
+
+  it("links a Ready to link tag and creates one deterministic NFC receipt", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "chip";
+    context.stepIndex = manualContract.flows.chip.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.artworkStatus = "certified";
+    context.world.nfcDraft = {
+      actorId: "authorized_certifier",
+      tagState: "ready_to_link",
+      scanConfirmed: true,
+      signatureConfirmed: true,
+    };
+    const actor = createActor(demoMachine, { input: context }).start();
+    actor.send({ type: "COMPLETE_STEP" });
+    actor.send({ type: "COMPLETE_STEP" });
+    const result = actor.getSnapshot().context.world;
+
+    expect(result.artworkStatus).toBe("tagged");
+    expect(result.vouchers.nfc).toBe(0);
+    expect(result.nfcReceipts).toEqual([expect.objectContaining({
+      receiptId: "NFC-DEMO-001",
+      actorId: "authorized_certifier",
+      tagState: "linked_artwork",
+      vouchersConsumed: 1,
+      networkRef: "gnosis-simulated",
+      tagRef: "TAG-DEMO-001",
+      certificationRef: "CERT-NFC-DEMO-001",
+      tokenRef: "TOKEN-DEMO-001",
+      transactionRef: "TX-DEMO-NFC-001",
+    })]);
+    expect(result.events.filter((event) => event === "chip.completed")).toHaveLength(1);
   });
 
   it("accepts only allowlisted deep-link context", () => {
