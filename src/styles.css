@@ -163,6 +163,27 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .privacy-toggle small, .privacy-certify-controls small { color: var(--muted); font-size: 9px; font-weight: 400; }
 .privacy-certify-controls { display: grid; gap: 5px; }
 .privacy-result dl { gap: 5px; }
+.voucher-practice { display: grid; gap: 10px; }
+.voucher-explainer { display: flex; align-items: center; gap: 9px; padding: 10px; border-left: 4px solid var(--aqua); background: #eefafa; }
+.voucher-explainer span { display: grid; gap: 3px; }
+.voucher-explainer small { color: var(--muted); font-size: 9px; line-height: 1.4; }
+.voucher-product-grid { display: grid; gap: 6px; }
+.voucher-product-grid button { width: 100%; min-height: 74px; display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 8px; padding: 8px; border: 1px solid var(--line); background: white; color: var(--ink); text-align: left; }
+.voucher-product-grid button.selected { border-color: var(--aqua); box-shadow: inset 4px 0 0 var(--aqua); }
+.voucher-product-grid button:disabled { opacity: .7; cursor: default; }
+.voucher-product-grid button span { min-width: 0; display: grid; gap: 3px; }
+.voucher-product-grid button small { color: var(--muted); font-size: 9px; line-height: 1.35; }
+.voucher-product-grid button b { color: var(--aqua-dark); font-size: 10px; white-space: nowrap; }
+.voucher-snapshot { display: grid; gap: 4px; padding: 9px; border: 1px solid var(--line); background: #f7f8f9; font-size: 10px; }
+.voucher-snapshot span { color: var(--muted); font-size: 9px; line-height: 1.4; }
+.voucher-snapshot small { color: var(--aqua-dark); font-weight: 750; }
+.voucher-consumption { display: grid; gap: 5px; }
+.voucher-consumption h3 { margin: 0 0 2px; font-size: 11px; }
+.voucher-consumption > div { display: grid; grid-template-columns: 70px 1fr; gap: 8px; padding: 7px; border: 1px solid var(--line); background: white; font-size: 9px; line-height: 1.4; }
+.voucher-consumption > div span { color: var(--muted); }
+.shop-link { min-height: 40px; display: flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--aqua); color: var(--aqua-dark); font-size: 11px; font-weight: 750; text-decoration: none; }
+.shop-link:hover { background: #eefafa; }
+.voucher-result dl { gap: 5px; }
 .voucher-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
 .voucher-row > div { min-height: 72px; border: 1px solid var(--line); display: grid; place-items: center; align-content: center; gap: 3px; background: white; }
 .voucher-row span { color: var(--muted); font-size: 9px; }

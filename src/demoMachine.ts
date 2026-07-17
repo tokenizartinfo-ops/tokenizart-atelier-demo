@@ -1,7 +1,7 @@
 import { assign, setup } from "xstate";
 import manual from "./data/atelier-manual-native-microsteps.v1.json";
 import iconAtlas from "./data/atelier-manual-native-icon-atlas.v1.json";
-import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, DemoMintReceipt, DemoNfcReceipt, DemoPrivacyReceipt, DemoTransferReceipt, Language, ManualContract, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType } from "./types";
+import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, DemoMintReceipt, DemoNfcReceipt, DemoPrivacyReceipt, DemoTransferReceipt, DemoVoucherReceipt, Language, ManualContract, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType, VoucherBalances, VoucherProductId } from "./types";
 
 const manualBase = manual as ManualContract;
 const actionIcons = iconAtlas.icons.filter((icon) => icon.context === "atelier_action");
@@ -75,6 +75,11 @@ export const initialContext: DemoContext = {
       ownerConfirmed: false,
     },
     privacyReceipts: [],
+    voucherDraft: {
+      productId: "starter_kit",
+      creditConfirmed: false,
+    },
+    voucherReceipts: [],
     certifyDraft: {
       actorId: "expert",
       typeId: "authenticity",
@@ -97,6 +102,7 @@ type DemoEvent =
   | { type: "SET_NFC_DRAFT"; actorId?: NfcActorId; tagState?: NfcTagState; scanConfirmed?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_TRANSFER_DRAFT"; destinationType?: TransferDestinationType; recipientVerified?: boolean; externalWarningAccepted?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_PRIVACY_DRAFT"; galleryVisible?: boolean; technicalSheetVisible?: boolean; certifyId?: PrivacyCertifyId; certifyVisible?: boolean; previewAudience?: PrivacyPreviewAudience; ownerConfirmed?: boolean }
+  | { type: "SET_VOUCHER_DRAFT"; productId?: VoucherProductId; creditConfirmed?: boolean }
   | { type: "SET_CERTIFY_DRAFT"; actorId?: CertifyActorId; typeId?: CertifyTypeId; visibility?: CertifyVisibility }
   | { type: "INJECT_ERROR"; code: string }
   | { type: "RESOLVE_ERROR" }
@@ -111,9 +117,16 @@ function mintVoucherRequirement(context: DemoContext): number {
   return context.world.mintDraft.mode === "batch" ? 2 : 1;
 }
 
+const voucherProducts: Record<VoucherProductId, { priceUsd: number; credited: VoucherBalances }> = {
+  starter_kit: { priceUsd: 20, credited: { mint: 1, certify: 2, nfc: 0 } },
+  mint: { priceUsd: 8, credited: { mint: 1, certify: 0, nfc: 0 } },
+  certify: { priceUsd: 8, credited: { mint: 0, certify: 1, nfc: 0 } },
+  nfc: { priceUsd: 10, credited: { mint: 0, certify: 0, nfc: 1 } },
+};
+
 function completionError(context: DemoContext): string | null {
   const { flow, world } = context;
-  if (["account_wallet", "carga_obra", "mint", "certify", "chip", "transferencia", "privacy"].includes(flow) && world.accountStatus !== "active") {
+  if (["account_wallet", "carga_obra", "mint", "certify", "chip", "transferencia", "privacy", "vouchers"].includes(flow) && world.accountStatus !== "active") {
     return "account_required";
   }
   if (["mint", "certify", "chip", "transferencia"].includes(flow) && world.walletStatus !== "backed_up") {
@@ -139,6 +152,7 @@ function completionError(context: DemoContext): string | null {
   if (flow === "transferencia" && !world.transferDraft.signatureConfirmed) return "transfer_confirmation_required";
   if (flow === "privacy" && world.artworkStatus === "none") return "privacy_artwork_required";
   if (flow === "privacy" && !world.privacyDraft.ownerConfirmed) return "privacy_confirmation_required";
+  if (flow === "vouchers" && !world.voucherDraft.creditConfirmed) return "voucher_confirmation_required";
   return null;
 }
 
@@ -242,6 +256,27 @@ function completeFlow(context: DemoContext): DemoContext {
       completedAt: "2026-07-17T12:00:00.000Z",
     };
     world.privacyReceipts = [...world.privacyReceipts, receipt];
+  }
+  if (context.flow === "vouchers") {
+    const product = voucherProducts[world.voucherDraft.productId];
+    const resultingBalances: VoucherBalances = {
+      mint: world.vouchers.mint + product.credited.mint,
+      certify: world.vouchers.certify + product.credited.certify,
+      nfc: world.vouchers.nfc + product.credited.nfc,
+    };
+    const sequence = String(world.voucherReceipts.length + 1).padStart(3, "0");
+    const receipt: DemoVoucherReceipt = {
+      receiptId: `VOUCHER-DEMO-${sequence}`,
+      productId: world.voucherDraft.productId,
+      priceUsd: product.priceUsd,
+      priceVerifiedAt: "2026-07-14",
+      credited: { ...product.credited },
+      resultingBalances,
+      sourceUrl: "https://tokenizart.com/es/shop/",
+      completedAt: "2026-07-17T12:00:00.000Z",
+    };
+    world.vouchers = resultingBalances;
+    world.voucherReceipts = [...world.voucherReceipts, receipt];
   }
   world.events.push(completionEvent);
   return { ...context, world, errorCode: null };
@@ -347,6 +382,18 @@ export const demoMachine = setup({
             },
           })),
         },
+        SET_VOUCHER_DRAFT: {
+          actions: assign(({ context, event }) => ({
+            ...context,
+            world: {
+              ...context.world,
+              voucherDraft: {
+                productId: event.productId ?? context.world.voucherDraft.productId,
+                creditConfirmed: event.creditConfirmed ?? context.world.voucherDraft.creditConfirmed,
+              },
+            },
+          })),
+        },
         SET_CERTIFY_DRAFT: {
           actions: assign(({ context, event }) => ({
             ...context,
@@ -412,6 +459,7 @@ function normalizeContext(context: DemoContext): DemoContext {
   const transferDestinationTypes: TransferDestinationType[] = ["tokenizart_user", "external_wallet"];
   const privacyPreviewAudiences: PrivacyPreviewAudience[] = ["owner", "visitor"];
   const privacyCertifyIds: PrivacyCertifyId[] = ["authenticity", "exhibition", "condition"];
+  const voucherProductIds: VoucherProductId[] = ["starter_kit", "mint", "certify", "nfc"];
   const actorIds: CertifyActorId[] = ["owner_artist", "expert", "gallery_museum"];
   const typeIds: CertifyTypeId[] = ["authenticity", "condition", "exhibition", "additional_report"];
   const visibilities: CertifyVisibility[] = ["public", "owner"];
@@ -485,6 +533,19 @@ function normalizeContext(context: DemoContext): DemoContext {
       && item.publicCertifyIds.every((id) => privacyCertifyIds.includes(id))
       && Array.isArray(item.ownerOnlyCertifyIds)
       && item.ownerOnlyCertifyIds.every((id) => privacyCertifyIds.includes(id))
+    ))
+    : [];
+  const voucherDraft = next.world.voucherDraft;
+  next.world.voucherDraft = {
+    productId: voucherProductIds.includes(voucherDraft?.productId) ? voucherDraft.productId : "starter_kit",
+    creditConfirmed: voucherDraft?.creditConfirmed === true,
+  };
+  next.world.voucherReceipts = Array.isArray(next.world.voucherReceipts)
+    ? next.world.voucherReceipts.filter((item) => (
+      typeof item?.receiptId === "string"
+      && voucherProductIds.includes(item.productId)
+      && item.priceVerifiedAt === "2026-07-14"
+      && item.sourceUrl === "https://tokenizart.com/es/shop/"
     ))
     : [];
   next.world.certifyDraft = {

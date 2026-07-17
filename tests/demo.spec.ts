@@ -274,3 +274,51 @@ test("compares owner and visitor privacy before applying a partial public view",
   await expect(result.getByText(/privacidad de ninguna obra real/)).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("privacy-owner-visitor-result.png"), fullPage: true });
 });
+
+test("credits a synthetic Starter Kit and explains voucher consumption boundaries", async ({ page }, testInfo) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
+      language: "es",
+      flow: "vouchers",
+      stepIndex: 0,
+      scenarioId: "first-artwork",
+      fixtureId: "painting-river-001",
+      errorCode: null,
+      world: {
+        accountStatus: "active",
+        walletStatus: "backed_up",
+        artworkStatus: "loaded",
+        artworkTitle: "Ecos del rio",
+        artworkAuthor: "Alex Rivera",
+        artworkType: "painting",
+        currentOwnerRef: "OWNER-DEMO-ALEX",
+        galleryVisible: false,
+        certifyVisible: true,
+        voucherDraft: { productId: "starter_kit", creditConfirmed: false },
+        voucherReceipts: [],
+        vouchers: { mint: 2, certify: 2, nfc: 1 },
+        events: ["onboarding.completed", "account_wallet.completed", "carga_obra.completed"],
+      },
+    }));
+  });
+
+  await page.goto("/?flow=vouchers&step=vouchers.understand-consumption&lang=es&scenario=first-artwork");
+  await expect(page.getByText(/verificado: 2026-07-14/)).toBeVisible();
+  await expect(page.getByRole("link", { name: /Abrir Shop oficial/ })).toHaveAttribute("href", "https://tokenizart.com/es/shop/");
+  await expect(page.locator(".voucher-consumption").getByText(/No consume vouchers/)).toBeVisible();
+
+  await page.getByRole("button", { name: /Voucher Chip/ }).click();
+  await expect(page.getByText("+0 Mint · +0 Certify · +1 NFC")).toBeVisible();
+  await page.getByRole("button", { name: /Starter Kit/ }).click();
+  await page.getByLabel(/Confirmo la/).check();
+  await page.getByRole("button", { name: /Completar paso/ }).click();
+
+  const result = page.locator(".voucher-result");
+  await expect(result.getByText(/Vouchers acreditados/)).toBeVisible();
+  await expect(result.getByText("VOUCHER-DEMO-001", { exact: true })).toBeVisible();
+  await expect(result.getByText("USD 20.00", { exact: true })).toBeVisible();
+  await expect(result.getByText("+1 M · +2 C · +0 NFC", { exact: true })).toBeVisible();
+  await expect(result.getByText("3 M · 4 C · 1 NFC", { exact: true })).toBeVisible();
+  await expect(result.getByText(/un pago/)).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("voucher-starter-kit-result.png"), fullPage: true });
+});

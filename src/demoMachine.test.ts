@@ -167,7 +167,7 @@ describe("Demo Atelier contracts", () => {
     expect(actor.getSnapshot().context.world.artworkStatus).toBe("loaded");
   });
 
-  it("normalizes legacy sessions without Mint, NFC, transfer, privacy or Certify result fields", () => {
+  it("normalizes legacy sessions without Mint, NFC, transfer, privacy, voucher or Certify result fields", () => {
     const legacy = structuredClone(initialContext) as any;
     delete legacy.world.mintDraft;
     delete legacy.world.mintReceipts;
@@ -178,6 +178,8 @@ describe("Demo Atelier contracts", () => {
     delete legacy.world.transferReceipts;
     delete legacy.world.privacyDraft;
     delete legacy.world.privacyReceipts;
+    delete legacy.world.voucherDraft;
+    delete legacy.world.voucherReceipts;
     delete legacy.world.certifyDraft;
     delete legacy.world.certifications;
     const restored = safeRestore(JSON.stringify(legacy));
@@ -212,6 +214,8 @@ describe("Demo Atelier contracts", () => {
       ownerConfirmed: false,
     });
     expect(restored?.world.privacyReceipts).toEqual([]);
+    expect(restored?.world.voucherDraft).toEqual({ productId: "starter_kit", creditConfirmed: false });
+    expect(restored?.world.voucherReceipts).toEqual([]);
     expect(restored?.world.certifyDraft).toEqual({ actorId: "expert", typeId: "authenticity", visibility: "public" });
     expect(restored?.world.certifications).toEqual([]);
   });
@@ -426,6 +430,62 @@ describe("Demo Atelier contracts", () => {
     expect(receipt.publicCertifyIds).toEqual([]);
     expect(receipt.ownerOnlyCertifyIds).toEqual(["authenticity", "exhibition", "condition"]);
     expect(receipt.technicalSheetVisible).toBe(false);
+  });
+
+  it("requires an active account and explicit confirmation before simulated voucher credit", () => {
+    const inactive = structuredClone(initialContext);
+    inactive.flow = "vouchers";
+    inactive.stepIndex = manualContract.flows.vouchers.steps.length - 1;
+    inactive.world.voucherDraft.creditConfirmed = true;
+    const inactiveActor = createActor(demoMachine, { input: inactive }).start();
+    inactiveActor.send({ type: "COMPLETE_STEP" });
+    expect(inactiveActor.getSnapshot().context.errorCode).toBe("account_required");
+
+    const unconfirmed = structuredClone(inactive);
+    unconfirmed.world.accountStatus = "active";
+    unconfirmed.world.voucherDraft.creditConfirmed = false;
+    const unconfirmedActor = createActor(demoMachine, { input: unconfirmed }).start();
+    unconfirmedActor.send({ type: "COMPLETE_STEP" });
+    expect(unconfirmedActor.getSnapshot().context.errorCode).toBe("voucher_confirmation_required");
+    expect(unconfirmedActor.getSnapshot().context.world.voucherReceipts).toHaveLength(0);
+  });
+
+  it("credits the Starter Kit exactly once using the dated public Shop snapshot", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "vouchers";
+    context.stepIndex = manualContract.flows.vouchers.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.voucherDraft = { productId: "starter_kit", creditConfirmed: true };
+    const actor = createActor(demoMachine, { input: context }).start();
+    actor.send({ type: "COMPLETE_STEP" });
+    actor.send({ type: "COMPLETE_STEP" });
+    const result = actor.getSnapshot().context.world;
+
+    expect(result.vouchers).toEqual({ mint: 3, certify: 4, nfc: 1 });
+    expect(result.voucherReceipts).toEqual([expect.objectContaining({
+      receiptId: "VOUCHER-DEMO-001",
+      productId: "starter_kit",
+      priceUsd: 20,
+      priceVerifiedAt: "2026-07-14",
+      credited: { mint: 1, certify: 2, nfc: 0 },
+      resultingBalances: { mint: 3, certify: 4, nfc: 1 },
+      sourceUrl: "https://tokenizart.com/es/shop/",
+    })]);
+    expect(result.events.filter((event) => event === "vouchers.completed")).toHaveLength(1);
+  });
+
+  it("credits an individual Chip voucher without changing Mint or Certify", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "vouchers";
+    context.stepIndex = manualContract.flows.vouchers.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.voucherDraft = { productId: "nfc", creditConfirmed: true };
+    const actor = createActor(demoMachine, { input: context }).start();
+    actor.send({ type: "COMPLETE_STEP" });
+    const result = actor.getSnapshot().context.world;
+
+    expect(result.vouchers).toEqual({ mint: 2, certify: 2, nfc: 2 });
+    expect(result.voucherReceipts[0]).toEqual(expect.objectContaining({ productId: "nfc", priceUsd: 10 }));
   });
 
   it("accepts only allowlisted deep-link context", () => {

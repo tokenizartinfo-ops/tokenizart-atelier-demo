@@ -9,6 +9,13 @@ export type NfcTagState = "ready_to_link" | "linked_artwork" | "not_tokenizart";
 export type TransferDestinationType = "tokenizart_user" | "external_wallet";
 export type PrivacyPreviewAudience = "owner" | "visitor";
 export type PrivacyCertifyId = "authenticity" | "exhibition" | "condition";
+export type VoucherProductId = "starter_kit" | "mint" | "certify" | "nfc";
+
+export interface VoucherBalances {
+  mint: number;
+  certify: number;
+  nfc: number;
+}
 
 export interface LocalizedCopy {
   title: string;
@@ -103,6 +110,17 @@ export interface DemoPrivacyReceipt {
   completedAt: string;
 }
 
+export interface DemoVoucherReceipt {
+  receiptId: string;
+  productId: VoucherProductId;
+  priceUsd: number;
+  priceVerifiedAt: "2026-07-14";
+  credited: VoucherBalances;
+  resultingBalances: VoucherBalances;
+  sourceUrl: "https://tokenizart.com/es/shop/";
+  completedAt: string;
+}
+
 export interface DemoWorld {
   accountStatus: "not_created" | "email_pending" | "active";
   walletStatus: "not_created" | "created" | "backed_up";
@@ -142,13 +160,18 @@ export interface DemoWorld {
     ownerConfirmed: boolean;
   };
   privacyReceipts: DemoPrivacyReceipt[];
+  voucherDraft: {
+    productId: VoucherProductId;
+    creditConfirmed: boolean;
+  };
+  voucherReceipts: DemoVoucherReceipt[];
   certifyDraft: {
     actorId: CertifyActorId;
     typeId: CertifyTypeId;
     visibility: CertifyVisibility;
   };
   certifications: DemoCertification[];
-  vouchers: { mint: number; certify: number; nfc: number };
+  vouchers: VoucherBalances;
   events: string[];
 }
 

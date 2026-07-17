@@ -11,6 +11,7 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Lets the user configure a synthetic Certify actor, supported fact, evidence and owner/public visibility, then renders the completed provenance state.
 - Teaches the three NFC readings, the mobile scan, voucher/signature gates and the final linked-tag receipt without touching a physical tag.
 - Lets an owner compare Level 4 and visitor Level 5 views before simulating Gallery, technical-sheet and per-Certify visibility.
+- Shows the dated public Shop snapshot, who consumes each voucher, and a synthetic credit receipt without performing a purchase.
 - Keeps state only in browser `sessionStorage`.
 - Deep-links the current step to Tokenizart Companion.
 
@@ -32,7 +33,7 @@ Current IDs -> Companion deep link / A2UI integration
 
 ## Phase 2 status
 
-Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `Transfer` and `Privacy`.
+Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `Transfer`, `Privacy` and `Vouchers`.
 
 `Certify` includes:
 
@@ -74,7 +75,15 @@ Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `
 - A deterministic receipt that distinguishes public Certify records from owner-only records.
 - A clear rule that hiding information does not delete it from the owner environment and that a future owner controls visibility after transfer.
 
-All five action verticals expose specialized deterministic completion states. Vouchers remain a read-only educational view.
+`Vouchers` includes:
+
+- Dated public Shop prices verified on `2026-07-14`, with a direct link to the official Shop for live confirmation.
+- Starter Kit, Mint, Certify and Chip products with explicit synthetic balance effects.
+- A consumption matrix: the executing actor consumes Mint, Certify or NFC; transfer consumes none.
+- Explicit separation between vouchers, gas, money, cryptocurrency, physical chips and real owner balances.
+- An idempotent synthetic credit receipt; no payment, order, assignment, delivery, refund or real credit occurs.
+
+All six action verticals expose specialized deterministic completion states.
 
 ## Local development
 

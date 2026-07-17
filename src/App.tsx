@@ -9,6 +9,7 @@ import {
   Check,
   CircleAlert,
   Eye,
+  ExternalLink,
   FileCheck2,
   Fingerprint,
   GalleryHorizontalEnd,
@@ -18,10 +19,12 @@ import {
   LogIn,
   MessageCircleQuestion,
   Nfc,
+  PackageCheck,
   RefreshCcw,
   Route,
   ShieldCheck,
   Shirt,
+  ShoppingCart,
   Tag,
   TicketCheck,
   UserRoundPlus,
@@ -31,7 +34,7 @@ import {
 } from "lucide-react";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 import { flowLabels, ui } from "./i18n";
-import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType } from "./types";
+import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType, VoucherBalances as VoucherBalanceValues, VoucherProductId } from "./types";
 
 const SESSION_KEY = "tokenizart.demo-atelier.session.v1";
 
@@ -161,6 +164,11 @@ const errors: Record<string, Record<Language, { title: string; body: string }>> 
     en: { title: "Owner confirmation is missing", body: "Review the owner/visitor comparison and consciously confirm what will remain public." },
     pt: { title: "Falta a confirmação do owner", body: "Revise a comparação owner/visitante e confirme conscientemente o que ficará público." },
   },
+  voucher_confirmation_required: {
+    es: { title: "Falta confirmar la acreditación simulada", body: "Revisa el producto, el precio fechado y los vouchers de práctica que se agregarán. No se realiza una compra real." },
+    en: { title: "Simulated credit confirmation is missing", body: "Review the product, dated price, and practice vouchers that will be added. No real purchase is made." },
+    pt: { title: "Falta confirmar o crédito simulado", body: "Revise o produto, o preço datado e os vouchers de prática que serão adicionados. Nenhuma compra real é feita." },
+  },
 };
 
 const certifyActors: Record<CertifyActorId, Record<Language, { name: string; description: string }>> = {
@@ -253,6 +261,38 @@ const transferDestinations: Record<TransferDestinationType, Record<Language, { n
 
 const privacyCertifyIds: PrivacyCertifyId[] = ["authenticity", "exhibition", "condition"];
 
+const voucherProducts: Record<VoucherProductId, Record<Language, { name: string; description: string }> & { priceUsd: number; credited: VoucherBalanceValues }> = {
+  starter_kit: {
+    priceUsd: 20,
+    credited: { mint: 1, certify: 2, nfc: 0 },
+    es: { name: "Starter Kit", description: "1 Voucher Mint, 2 Vouchers Certify y Toolbox con chip NFC, etiqueta VOID e instrucciones." },
+    en: { name: "Starter Kit", description: "1 Mint Voucher, 2 Certify Vouchers, and a Toolbox with NFC chip, VOID label, and instructions." },
+    pt: { name: "Starter Kit", description: "1 Voucher Mint, 2 Vouchers Certify e Toolbox com chip NFC, etiqueta VOID e instruções." },
+  },
+  mint: {
+    priceUsd: 8,
+    credited: { mint: 1, certify: 0, nfc: 0 },
+    es: { name: "Voucher Mint", description: "Habilita una operación Mint individual; el lote requiere uno por obra." },
+    en: { name: "Mint Voucher", description: "Enables one individual Mint operation; a batch requires one per artwork." },
+    pt: { name: "Voucher Mint", description: "Habilita uma operação Mint individual; o lote exige um por obra." },
+  },
+  certify: {
+    priceUsd: 8,
+    credited: { mint: 0, certify: 1, nfc: 0 },
+    es: { name: "Voucher Certify", description: "Lo consume el actor que ejecuta y firma la certificación." },
+    en: { name: "Certify Voucher", description: "Consumed by the actor who executes and signs the certification." },
+    pt: { name: "Voucher Certify", description: "Consumido pelo ator que executa e assina a certificação." },
+  },
+  nfc: {
+    priceUsd: 10,
+    credited: { mint: 0, certify: 0, nfc: 1 },
+    es: { name: "Voucher Chip", description: "Corresponde al flujo de vinculación NFC; no es el chip físico por sí solo." },
+    en: { name: "Chip Voucher", description: "Applies to the NFC linking flow; it is not the physical chip by itself." },
+    pt: { name: "Voucher Chip", description: "Corresponde ao fluxo de vinculação NFC; não é apenas o chip físico." },
+  },
+};
+const voucherProductIds: VoucherProductId[] = ["starter_kit", "mint", "certify", "nfc"];
+
 const certifyTypes: Record<CertifyTypeId, Record<Language, { name: string; evidence: string }>> = {
   authenticity: {
     es: { name: "Autenticidad", evidence: "Informe de autenticidad sintético con firma y referencia de la obra." },
@@ -331,7 +371,7 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
   }
 
   if (context.flow === "vouchers") {
-    return <VoucherBalances context={context} />;
+    return <VoucherPractice context={context} send={send} />;
   }
 
   if (context.flow === "privacy") {
@@ -674,6 +714,76 @@ function PrivacyCompletion({ context }: { context: DemoContext }) {
   );
 }
 
+function VoucherPractice({ context, send }: { context: DemoContext; send: (event: any) => void }) {
+  const lang = context.language;
+  const t = ui[lang];
+  const draft = context.world.voucherDraft;
+  const selected = voucherProducts[draft.productId];
+  const completed = context.world.events.includes("vouchers.completed");
+  const consumers = [
+    { label: "Mint", copy: t.voucherMintConsumer },
+    { label: "Certify", copy: t.voucherCertifyConsumer },
+    { label: "NFC", copy: t.voucherNfcConsumer },
+    { label: t.transferTitle, copy: t.voucherTransferConsumer },
+  ];
+
+  return (
+    <div className="practice-fields voucher-practice">
+      <div className="voucher-explainer"><TicketCheck size={25} /><span><strong>{t.vouchersAreCredits}</strong><small>{t.vouchersNotGas}</small></span></div>
+      <VoucherBalances context={context} />
+      <fieldset>
+        <legend>{t.voucherChooseProduct}</legend>
+        <div className="voucher-product-grid">
+          {voucherProductIds.map((productId) => {
+            const product = voucherProducts[productId];
+            return (
+              <button type="button" key={productId} disabled={completed} className={draft.productId === productId ? "selected" : ""} onClick={() => send({ type: "SET_VOUCHER_DRAFT", productId, creditConfirmed: false })}>
+                {productId === "starter_kit" ? <PackageCheck size={21} /> : <TicketCheck size={21} />}
+                <span><strong>{product[lang].name}</strong><small>{product[lang].description}</small></span>
+                <b>USD {product.priceUsd.toFixed(2)}</b>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+      <div className="voucher-snapshot"><strong>{t.voucherSnapshotLabel}: 2026-07-14</strong><span>{t.voucherPriceCanChange}</span><small>+{selected.credited.mint} Mint · +{selected.credited.certify} Certify · +{selected.credited.nfc} NFC</small></div>
+      <section className="voucher-consumption"><h3>{t.voucherConsumptionTitle}</h3>{consumers.map((item) => <div key={item.label}><strong>{item.label}</strong><span>{item.copy}</span></div>)}</section>
+      <a className="shop-link" href="https://tokenizart.com/es/shop/" target="_blank" rel="noreferrer"><ShoppingCart size={18} />{t.openOfficialShop}<ExternalLink size={16} /></a>
+      <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.creditConfirmed} onChange={(event) => send({ type: "SET_VOUCHER_DRAFT", creditConfirmed: event.target.checked })} /><span>{t.voucherConfirm}<small>{t.voucherConfirmHelp}</small></span></label>
+      <div className="safety-note"><ShieldCheck size={18} />{t.voucherSafety}</div>
+      {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "voucher_confirmation_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}
+    </div>
+  );
+}
+
+function VoucherCompletion({ context }: { context: DemoContext }) {
+  if (context.flow !== "vouchers" || !context.world.events.includes("vouchers.completed")) return null;
+  const receipt = context.world.voucherReceipts.at(-1);
+  if (!receipt) return null;
+  const lang = context.language;
+  const t = ui[lang];
+  const product = voucherProducts[receipt.productId][lang];
+  const timeline = {
+    es: ["Producto revisado", "Acreditación simulada", "Saldo de práctica actualizado"],
+    en: ["Product reviewed", "Simulated credit", "Practice balance updated"],
+    pt: ["Produto revisado", "Crédito simulado", "Saldo de prática atualizado"],
+  }[lang];
+
+  return (
+    <section className="completion-result voucher-result" aria-live="polite">
+      <div className="completion-heading"><PackageCheck size={28} /><div><strong>{t.voucherCompleted}</strong><span>{receipt.receiptId}</span></div></div>
+      <dl>
+        <div><dt>{t.voucherProduct}</dt><dd>{product.name}</dd></div>
+        <div><dt>{t.voucherSnapshotPrice}</dt><dd>USD {receipt.priceUsd.toFixed(2)}</dd></div>
+        <div><dt>{t.voucherCreditsAdded}</dt><dd>+{receipt.credited.mint} M · +{receipt.credited.certify} C · +{receipt.credited.nfc} NFC</dd></div>
+        <div><dt>{t.voucherResultingBalance}</dt><dd>{receipt.resultingBalances.mint} M · {receipt.resultingBalances.certify} C · {receipt.resultingBalances.nfc} NFC</dd></div>
+      </dl>
+      <div className="provenance-timeline">{timeline.map((item) => <span key={item}><Check size={15} />{item}</span>)}</div>
+      <p>{t.noRealVoucherPurchase}</p>
+    </section>
+  );
+}
+
 function VoucherBalances({ context, compact = false }: { context: DemoContext; compact?: boolean }) {
   return (
     <div className={compact ? "voucher-row compact" : "voucher-row"}>
@@ -784,6 +894,7 @@ function App() {
               <NfcCompletion context={context} />
               <TransferCompletion context={context} />
               <PrivacyCompletion context={context} />
+              <VoucherCompletion context={context} />
               {activeError && <div className="error-panel"><CircleAlert size={22} /><div><strong>{activeError.title}</strong><p>{activeError.body}</p><button onClick={() => send({ type: "RESOLVE_ERROR" })}><Check size={17} />{t.resolve}</button></div></div>}
             </div>
           </section>
