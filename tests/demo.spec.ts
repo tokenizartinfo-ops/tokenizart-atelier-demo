@@ -165,3 +165,55 @@ test("interprets NFC tag states and completes a safe synthetic link", async ({ p
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("nfc-result.png"), fullPage: true });
 });
+
+test("transfers synthetic ownership to an external wallet without vouchers", async ({ page }, testInfo) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
+      language: "es",
+      flow: "transferencia",
+      stepIndex: 0,
+      scenarioId: "first-artwork",
+      fixtureId: "painting-river-001",
+      errorCode: null,
+      world: {
+        accountStatus: "active",
+        walletStatus: "backed_up",
+        artworkStatus: "tagged",
+        artworkTitle: "Ecos del río",
+        artworkAuthor: "Alex Rivera",
+        artworkType: "painting",
+        currentOwnerRef: "OWNER-DEMO-ALEX",
+        galleryVisible: false,
+        certifyVisible: true,
+        mintDraft: { actorId: "owner_artist", mode: "single", reviewConfirmed: true, signatureConfirmed: true },
+        mintReceipts: [],
+        nfcDraft: { actorId: "owner_artist", tagState: "ready_to_link", scanConfirmed: true, signatureConfirmed: true },
+        nfcReceipts: [],
+        transferDraft: { destinationType: "tokenizart_user", recipientVerified: false, externalWarningAccepted: false, signatureConfirmed: false },
+        transferReceipts: [],
+        certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
+        certifications: [],
+        vouchers: { mint: 1, certify: 1, nfc: 0 },
+        events: ["onboarding.completed", "account_wallet.completed", "carga_obra.completed", "mint.completed", "certify.completed", "chip.completed"],
+      },
+    }));
+  });
+
+  await page.goto("/?flow=transferencia&step=transferencia.external-wallet-boundary&lang=es&scenario=first-artwork");
+  await page.getByRole("button", { name: /Wallet externa/ }).click();
+  await page.getByLabel("Confirmo que verifiqué el destinatario").check();
+  await page.getByLabel("Comprendo que sale de la gestión de Atelier").check();
+  await page.getByLabel("Confirmo la firma simulada de la transferencia").check();
+  await page.getByRole("button", { name: /Completar paso/ }).click();
+
+  const result = page.locator(".transfer-result");
+  await expect(result.getByText("Titularidad transferida en la simulación")).toBeVisible();
+  await expect(result.getByText("OWNER-DEMO-ALEX", { exact: true })).toBeVisible();
+  await expect(result.getByText("OWNER-DEMO-EXTERNAL", { exact: true })).toBeVisible();
+  await expect(result.getByText("0xEXTERNAL-DEMO-0001", { exact: true })).toBeVisible();
+  await expect(result.getByText("Fuera de la gestión de Atelier", { exact: true })).toBeVisible();
+  await expect(result.getByText("TX-DEMO-TRANSFER-001", { exact: true })).toBeVisible();
+  await expect(result.getByText("0", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
+  await page.screenshot({ path: testInfo.outputPath("transfer-result.png"), fullPage: true });
+});

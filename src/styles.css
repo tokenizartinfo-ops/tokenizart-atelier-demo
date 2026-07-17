@@ -137,6 +137,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .phone-simulation.nfc-linked_artwork { border-color: #236c60; background: #eaf7f3; }
 .phone-simulation.nfc-not_tokenizart { border-color: var(--coral); background: var(--coral-soft); }
 .nfc-result dl { gap: 5px; }
+.transfer-warning { border-color: #d99989; background: var(--coral-soft); }
+.transfer-result dl { gap: 5px; }
 .privacy-controls label { display: flex; align-items: center; justify-content: space-between; min-height: 42px; border-bottom: 1px solid var(--line); }
 .privacy-controls input { width: 20px; height: 20px; accent-color: var(--aqua); }
 .privacy-controls p { font-size: 12px; color: var(--muted); line-height: 1.45; }

@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 import { flowLabels, ui } from "./i18n";
-import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState } from "./types";
+import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, TransferDestinationType } from "./types";
 
 const SESSION_KEY = "tokenizart.demo-atelier.session.v1";
 
@@ -136,6 +136,21 @@ const errors: Record<string, Record<Language, { title: string; body: string }>> 
     en: { title: "Simulated signature is missing", body: "Confirm the practice wallet closure. Never enter a password, private key, or seed phrase in the demo." },
     pt: { title: "Falta a assinatura simulada", body: "Confirme o fechamento da wallet de prática. Nunca insira senha, chave privada ou seed phrase na demo." },
   },
+  transfer_recipient_required: {
+    es: { title: "Verifica el destinatario", body: "Confirma que el usuario o wallet de práctica sea el destino correcto antes de transferir la titularidad." },
+    en: { title: "Verify the recipient", body: "Confirm that the practice user or wallet is the correct destination before transferring ownership." },
+    pt: { title: "Verifique o destinatário", body: "Confirme que o usuário ou wallet de prática seja o destino correto antes de transferir a titularidade." },
+  },
+  transfer_external_warning_required: {
+    es: { title: "Acepta el límite de wallet externa", body: "Fuera de Atelier la información permanece en blockchain/IPFS, pero la obra deja de gestionarse desde esa cuenta de Atelier." },
+    en: { title: "Accept the external-wallet boundary", body: "Outside Atelier, information remains on blockchain/IPFS, but the artwork is no longer managed from that Atelier account." },
+    pt: { title: "Aceite o limite da wallet externa", body: "Fora do Atelier, a informação permanece em blockchain/IPFS, mas a obra deixa de ser gerenciada por essa conta Atelier." },
+  },
+  transfer_confirmation_required: {
+    es: { title: "Falta la firma simulada", body: "Confirma la firma de wallet de práctica. La demo no recibe credenciales ni ejecuta la transferencia real." },
+    en: { title: "Simulated signature is missing", body: "Confirm the practice wallet signature. The demo receives no credentials and performs no real transfer." },
+    pt: { title: "Falta a assinatura simulada", body: "Confirme a assinatura da wallet de prática. A demo não recebe credenciais nem executa a transferência real." },
+  },
 };
 
 const certifyActors: Record<CertifyActorId, Record<Language, { name: string; description: string }>> = {
@@ -210,6 +225,19 @@ const nfcTagStates: Record<NfcTagState, Record<Language, { name: string; descrip
     es: { name: "Tag no válido", description: "La plataforma no lo reconoce como un tag Tokenizart.", systemMessage: "This is not a Tokenizart NFC tag" },
     en: { name: "Invalid tag", description: "The platform does not recognize it as a Tokenizart tag.", systemMessage: "This is not a Tokenizart NFC tag" },
     pt: { name: "Tag inválido", description: "A plataforma não o reconhece como tag Tokenizart.", systemMessage: "This is not a Tokenizart NFC tag" },
+  },
+};
+
+const transferDestinations: Record<TransferDestinationType, Record<Language, { name: string; description: string }>> = {
+  tokenizart_user: {
+    es: { name: "Usuario Tokenizart", description: "La obra pasa a otro usuario y permanece gestionable dentro de Atelier." },
+    en: { name: "Tokenizart user", description: "The artwork moves to another user and remains manageable inside Atelier." },
+    pt: { name: "Usuário Tokenizart", description: "A obra passa para outro usuário e continua gerenciável no Atelier." },
+  },
+  external_wallet: {
+    es: { name: "Wallet externa", description: "La titularidad sale del entorno gestionable por la cuenta de Atelier." },
+    en: { name: "External wallet", description: "Ownership leaves the environment managed by the Atelier account." },
+    pt: { name: "Wallet externa", description: "A titularidade sai do ambiente gerenciado pela conta Atelier." },
   },
 };
 
@@ -409,10 +437,29 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
   }
 
   if (context.flow === "transferencia") {
+    const draft = context.world.transferDraft;
+    const completed = context.world.events.includes("transferencia.completed");
+    const external = draft.destinationType === "external_wallet";
     return (
-      <div className="practice-fields">
-        <label>Destinatario sintético<input value="coleccionista.demo@ejemplo.test" readOnly /></label>
-        <div className="safety-note"><Tag size={18} />Transferencia no consume vouchers. No se envía ninguna obra real.</div>
+      <div className="practice-fields transfer-config">
+        <label>{t.transferCurrentOwner}<input value="Alex Rivera · OWNER-DEMO-ALEX" readOnly /></label>
+        <fieldset>
+          <legend>{t.transferDestination}</legend>
+          <div className="mode-selector">
+            {(Object.keys(transferDestinations) as TransferDestinationType[]).map((destinationType) => {
+              const destination = transferDestinations[destinationType][lang];
+              return <button type="button" key={destinationType} disabled={completed} className={draft.destinationType === destinationType ? "selected" : ""} onClick={() => send({ type: "SET_TRANSFER_DRAFT", destinationType, recipientVerified: false, externalWarningAccepted: false, signatureConfirmed: false })}><ArrowRight size={18} /><span><strong>{destination.name}</strong><small>{destination.description}</small></span></button>;
+            })}
+          </div>
+        </fieldset>
+        <label>{external ? t.transferExternalWallet : t.transferRecipientEmail}<input value={external ? "0xEXTERNAL-DEMO-0001" : "coleccionista.demo@ejemplo.test"} readOnly /></label>
+        <div className="wallet-preview"><WalletCards size={24} /><span><strong>{external ? "0xEXTERNAL...0001" : "WALLET-DEMO-COLLECTOR"}</strong><small>{transferDestinations[draft.destinationType][lang].description}</small></span><Check size={18} /></div>
+        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.recipientVerified} onChange={(event) => send({ type: "SET_TRANSFER_DRAFT", recipientVerified: event.target.checked })} /><span>{t.confirmTransferRecipient}<small>{t.transferVerifyHelp}</small></span></label>
+        {external && <label className="confirmation-check transfer-warning"><input type="checkbox" disabled={completed} checked={draft.externalWarningAccepted} onChange={(event) => send({ type: "SET_TRANSFER_DRAFT", externalWarningAccepted: event.target.checked })} /><span>{t.confirmExternalBoundary}<small>{t.externalBoundaryHelp}</small></span></label>}
+        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_TRANSFER_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmTransferSignature}<small>{t.signatureHelp}</small></span></label>
+        <div className="safety-note"><Tag size={18} />{t.transferNoVoucher}</div>
+        <div className="transaction-preview"><ArrowRight size={25} /><span><strong>{t.transferTitle} · {t.simulated}</strong><small>{context.world.artworkTitle} · {t.vouchersConsumed}: 0</small></span></div>
+        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: !draft.recipientVerified ? "transfer_recipient_required" : external && !draft.externalWarningAccepted ? "transfer_external_warning_required" : "transfer_confirmation_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}
       </div>
     );
   }
@@ -516,6 +563,40 @@ function NfcCompletion({ context }: { context: DemoContext }) {
       </dl>
       <div className="provenance-timeline">{timeline.map((item) => <span key={item}><Check size={15} />{item}</span>)}</div>
       <p>{t.noRealNfc}</p>
+    </section>
+  );
+}
+
+function TransferCompletion({ context }: { context: DemoContext }) {
+  if (context.flow !== "transferencia" || !context.world.events.includes("transferencia.completed")) return null;
+  const receipt = context.world.transferReceipts.at(-1);
+  if (!receipt) return null;
+  const lang = context.language;
+  const t = ui[lang];
+  const destination = transferDestinations[receipt.destinationType][lang];
+  const management = receipt.atelierManagement === "inside_atelier" ? t.transferInsideAtelier : t.transferOutsideAtelier;
+  const timeline = {
+    es: ["Owner anterior", "Destino verificado", "Nuevo owner"],
+    en: ["Previous owner", "Destination verified", "New owner"],
+    pt: ["Owner anterior", "Destino verificado", "Novo owner"],
+  }[lang];
+
+  return (
+    <section className="completion-result transfer-result" aria-live="polite">
+      <div className="completion-heading"><ArrowRight size={28} /><div><strong>{t.transferCompleted}</strong><span>{receipt.receiptId}</span></div></div>
+      <dl>
+        <div><dt>{t.transferDestination}</dt><dd>{destination.name}</dd></div>
+        <div><dt>{t.transferPreviousOwner}</dt><dd>{receipt.previousOwnerRef}</dd></div>
+        <div><dt>{t.transferNewOwner}</dt><dd>{receipt.newOwnerRef}</dd></div>
+        <div><dt>{t.transferDestinationWallet}</dt><dd>{receipt.destinationWalletRef}</dd></div>
+        <div><dt>{t.transferManagement}</dt><dd>{management}</dd></div>
+        <div><dt>{t.networkLabel}</dt><dd>Gnosis Chain · {t.simulated.toLowerCase()}</dd></div>
+        <div><dt>{t.vouchersConsumed}</dt><dd>{receipt.vouchersConsumed}</dd></div>
+        <div><dt>{t.tokenReference}</dt><dd>{receipt.tokenRef}</dd></div>
+        <div><dt>{t.transactionReference}</dt><dd>{receipt.transactionRef}</dd></div>
+      </dl>
+      <div className="provenance-timeline">{timeline.map((item) => <span key={item}><Check size={15} />{item}</span>)}</div>
+      <p>{t.noRealTransfer}</p>
     </section>
   );
 }
@@ -628,6 +709,7 @@ function App() {
               <MintCompletion context={context} />
               <CertifyCompletion context={context} />
               <NfcCompletion context={context} />
+              <TransferCompletion context={context} />
               {activeError && <div className="error-panel"><CircleAlert size={22} /><div><strong>{activeError.title}</strong><p>{activeError.body}</p><button onClick={() => send({ type: "RESOLVE_ERROR" })}><Check size={17} />{t.resolve}</button></div></div>}
             </div>
           </section>

@@ -6,6 +6,7 @@ export type MintActorId = "owner_artist" | "authorized_manager";
 export type MintMode = "single" | "batch";
 export type NfcActorId = "owner_artist" | "authorized_certifier";
 export type NfcTagState = "ready_to_link" | "linked_artwork" | "not_tokenizart";
+export type TransferDestinationType = "tokenizart_user" | "external_wallet";
 
 export interface LocalizedCopy {
   title: string;
@@ -77,6 +78,20 @@ export interface DemoNfcReceipt {
   completedAt: string;
 }
 
+export interface DemoTransferReceipt {
+  receiptId: string;
+  destinationType: TransferDestinationType;
+  previousOwnerRef: string;
+  newOwnerRef: string;
+  destinationWalletRef: string;
+  atelierManagement: "inside_atelier" | "outside_atelier";
+  vouchersConsumed: 0;
+  networkRef: "gnosis-simulated";
+  tokenRef: string;
+  transactionRef: string;
+  completedAt: string;
+}
+
 export interface DemoWorld {
   accountStatus: "not_created" | "email_pending" | "active";
   walletStatus: "not_created" | "created" | "backed_up";
@@ -84,6 +99,7 @@ export interface DemoWorld {
   artworkTitle: string;
   artworkAuthor: string;
   artworkType: "painting" | "sculpture" | "sports";
+  currentOwnerRef: string;
   galleryVisible: boolean;
   certifyVisible: boolean;
   mintDraft: {
@@ -100,6 +116,13 @@ export interface DemoWorld {
     signatureConfirmed: boolean;
   };
   nfcReceipts: DemoNfcReceipt[];
+  transferDraft: {
+    destinationType: TransferDestinationType;
+    recipientVerified: boolean;
+    externalWarningAccepted: boolean;
+    signatureConfirmed: boolean;
+  };
+  transferReceipts: DemoTransferReceipt[];
   certifyDraft: {
     actorId: CertifyActorId;
     typeId: CertifyTypeId;

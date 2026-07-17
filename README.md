@@ -31,7 +31,7 @@ Current IDs -> Companion deep link / A2UI integration
 
 ## Phase 2 status
 
-Specialized actor/result verticals are available for `Certify`, `Mint` and `NFC`.
+Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC` and `Transfer`.
 
 `Certify` includes:
 
@@ -57,7 +57,15 @@ Specialized actor/result verticals are available for `Certify`, `Mint` and `NFC`
 - Deterministic tag, Certify, token and transaction references.
 - Idempotent voucher consumption and a final physical/digital-link timeline in Spanish, English and Portuguese.
 
-Transfer still uses its generic deterministic completion state and will receive the same actor/result treatment incrementally.
+`Transfer` includes:
+
+- Synthetic Tokenizart-user and external-wallet destinations.
+- Recipient, external-boundary and simulated-signature confirmations.
+- Previous owner, new owner, destination wallet, token and transaction references.
+- Explicit zero-voucher behavior and an Atelier-management boundary.
+- A final ownership timeline in Spanish, English and Portuguese without implying a sale, price, payment, physical delivery or copyright assignment.
+
+All four action verticals now expose specialized deterministic completion states. Privacy and vouchers remain read-only educational views.
 
 ## Local development
 

@@ -28,10 +28,28 @@ describe("Demo Atelier contracts", () => {
     context.world.accountStatus = "active";
     context.world.walletStatus = "backed_up";
     context.world.artworkStatus = "minted";
+    context.world.transferDraft = {
+      destinationType: "tokenizart_user",
+      recipientVerified: true,
+      externalWarningAccepted: false,
+      signatureConfirmed: true,
+    };
     const actor = createActor(demoMachine, { input: context }).start();
     actor.send({ type: "COMPLETE_STEP" });
-    expect(actor.getSnapshot().context.world.vouchers).toEqual({ mint: 2, certify: 2, nfc: 1 });
-    expect(actor.getSnapshot().context.world.artworkStatus).toBe("transferred");
+    actor.send({ type: "COMPLETE_STEP" });
+    const result = actor.getSnapshot().context.world;
+    expect(result.vouchers).toEqual({ mint: 2, certify: 2, nfc: 1 });
+    expect(result.artworkStatus).toBe("transferred");
+    expect(result.currentOwnerRef).toBe("OWNER-DEMO-COLLECTOR");
+    expect(result.transferReceipts).toEqual([expect.objectContaining({
+      receiptId: "TRANSFER-DEMO-001",
+      destinationType: "tokenizart_user",
+      previousOwnerRef: "OWNER-DEMO-ALEX",
+      newOwnerRef: "OWNER-DEMO-COLLECTOR",
+      atelierManagement: "inside_atelier",
+      vouchersConsumed: 0,
+      transactionRef: "TX-DEMO-TRANSFER-001",
+    })]);
   });
 
   it("consumes the matching voucher only on completed eligible flows", () => {
@@ -149,12 +167,15 @@ describe("Demo Atelier contracts", () => {
     expect(actor.getSnapshot().context.world.artworkStatus).toBe("loaded");
   });
 
-  it("normalizes legacy sessions without Mint, NFC or Certify result fields", () => {
+  it("normalizes legacy sessions without Mint, NFC, transfer or Certify result fields", () => {
     const legacy = structuredClone(initialContext) as any;
     delete legacy.world.mintDraft;
     delete legacy.world.mintReceipts;
     delete legacy.world.nfcDraft;
     delete legacy.world.nfcReceipts;
+    delete legacy.world.currentOwnerRef;
+    delete legacy.world.transferDraft;
+    delete legacy.world.transferReceipts;
     delete legacy.world.certifyDraft;
     delete legacy.world.certifications;
     const restored = safeRestore(JSON.stringify(legacy));
@@ -173,6 +194,14 @@ describe("Demo Atelier contracts", () => {
       signatureConfirmed: false,
     });
     expect(restored?.world.nfcReceipts).toEqual([]);
+    expect(restored?.world.currentOwnerRef).toBe("OWNER-DEMO-ALEX");
+    expect(restored?.world.transferDraft).toEqual({
+      destinationType: "tokenizart_user",
+      recipientVerified: false,
+      externalWarningAccepted: false,
+      signatureConfirmed: false,
+    });
+    expect(restored?.world.transferReceipts).toEqual([]);
     expect(restored?.world.certifyDraft).toEqual({ actorId: "expert", typeId: "authenticity", visibility: "public" });
     expect(restored?.world.certifications).toEqual([]);
   });
@@ -274,6 +303,54 @@ describe("Demo Atelier contracts", () => {
       transactionRef: "TX-DEMO-NFC-001",
     })]);
     expect(result.events.filter((event) => event === "chip.completed")).toHaveLength(1);
+  });
+
+  it("requires recipient, external boundary and simulated signature in order", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "transferencia";
+    context.stepIndex = manualContract.flows.transferencia.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.artworkStatus = "tagged";
+    context.world.transferDraft.destinationType = "external_wallet";
+    const actor = createActor(demoMachine, { input: context }).start();
+
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("transfer_recipient_required");
+    actor.send({ type: "SET_TRANSFER_DRAFT", recipientVerified: true });
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("transfer_external_warning_required");
+    actor.send({ type: "SET_TRANSFER_DRAFT", externalWarningAccepted: true });
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("transfer_confirmation_required");
+    expect(actor.getSnapshot().context.world.transferReceipts).toHaveLength(0);
+  });
+
+  it("records the external-wallet boundary without consuming vouchers", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "transferencia";
+    context.stepIndex = manualContract.flows.transferencia.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.artworkStatus = "certified";
+    context.world.transferDraft = {
+      destinationType: "external_wallet",
+      recipientVerified: true,
+      externalWarningAccepted: true,
+      signatureConfirmed: true,
+    };
+    const actor = createActor(demoMachine, { input: context }).start();
+    actor.send({ type: "COMPLETE_STEP" });
+    const result = actor.getSnapshot().context.world;
+
+    expect(result.vouchers).toEqual({ mint: 2, certify: 2, nfc: 1 });
+    expect(result.transferReceipts).toEqual([expect.objectContaining({
+      destinationType: "external_wallet",
+      newOwnerRef: "OWNER-DEMO-EXTERNAL",
+      destinationWalletRef: "0xEXTERNAL-DEMO-0001",
+      atelierManagement: "outside_atelier",
+      vouchersConsumed: 0,
+    })]);
   });
 
   it("accepts only allowlisted deep-link context", () => {

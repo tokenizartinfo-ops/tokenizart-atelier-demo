@@ -1,7 +1,7 @@
 import { assign, setup } from "xstate";
 import manual from "./data/atelier-manual-native-microsteps.v1.json";
 import iconAtlas from "./data/atelier-manual-native-icon-atlas.v1.json";
-import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, DemoMintReceipt, DemoNfcReceipt, Language, ManualContract, MintActorId, MintMode, NfcActorId, NfcTagState } from "./types";
+import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, DemoMintReceipt, DemoNfcReceipt, DemoTransferReceipt, Language, ManualContract, MintActorId, MintMode, NfcActorId, NfcTagState, TransferDestinationType } from "./types";
 
 const manualBase = manual as ManualContract;
 const actionIcons = iconAtlas.icons.filter((icon) => icon.context === "atelier_action");
@@ -39,6 +39,7 @@ export const initialContext: DemoContext = {
     artworkTitle: "Ecos del río",
     artworkAuthor: "Alex Rivera",
     artworkType: "painting",
+    currentOwnerRef: "OWNER-DEMO-ALEX",
     galleryVisible: false,
     certifyVisible: true,
     mintDraft: {
@@ -55,6 +56,13 @@ export const initialContext: DemoContext = {
       signatureConfirmed: false,
     },
     nfcReceipts: [],
+    transferDraft: {
+      destinationType: "tokenizart_user",
+      recipientVerified: false,
+      externalWarningAccepted: false,
+      signatureConfirmed: false,
+    },
+    transferReceipts: [],
     certifyDraft: {
       actorId: "expert",
       typeId: "authenticity",
@@ -75,6 +83,7 @@ type DemoEvent =
   | { type: "UPDATE_ARTWORK"; title?: string; author?: string }
   | { type: "SET_MINT_DRAFT"; actorId?: MintActorId; mode?: MintMode; reviewConfirmed?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_NFC_DRAFT"; actorId?: NfcActorId; tagState?: NfcTagState; scanConfirmed?: boolean; signatureConfirmed?: boolean }
+  | { type: "SET_TRANSFER_DRAFT"; destinationType?: TransferDestinationType; recipientVerified?: boolean; externalWarningAccepted?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_CERTIFY_DRAFT"; actorId?: CertifyActorId; typeId?: CertifyTypeId; visibility?: CertifyVisibility }
   | { type: "INJECT_ERROR"; code: string }
   | { type: "RESOLVE_ERROR" }
@@ -110,6 +119,11 @@ function completionError(context: DemoContext): string | null {
   if (flow === "chip" && !world.nfcDraft.scanConfirmed) return "nfc_scan_required";
   if (flow === "chip" && world.vouchers.nfc <= 0) return "missing_voucher";
   if (flow === "chip" && !world.nfcDraft.signatureConfirmed) return "nfc_confirmation_required";
+  if (flow === "transferencia" && !world.transferDraft.recipientVerified) return "transfer_recipient_required";
+  if (flow === "transferencia" && world.transferDraft.destinationType === "external_wallet" && !world.transferDraft.externalWarningAccepted) {
+    return "transfer_external_warning_required";
+  }
+  if (flow === "transferencia" && !world.transferDraft.signatureConfirmed) return "transfer_confirmation_required";
   return null;
 }
 
@@ -176,7 +190,26 @@ function completeFlow(context: DemoContext): DemoContext {
     };
     world.nfcReceipts = [...world.nfcReceipts, receipt];
   }
-  if (context.flow === "transferencia") world.artworkStatus = "transferred";
+  if (context.flow === "transferencia") {
+    world.artworkStatus = "transferred";
+    const sequence = String(world.transferReceipts.length + 1).padStart(3, "0");
+    const external = world.transferDraft.destinationType === "external_wallet";
+    const receipt: DemoTransferReceipt = {
+      receiptId: `TRANSFER-DEMO-${sequence}`,
+      destinationType: world.transferDraft.destinationType,
+      previousOwnerRef: world.currentOwnerRef,
+      newOwnerRef: external ? "OWNER-DEMO-EXTERNAL" : "OWNER-DEMO-COLLECTOR",
+      destinationWalletRef: external ? "0xEXTERNAL-DEMO-0001" : "WALLET-DEMO-COLLECTOR",
+      atelierManagement: external ? "outside_atelier" : "inside_atelier",
+      vouchersConsumed: 0,
+      networkRef: "gnosis-simulated",
+      tokenRef: `TOKEN-DEMO-${sequence}`,
+      transactionRef: `TX-DEMO-TRANSFER-${sequence}`,
+      completedAt: "2026-07-17T12:00:00.000Z",
+    };
+    world.currentOwnerRef = receipt.newOwnerRef;
+    world.transferReceipts = [...world.transferReceipts, receipt];
+  }
   world.events.push(completionEvent);
   return { ...context, world, errorCode: null };
 }
@@ -250,6 +283,20 @@ export const demoMachine = setup({
             },
           })),
         },
+        SET_TRANSFER_DRAFT: {
+          actions: assign(({ context, event }) => ({
+            ...context,
+            world: {
+              ...context.world,
+              transferDraft: {
+                destinationType: event.destinationType ?? context.world.transferDraft.destinationType,
+                recipientVerified: event.recipientVerified ?? context.world.transferDraft.recipientVerified,
+                externalWarningAccepted: event.externalWarningAccepted ?? context.world.transferDraft.externalWarningAccepted,
+                signatureConfirmed: event.signatureConfirmed ?? context.world.transferDraft.signatureConfirmed,
+              },
+            },
+          })),
+        },
         SET_CERTIFY_DRAFT: {
           actions: assign(({ context, event }) => ({
             ...context,
@@ -312,6 +359,7 @@ function normalizeContext(context: DemoContext): DemoContext {
   const mintModes: MintMode[] = ["single", "batch"];
   const nfcActorIds: NfcActorId[] = ["owner_artist", "authorized_certifier"];
   const nfcTagStates: NfcTagState[] = ["ready_to_link", "linked_artwork", "not_tokenizart"];
+  const transferDestinationTypes: TransferDestinationType[] = ["tokenizart_user", "external_wallet"];
   const actorIds: CertifyActorId[] = ["owner_artist", "expert", "gallery_museum"];
   const typeIds: CertifyTypeId[] = ["authenticity", "condition", "exhibition", "additional_report"];
   const visibilities: CertifyVisibility[] = ["public", "owner"];
@@ -343,6 +391,24 @@ function normalizeContext(context: DemoContext): DemoContext {
       typeof item?.receiptId === "string"
       && nfcActorIds.includes(item.actorId)
       && item.tagState === "linked_artwork"
+      && item.networkRef === "gnosis-simulated"
+    ))
+    : [];
+  const transferDraft = next.world.transferDraft;
+  next.world.currentOwnerRef = typeof next.world.currentOwnerRef === "string" && next.world.currentOwnerRef
+    ? next.world.currentOwnerRef
+    : "OWNER-DEMO-ALEX";
+  next.world.transferDraft = {
+    destinationType: transferDestinationTypes.includes(transferDraft?.destinationType) ? transferDraft.destinationType : "tokenizart_user",
+    recipientVerified: transferDraft?.recipientVerified === true,
+    externalWarningAccepted: transferDraft?.externalWarningAccepted === true,
+    signatureConfirmed: transferDraft?.signatureConfirmed === true,
+  };
+  next.world.transferReceipts = Array.isArray(next.world.transferReceipts)
+    ? next.world.transferReceipts.filter((item) => (
+      typeof item?.receiptId === "string"
+      && transferDestinationTypes.includes(item.destinationType)
+      && item.vouchersConsumed === 0
       && item.networkRef === "gnosis-simulated"
     ))
     : [];
