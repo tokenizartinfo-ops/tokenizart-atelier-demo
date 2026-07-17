@@ -69,3 +69,49 @@ test("configures a synthetic Certify actor and renders the completed provenance"
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("certify-result.png"), fullPage: true });
 });
+
+test("completes a synthetic batch Mint with deterministic references", async ({ page }, testInfo) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
+      language: "es",
+      flow: "mint",
+      stepIndex: 0,
+      scenarioId: "first-artwork",
+      fixtureId: "painting-river-001",
+      errorCode: null,
+      world: {
+        accountStatus: "active",
+        walletStatus: "backed_up",
+        artworkStatus: "loaded",
+        artworkTitle: "Ecos del río",
+        artworkAuthor: "Alex Rivera",
+        artworkType: "painting",
+        galleryVisible: false,
+        certifyVisible: true,
+        mintDraft: { actorId: "owner_artist", mode: "single", reviewConfirmed: false, signatureConfirmed: false },
+        mintReceipts: [],
+        certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
+        certifications: [],
+        vouchers: { mint: 2, certify: 2, nfc: 1 },
+        events: ["onboarding.completed", "account_wallet.completed", "carga_obra.completed"],
+      },
+    }));
+  });
+
+  await page.goto("/?flow=mint&step=mint.batch-review-and-confirm&lang=es&scenario=first-artwork");
+  await page.getByRole("button", { name: /Gestor Demo autorizado/ }).click();
+  await page.getByRole("button", { name: /Lote de 2 obras/ }).click();
+  await page.getByLabel("Confirmo que revisé la información de práctica").check();
+  await page.getByLabel("Confirmo la firma de wallet simulada").check();
+  await page.getByRole("button", { name: /Completar paso/ }).click();
+
+  const result = page.locator(".mint-result");
+  await expect(result.getByText("Identidad digital simulada creada")).toBeVisible();
+  await expect(result.getByText("Gestor Demo autorizado", { exact: true })).toBeVisible();
+  await expect(result.getByText("Lote de 2 obras", { exact: true })).toBeVisible();
+  await expect(result.getByText("TOKEN-DEMO-001", { exact: true })).toBeVisible();
+  await expect(result.getByText("TX-DEMO-MINT-001", { exact: true })).toBeVisible();
+  await expect(result.getByText("IPFS-DEMO-001", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
+  await page.screenshot({ path: testInfo.outputPath("mint-result.png"), fullPage: true });
+});

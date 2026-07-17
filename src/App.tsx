@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 import { flowLabels, ui } from "./i18n";
-import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep } from "./types";
+import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode } from "./types";
 
 const SESSION_KEY = "tokenizart.demo-atelier.session.v1";
 
@@ -101,6 +101,16 @@ const errors: Record<string, Record<Language, { title: string; body: string }>> 
     en: { title: "No voucher available", body: "Mint, Certify, or NFC stays blocked until the matching voucher is available. Transfer does not consume vouchers." },
     pt: { title: "Voucher indisponível", body: "Mint, Certify ou NFC fica bloqueado até existir o voucher correspondente. Transferência não consome vouchers." },
   },
+  mint_review_required: {
+    es: { title: "Revisa la obra antes de Mint", body: "Confirma que título, autor, imágenes, ficha y visibilidad de práctica estén revisados. Mint no debe usarse como una edición rápida." },
+    en: { title: "Review the artwork before Mint", body: "Confirm that the practice title, author, images, technical sheet, and visibility were reviewed. Mint is not a quick edit." },
+    pt: { title: "Revise a obra antes do Mint", body: "Confirme que título, autor, imagens, ficha técnica e visibilidade de prática foram revisados. Mint não é uma edição rápida." },
+  },
+  mint_confirmation_required: {
+    es: { title: "Falta la confirmación simulada", body: "Marca la confirmación de firma de wallet. Es un control didáctico: no ingreses una clave ni contraseña real." },
+    en: { title: "Simulated confirmation is missing", body: "Confirm the simulated wallet signature. This is a learning control: do not enter a real key or password." },
+    pt: { title: "Falta a confirmação simulada", body: "Confirme a assinatura simulada da wallet. É um controle didático: não insira chave nem senha real." },
+  },
   missing_required_field: {
     es: { title: "Falta un dato requerido", body: "La demo marca el campo sin perder lo que ya completaste. Puedes volver, corregir y continuar." },
     en: { title: "A required field is missing", body: "The demo marks the field without losing your progress. Go back, fix it, and continue." },
@@ -128,6 +138,32 @@ const certifyActors: Record<CertifyActorId, Record<Language, { name: string; des
     es: { name: "Museo Demo", description: "Documenta exhibición, custodia u otro hecho institucional." },
     en: { name: "Demo Museum", description: "Documents an exhibition, custody, or another institutional fact." },
     pt: { name: "Museu Demo", description: "Documenta exposição, custódia ou outro fato institucional." },
+  },
+};
+
+const mintActors: Record<MintActorId, Record<Language, { name: string; description: string }>> = {
+  owner_artist: {
+    es: { name: "Alex Rivera · owner/artista", description: "Registra una obra propia previamente revisada." },
+    en: { name: "Alex Rivera · owner/artist", description: "Registers a reviewed artwork they own." },
+    pt: { name: "Alex Rivera · owner/artista", description: "Registra uma obra própria previamente revisada." },
+  },
+  authorized_manager: {
+    es: { name: "Gestor Demo autorizado", description: "Prepara el Mint de una obra gestionada dentro del escenario sintético." },
+    en: { name: "Authorized Demo Manager", description: "Prepares Mint for a managed artwork inside the synthetic scenario." },
+    pt: { name: "Gestor Demo autorizado", description: "Prepara o Mint de uma obra gerenciada no cenário sintético." },
+  },
+};
+
+const mintModes: Record<MintMode, Record<Language, { name: string; description: string }>> = {
+  single: {
+    es: { name: "Una obra", description: "Registra la identidad digital de la obra actual." },
+    en: { name: "One artwork", description: "Registers the digital identity of the current artwork." },
+    pt: { name: "Uma obra", description: "Registra a identidade digital da obra atual." },
+  },
+  batch: {
+    es: { name: "Lote de 2 obras", description: "Simula dos obras revisadas y dos vouchers Mint." },
+    en: { name: "Batch of 2 artworks", description: "Simulates two reviewed artworks and two Mint vouchers." },
+    pt: { name: "Lote de 2 obras", description: "Simula duas obras revisadas e dois vouchers Mint." },
   },
 };
 
@@ -265,11 +301,39 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
   }
 
   if (context.flow === "mint") {
-    const balance = context.world.vouchers.mint;
+    const draft = context.world.mintDraft;
+    const completed = context.world.events.includes("mint.completed");
+    const voucherRequirement = draft.mode === "batch" ? 2 : 1;
     return (
-      <div className="practice-fields">
-        <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Mint {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherAvailable}: {balance}</small></span></div>
-        <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: balance ? "wrong_wallet_password" : "missing_voucher" })}><CircleAlert size={17} />{t.errorPractice}</button>
+      <div className="practice-fields mint-config">
+        <fieldset>
+          <legend>{t.mintActor}</legend>
+          <div className="actor-selector">
+            {(Object.keys(mintActors) as MintActorId[]).map((actorId) => {
+              const actor = mintActors[actorId][lang];
+              return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => send({ type: "SET_MINT_DRAFT", actorId })}><Fingerprint size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
+            })}
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>{t.mintMode}</legend>
+          <div className="mode-selector">
+            {(Object.keys(mintModes) as MintMode[]).map((mode) => {
+              const option = mintModes[mode][lang];
+              return <button type="button" key={mode} disabled={completed} className={draft.mode === mode ? "selected" : ""} onClick={() => send({ type: "SET_MINT_DRAFT", mode })}><Blocks size={18} /><span><strong>{option.name}</strong><small>{option.description}</small></span></button>;
+            })}
+          </div>
+        </fieldset>
+        <div className="mint-readiness">
+          <strong>{t.reviewBeforeMint}</strong>
+          <span><Check size={16} />{t.artworkDataReady}</span>
+          <span><Check size={16} />{t.artworkImagesReady}</span>
+          <span><Check size={16} />{t.artworkVisibilityReady}</span>
+        </div>
+        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.reviewConfirmed} onChange={(event) => send({ type: "SET_MINT_DRAFT", reviewConfirmed: event.target.checked })} /><span>{t.confirmReview}</span></label>
+        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_MINT_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmSignature}<small>{t.signatureHelp}</small></span></label>
+        <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Mint {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherCost}: {voucherRequirement} · {t.voucherAvailable}: {context.world.vouchers.mint}</small></span></div>
+        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: context.world.vouchers.mint < voucherRequirement ? "missing_voucher" : "wrong_wallet_password" })}><CircleAlert size={17} />{t.errorPractice}</button>}
       </div>
     );
   }
@@ -288,6 +352,39 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
       <div className="safety-note"><ShieldCheck size={18} />{t.realActionBlocked}. {t.freeMode}</div>
       <VoucherBalances context={context} compact />
     </div>
+  );
+}
+
+function MintCompletion({ context }: { context: DemoContext }) {
+  if (context.flow !== "mint" || !context.world.events.includes("mint.completed")) return null;
+  const receipt = context.world.mintReceipts.at(-1);
+  if (!receipt) return null;
+  const lang = context.language;
+  const t = ui[lang];
+  const actor = mintActors[receipt.actorId][lang];
+  const mode = mintModes[receipt.mode][lang];
+  const network = { es: "Gnosis Chain · simulada", en: "Gnosis Chain · simulated", pt: "Gnosis Chain · simulada" }[lang];
+  const timeline = {
+    es: ["Obra precargada", "Datos revisados", "Identidad digital"],
+    en: ["Artwork preloaded", "Data reviewed", "Digital identity"],
+    pt: ["Obra pré-carregada", "Dados revisados", "Identidade digital"],
+  }[lang];
+
+  return (
+    <section className="completion-result mint-result" aria-live="polite">
+      <div className="completion-heading"><Fingerprint size={28} /><div><strong>{t.mintCompleted}</strong><span>{receipt.receiptId}</span></div></div>
+      <dl>
+        <div><dt>{t.mintedBy}</dt><dd>{actor.name}</dd></div>
+        <div><dt>{t.mintModeResult}</dt><dd>{mode.name}</dd></div>
+        <div><dt>{t.networkLabel}</dt><dd>{network}</dd></div>
+        <div><dt>{t.vouchersConsumed}</dt><dd>{receipt.vouchersConsumed}</dd></div>
+        <div><dt>{t.tokenReference}</dt><dd>{receipt.tokenRef}</dd></div>
+        <div><dt>{t.transactionReference}</dt><dd>{receipt.transactionRef}</dd></div>
+        <div><dt>{t.metadataReference}</dt><dd>{receipt.metadataRef}</dd></div>
+      </dl>
+      <div className="provenance-timeline">{timeline.map((item) => <span key={item}><Check size={15} />{item}</span>)}</div>
+      <p>{t.noRealMint}</p>
+    </section>
   );
 }
 
@@ -426,6 +523,7 @@ function App() {
             <div className="practice-zone">
               <div className="practice-title"><LogIn size={20} /><strong>{t.demoData}</strong><span>{t.simulated}</span></div>
               <PracticeFields context={context} send={send} />
+              <MintCompletion context={context} />
               <CertifyCompletion context={context} />
               {activeError && <div className="error-panel"><CircleAlert size={22} /><div><strong>{activeError.title}</strong><p>{activeError.body}</p><button onClick={() => send({ type: "RESOLVE_ERROR" })}><Check size={17} />{t.resolve}</button></div></div>}
             </div>

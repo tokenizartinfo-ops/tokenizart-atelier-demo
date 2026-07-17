@@ -30,7 +30,9 @@ Current IDs -> Companion deep link / A2UI integration
 
 ## Phase 2 status
 
-The first specialized actor/result vertical is available for `Certify`:
+Specialized actor/result verticals are available for `Certify` and `Mint`.
+
+`Certify` includes:
 
 - Synthetic owner/artist, expert and gallery/museum actors.
 - Authenticity, condition, exhibition and additional-report evidence types.
@@ -38,7 +40,15 @@ The first specialized actor/result vertical is available for `Certify`:
 - Deterministic voucher consumption and idempotent completion.
 - Final receipt and provenance timeline in Spanish, English and Portuguese.
 
-Mint, NFC and transfer still use their generic deterministic completion state and will receive the same actor/result treatment incrementally.
+`Mint` includes:
+
+- Synthetic owner/artist and authorized-manager actors.
+- Single artwork and two-artwork batch modes.
+- Explicit review, voucher, and simulated-signature gates.
+- Deterministic Gnosis, token, transaction, and IPFS references that are clearly marked as simulations.
+- Idempotent voucher consumption and a final digital-identity timeline in Spanish, English and Portuguese.
+
+NFC and transfer still use their generic deterministic completion state and will receive the same actor/result treatment incrementally.
 
 ## Local development
 

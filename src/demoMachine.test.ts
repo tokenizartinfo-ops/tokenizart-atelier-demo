@@ -1,6 +1,6 @@
 import { createActor } from "xstate";
 import { describe, expect, it } from "vitest";
-import { contextFromSearch, demoMachine, initialContext, manualContract } from "./demoMachine";
+import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 
 describe("Demo Atelier contracts", () => {
   it("exposes all approved flows and excludes manual annotations", () => {
@@ -41,6 +41,8 @@ describe("Demo Atelier contracts", () => {
     context.world.accountStatus = "active";
     context.world.walletStatus = "backed_up";
     context.world.artworkStatus = "loaded";
+    context.world.mintDraft.reviewConfirmed = true;
+    context.world.mintDraft.signatureConfirmed = true;
     const actor = createActor(demoMachine, { input: context }).start();
     actor.send({ type: "COMPLETE_STEP" });
     expect(actor.getSnapshot().context.world.artworkStatus).toBe("minted");
@@ -66,11 +68,104 @@ describe("Demo Atelier contracts", () => {
     context.world.accountStatus = "active";
     context.world.walletStatus = "backed_up";
     context.world.artworkStatus = "loaded";
+    context.world.mintDraft.reviewConfirmed = true;
+    context.world.mintDraft.signatureConfirmed = true;
     const actor = createActor(demoMachine, { input: context }).start();
     actor.send({ type: "COMPLETE_STEP" });
     actor.send({ type: "COMPLETE_STEP" });
     expect(actor.getSnapshot().context.world.vouchers.mint).toBe(1);
     expect(actor.getSnapshot().context.world.events.filter((event) => event === "mint.completed")).toHaveLength(1);
+  });
+
+  it("requires review and simulated signature before Mint", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "mint";
+    context.stepIndex = manualContract.flows.mint.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.artworkStatus = "loaded";
+    const actor = createActor(demoMachine, { input: context }).start();
+
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("mint_review_required");
+    actor.send({ type: "SET_MINT_DRAFT", reviewConfirmed: true });
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("mint_confirmation_required");
+    expect(actor.getSnapshot().context.world.artworkStatus).toBe("loaded");
+  });
+
+  it("records an authorized batch Mint and consumes two vouchers exactly once", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "mint";
+    context.stepIndex = manualContract.flows.mint.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.artworkStatus = "loaded";
+    context.world.mintDraft = {
+      actorId: "authorized_manager",
+      mode: "batch",
+      reviewConfirmed: true,
+      signatureConfirmed: true,
+    };
+    const actor = createActor(demoMachine, { input: context }).start();
+    actor.send({ type: "COMPLETE_STEP" });
+    actor.send({ type: "COMPLETE_STEP" });
+    const result = actor.getSnapshot().context.world;
+
+    expect(result.artworkStatus).toBe("minted");
+    expect(result.vouchers.mint).toBe(0);
+    expect(result.mintReceipts).toEqual([expect.objectContaining({
+      receiptId: "MINT-DEMO-001",
+      actorId: "authorized_manager",
+      mode: "batch",
+      artworkCount: 2,
+      vouchersConsumed: 2,
+      networkRef: "gnosis-simulated",
+      tokenRef: "TOKEN-DEMO-001",
+      transactionRef: "TX-DEMO-MINT-001",
+      metadataRef: "IPFS-DEMO-001",
+    })]);
+  });
+
+  it("blocks batch Mint when only one Mint voucher is available", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "mint";
+    context.stepIndex = manualContract.flows.mint.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.artworkStatus = "loaded";
+    context.world.vouchers.mint = 1;
+    context.world.mintDraft = {
+      actorId: "owner_artist",
+      mode: "batch",
+      reviewConfirmed: true,
+      signatureConfirmed: true,
+    };
+    const actor = createActor(demoMachine, { input: context }).start();
+    actor.send({ type: "COMPLETE_STEP" });
+
+    expect(actor.getSnapshot().context.errorCode).toBe("missing_voucher");
+    expect(actor.getSnapshot().context.world.mintReceipts).toHaveLength(0);
+    expect(actor.getSnapshot().context.world.artworkStatus).toBe("loaded");
+  });
+
+  it("normalizes legacy sessions without Mint or Certify result fields", () => {
+    const legacy = structuredClone(initialContext) as any;
+    delete legacy.world.mintDraft;
+    delete legacy.world.mintReceipts;
+    delete legacy.world.certifyDraft;
+    delete legacy.world.certifications;
+    const restored = safeRestore(JSON.stringify(legacy));
+
+    expect(restored?.world.mintDraft).toEqual({
+      actorId: "owner_artist",
+      mode: "single",
+      reviewConfirmed: false,
+      signatureConfirmed: false,
+    });
+    expect(restored?.world.mintReceipts).toEqual([]);
+    expect(restored?.world.certifyDraft).toEqual({ actorId: "expert", typeId: "authenticity", visibility: "public" });
+    expect(restored?.world.certifications).toEqual([]);
   });
 
   it("records a synthetic Certify actor, evidence and owner visibility exactly once", () => {

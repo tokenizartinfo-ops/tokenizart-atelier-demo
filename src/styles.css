@@ -87,6 +87,21 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .actor-selector button small { color: var(--muted); font-size: 10px; line-height: 1.35; }
 .actor-selector button.selected { border-color: var(--aqua); background: var(--aqua-soft); color: #087b87; }
 .actor-selector button:disabled, .visibility-selector button:disabled, .practice-fields select:disabled { opacity: .72; }
+.mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.mode-selector button { min-height: 74px; display: flex; align-items: flex-start; gap: 8px; padding: 9px; border: 1px solid var(--line); background: white; color: var(--ink); text-align: left; }
+.mode-selector button > span { min-width: 0; display: grid; gap: 3px; }
+.mode-selector button strong { font-size: 11px; }
+.mode-selector button small { color: var(--muted); font-size: 9px; line-height: 1.35; }
+.mode-selector button.selected { border-color: var(--aqua); background: var(--aqua-soft); color: #087b87; }
+.mode-selector button:disabled { opacity: .72; }
+.mint-readiness { display: grid; gap: 7px; padding: 11px; background: #f4f8f9; border-left: 4px solid var(--aqua); }
+.mint-readiness > strong { margin-bottom: 2px; font-size: 12px; }
+.mint-readiness span { display: flex; align-items: center; gap: 6px; color: #236c60; font-size: 10px; line-height: 1.35; }
+.confirmation-check { min-height: 46px; grid-template-columns: 20px 1fr !important; align-items: flex-start; gap: 8px !important; padding: 9px; border: 1px solid var(--line); background: white; }
+.confirmation-check input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--aqua); }
+.confirmation-check > span { display: grid; gap: 3px; font-size: 11px; line-height: 1.35; }
+.confirmation-check small { color: var(--muted); font-weight: 400; }
+.mint-result dl { gap: 5px; }
 .visibility-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .visibility-selector button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); background: white; color: var(--ink); font-size: 11px; }
 .visibility-selector button.selected { border-color: var(--aqua); background: var(--aqua-soft); color: #087b87; font-weight: 750; }

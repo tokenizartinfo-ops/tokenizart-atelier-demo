@@ -2,6 +2,8 @@ export type Language = "es" | "en" | "pt";
 export type CertifyActorId = "owner_artist" | "expert" | "gallery_museum";
 export type CertifyTypeId = "authenticity" | "condition" | "exhibition" | "additional_report";
 export type CertifyVisibility = "public" | "owner";
+export type MintActorId = "owner_artist" | "authorized_manager";
+export type MintMode = "single" | "batch";
 
 export interface LocalizedCopy {
   title: string;
@@ -47,6 +49,19 @@ export interface DemoCertification {
   completedAt: string;
 }
 
+export interface DemoMintReceipt {
+  receiptId: string;
+  actorId: MintActorId;
+  mode: MintMode;
+  artworkCount: number;
+  vouchersConsumed: number;
+  networkRef: "gnosis-simulated";
+  tokenRef: string;
+  transactionRef: string;
+  metadataRef: string;
+  completedAt: string;
+}
+
 export interface DemoWorld {
   accountStatus: "not_created" | "email_pending" | "active";
   walletStatus: "not_created" | "created" | "backed_up";
@@ -56,6 +71,13 @@ export interface DemoWorld {
   artworkType: "painting" | "sculpture" | "sports";
   galleryVisible: boolean;
   certifyVisible: boolean;
+  mintDraft: {
+    actorId: MintActorId;
+    mode: MintMode;
+    reviewConfirmed: boolean;
+    signatureConfirmed: boolean;
+  };
+  mintReceipts: DemoMintReceipt[];
   certifyDraft: {
     actorId: CertifyActorId;
     typeId: CertifyTypeId;
