@@ -167,7 +167,7 @@ describe("Demo Atelier contracts", () => {
     expect(actor.getSnapshot().context.world.artworkStatus).toBe("loaded");
   });
 
-  it("normalizes legacy sessions without Mint, NFC, transfer or Certify result fields", () => {
+  it("normalizes legacy sessions without Mint, NFC, transfer, privacy or Certify result fields", () => {
     const legacy = structuredClone(initialContext) as any;
     delete legacy.world.mintDraft;
     delete legacy.world.mintReceipts;
@@ -176,6 +176,8 @@ describe("Demo Atelier contracts", () => {
     delete legacy.world.currentOwnerRef;
     delete legacy.world.transferDraft;
     delete legacy.world.transferReceipts;
+    delete legacy.world.privacyDraft;
+    delete legacy.world.privacyReceipts;
     delete legacy.world.certifyDraft;
     delete legacy.world.certifications;
     const restored = safeRestore(JSON.stringify(legacy));
@@ -202,6 +204,14 @@ describe("Demo Atelier contracts", () => {
       signatureConfirmed: false,
     });
     expect(restored?.world.transferReceipts).toEqual([]);
+    expect(restored?.world.privacyDraft).toEqual({
+      galleryVisible: false,
+      technicalSheetVisible: true,
+      certifyVisibility: { authenticity: true, exhibition: true, condition: true },
+      previewAudience: "visitor",
+      ownerConfirmed: false,
+    });
+    expect(restored?.world.privacyReceipts).toEqual([]);
     expect(restored?.world.certifyDraft).toEqual({ actorId: "expert", typeId: "authenticity", visibility: "public" });
     expect(restored?.world.certifications).toEqual([]);
   });
@@ -351,6 +361,71 @@ describe("Demo Atelier contracts", () => {
       atelierManagement: "outside_atelier",
       vouchersConsumed: 0,
     })]);
+  });
+
+  it("requires an artwork and explicit owner confirmation before changing privacy", () => {
+    const missingArtwork = structuredClone(initialContext);
+    missingArtwork.flow = "privacy";
+    missingArtwork.stepIndex = manualContract.flows.privacy.steps.length - 1;
+    missingArtwork.world.accountStatus = "active";
+    const actor = createActor(demoMachine, { input: missingArtwork }).start();
+
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("privacy_artwork_required");
+
+    const missingConfirmation = structuredClone(missingArtwork);
+    missingConfirmation.world.artworkStatus = "certified";
+    const confirmedActor = createActor(demoMachine, { input: missingConfirmation }).start();
+    confirmedActor.send({ type: "COMPLETE_STEP" });
+    expect(confirmedActor.getSnapshot().context.errorCode).toBe("privacy_confirmation_required");
+    expect(confirmedActor.getSnapshot().context.world.privacyReceipts).toHaveLength(0);
+  });
+
+  it("records partial public visibility while the owner retains every Certify", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "privacy";
+    context.stepIndex = manualContract.flows.privacy.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.artworkStatus = "certified";
+    context.world.privacyDraft = {
+      galleryVisible: true,
+      technicalSheetVisible: true,
+      certifyVisibility: { authenticity: true, exhibition: true, condition: false },
+      previewAudience: "visitor",
+      ownerConfirmed: true,
+    };
+    const actor = createActor(demoMachine, { input: context }).start();
+    actor.send({ type: "COMPLETE_STEP" });
+    actor.send({ type: "COMPLETE_STEP" });
+    const result = actor.getSnapshot().context.world;
+
+    expect(result.galleryVisible).toBe(true);
+    expect(result.certifyVisible).toBe(true);
+    expect(result.privacyReceipts).toEqual([expect.objectContaining({
+      receiptId: "PRIVACY-DEMO-001",
+      galleryVisible: true,
+      technicalSheetVisible: true,
+      publicCertifyIds: ["authenticity", "exhibition"],
+      ownerOnlyCertifyIds: ["condition"],
+    })]);
+    expect(result.events.filter((event) => event === "privacy.completed")).toHaveLength(1);
+  });
+
+  it("hides the complete public artwork view when Gallery is disabled", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "privacy";
+    context.stepIndex = manualContract.flows.privacy.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.artworkStatus = "tagged";
+    context.world.privacyDraft.galleryVisible = false;
+    context.world.privacyDraft.ownerConfirmed = true;
+    const actor = createActor(demoMachine, { input: context }).start();
+    actor.send({ type: "COMPLETE_STEP" });
+    const receipt = actor.getSnapshot().context.world.privacyReceipts[0];
+
+    expect(receipt.publicCertifyIds).toEqual([]);
+    expect(receipt.ownerOnlyCertifyIds).toEqual(["authenticity", "exhibition", "condition"]);
+    expect(receipt.technicalSheetVisible).toBe(false);
   });
 
   it("accepts only allowlisted deep-link context", () => {

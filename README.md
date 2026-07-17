@@ -10,6 +10,7 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Shows controlled failure scenarios and recovery guidance.
 - Lets the user configure a synthetic Certify actor, supported fact, evidence and owner/public visibility, then renders the completed provenance state.
 - Teaches the three NFC readings, the mobile scan, voucher/signature gates and the final linked-tag receipt without touching a physical tag.
+- Lets an owner compare Level 4 and visitor Level 5 views before simulating Gallery, technical-sheet and per-Certify visibility.
 - Keeps state only in browser `sessionStorage`.
 - Deep-links the current step to Tokenizart Companion.
 
@@ -31,7 +32,7 @@ Current IDs -> Companion deep link / A2UI integration
 
 ## Phase 2 status
 
-Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC` and `Transfer`.
+Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `Transfer` and `Privacy`.
 
 `Certify` includes:
 
@@ -65,7 +66,15 @@ Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC` an
 - Explicit zero-voucher behavior and an Atelier-management boundary.
 - A final ownership timeline in Spanish, English and Portuguese without implying a sale, price, payment, physical delivery or copyright assignment.
 
-All four action verticals now expose specialized deterministic completion states. Privacy and vouchers remain read-only educational views.
+`Privacy` includes:
+
+- A side-by-side audience model for the authenticated owner (Level 4) and public visitor (Level 5).
+- An artwork-level Gallery control plus technical-sheet and individual Certify visibility.
+- Explicit owner confirmation before applying the synthetic policy.
+- A deterministic receipt that distinguishes public Certify records from owner-only records.
+- A clear rule that hiding information does not delete it from the owner environment and that a future owner controls visibility after transfer.
+
+All five action verticals expose specialized deterministic completion states. Vouchers remain a read-only educational view.
 
 ## Local development
 

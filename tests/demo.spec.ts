@@ -217,3 +217,60 @@ test("transfers synthetic ownership to an external wallet without vouchers", asy
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("transfer-result.png"), fullPage: true });
 });
+
+test("compares owner and visitor privacy before applying a partial public view", async ({ page }, testInfo) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
+      language: "es",
+      flow: "privacy",
+      stepIndex: 0,
+      scenarioId: "first-artwork",
+      fixtureId: "painting-river-001",
+      errorCode: null,
+      world: {
+        accountStatus: "active",
+        walletStatus: "backed_up",
+        artworkStatus: "certified",
+        artworkTitle: "Ecos del rio",
+        artworkAuthor: "Alex Rivera",
+        artworkType: "painting",
+        currentOwnerRef: "OWNER-DEMO-ALEX",
+        galleryVisible: false,
+        certifyVisible: true,
+        privacyDraft: {
+          galleryVisible: true,
+          technicalSheetVisible: true,
+          certifyVisibility: { authenticity: true, exhibition: true, condition: false },
+          previewAudience: "visitor",
+          ownerConfirmed: false,
+        },
+        privacyReceipts: [],
+        vouchers: { mint: 1, certify: 1, nfc: 1 },
+        events: ["onboarding.completed", "account_wallet.completed", "carga_obra.completed", "mint.completed", "certify.completed"],
+      },
+    }));
+  });
+
+  await page.goto("/?flow=privacy&step=privacy.partial-restriction&lang=es&scenario=first-artwork");
+  const preview = page.getByTestId("privacy-preview");
+  await expect(preview.getByText("Vista visitante", { exact: true })).toBeVisible();
+  await expect(preview.getByText("Autenticidad", { exact: true })).toBeVisible();
+  await expect(preview.getByText(/Exhibici/)).toBeVisible();
+  await expect(preview.getByText(/Estado de conservaci/)).toHaveCount(0);
+
+  await page.getByRole("button", { name: /Vista owner/ }).click();
+  await expect(preview.getByText(/Estado de conservaci/)).toBeVisible();
+  await expect(preview.getByText("Solo owner", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: /Vista visitante/ }).click();
+
+  await page.getByLabel(/Confirmo esta/).check();
+  await page.getByRole("button", { name: /Completar paso/ }).click();
+
+  const result = page.locator(".privacy-result");
+  await expect(result.getByText(/visibilidad simulada aplicada/)).toBeVisible();
+  await expect(result.getByText("PRIVACY-DEMO-001", { exact: true })).toBeVisible();
+  await expect(result.getByText("2", { exact: true })).toBeVisible();
+  await expect(result.getByText("1", { exact: true })).toBeVisible();
+  await expect(result.getByText(/privacidad de ninguna obra real/)).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("privacy-owner-visitor-result.png"), fullPage: true });
+});

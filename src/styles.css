@@ -142,6 +142,27 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .privacy-controls label { display: flex; align-items: center; justify-content: space-between; min-height: 42px; border-bottom: 1px solid var(--line); }
 .privacy-controls input { width: 20px; height: 20px; accent-color: var(--aqua); }
 .privacy-controls p { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.privacy-preview { display: grid; gap: 10px; padding: 11px; border: 1px solid var(--line); background: #f4f8f9; }
+.privacy-preview.owner { border-left: 4px solid var(--ink); }
+.privacy-preview.visitor { border-left: 4px solid var(--aqua); }
+.privacy-preview-heading { display: flex; align-items: center; gap: 8px; }
+.privacy-preview-heading span { min-width: 0; display: grid; gap: 2px; flex: 1; }
+.privacy-preview-heading small { color: var(--muted); font-size: 9px; }
+.privacy-preview-heading b { padding: 3px 5px; background: white; border: 1px solid var(--line); font-size: 9px; }
+.privacy-hidden { min-height: 95px; display: grid; place-items: center; align-content: center; gap: 5px; text-align: center; color: var(--muted); }
+.privacy-hidden strong { color: var(--ink); font-size: 12px; }
+.privacy-hidden small { max-width: 260px; font-size: 9px; line-height: 1.4; }
+.privacy-technical { display: grid; gap: 2px; padding: 8px; background: white; border: 1px solid var(--line); font-size: 10px; }
+.privacy-technical span { color: var(--muted); }
+.privacy-certify-list { display: grid; gap: 5px; }
+.privacy-certify-list > div { min-height: 34px; display: flex; align-items: center; gap: 6px; padding: 6px; background: white; border: 1px solid var(--line); font-size: 10px; }
+.privacy-certify-list > div span { flex: 1; }
+.privacy-certify-list > div small { color: var(--aqua); font-weight: 750; }
+.privacy-toggle, .privacy-certify-controls label { padding: 8px; background: white; }
+.privacy-toggle > span, .privacy-certify-controls label > span { display: grid; gap: 2px; }
+.privacy-toggle small, .privacy-certify-controls small { color: var(--muted); font-size: 9px; font-weight: 400; }
+.privacy-certify-controls { display: grid; gap: 5px; }
+.privacy-result dl { gap: 5px; }
 .voucher-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
 .voucher-row > div { min-height: 72px; border: 1px solid var(--line); display: grid; place-items: center; align-content: center; gap: 3px; background: white; }
 .voucher-row span { color: var(--muted); font-size: 9px; }

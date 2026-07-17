@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 import { flowLabels, ui } from "./i18n";
-import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, TransferDestinationType } from "./types";
+import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType } from "./types";
 
 const SESSION_KEY = "tokenizart.demo-atelier.session.v1";
 
@@ -151,6 +151,16 @@ const errors: Record<string, Record<Language, { title: string; body: string }>> 
     en: { title: "Simulated signature is missing", body: "Confirm the practice wallet signature. The demo receives no credentials and performs no real transfer." },
     pt: { title: "Falta a assinatura simulada", body: "Confirme a assinatura da wallet de prática. A demo não recebe credenciais nem executa a transferência real." },
   },
+  privacy_artwork_required: {
+    es: { title: "Primero necesitas una obra", body: "La privacidad se administra sobre una obra propia. Precarga la obra de práctica antes de configurar su visibilidad." },
+    en: { title: "You need an artwork first", body: "Privacy is managed on an owned artwork. Preload the practice artwork before configuring visibility." },
+    pt: { title: "Primeiro você precisa de uma obra", body: "A privacidade é gerenciada sobre uma obra própria. Pré-carregue a obra de prática antes de configurar a visibilidade." },
+  },
+  privacy_confirmation_required: {
+    es: { title: "Falta la confirmación del owner", body: "Revisa la comparación owner/visitante y confirma conscientemente qué quedará público." },
+    en: { title: "Owner confirmation is missing", body: "Review the owner/visitor comparison and consciously confirm what will remain public." },
+    pt: { title: "Falta a confirmação do owner", body: "Revise a comparação owner/visitante e confirme conscientemente o que ficará público." },
+  },
 };
 
 const certifyActors: Record<CertifyActorId, Record<Language, { name: string; description: string }>> = {
@@ -241,6 +251,8 @@ const transferDestinations: Record<TransferDestinationType, Record<Language, { n
   },
 };
 
+const privacyCertifyIds: PrivacyCertifyId[] = ["authenticity", "exhibition", "condition"];
+
 const certifyTypes: Record<CertifyTypeId, Record<Language, { name: string; evidence: string }>> = {
   authenticity: {
     es: { name: "Autenticidad", evidence: "Informe de autenticidad sintético con firma y referencia de la obra." },
@@ -323,11 +335,45 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
   }
 
   if (context.flow === "privacy") {
+    const draft = context.world.privacyDraft;
+    const completed = context.world.events.includes("privacy.completed");
+    const audience = draft.previewAudience;
+    const effectivePublicCertify = draft.galleryVisible
+      ? privacyCertifyIds.filter((id) => draft.certifyVisibility[id])
+      : [];
     return (
       <div className="practice-fields privacy-controls">
-        <label><span>Gallery</span><input type="checkbox" checked={context.world.galleryVisible} readOnly /></label>
-        <label><span>Certify visibles</span><input type="checkbox" checked={context.world.certifyVisible} readOnly /></label>
-        <p>Solo el owner decide qué permanece público. La demo no cambia una obra real.</p>
+        <fieldset>
+          <legend>{t.privacyPreviewAs}</legend>
+          <div className="visibility-selector">
+            {(["owner", "visitor"] as PrivacyPreviewAudience[]).map((previewAudience) => <button type="button" key={previewAudience} className={audience === previewAudience ? "selected" : ""} onClick={() => send({ type: "SET_PRIVACY_DRAFT", previewAudience })}><Eye size={17} />{previewAudience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</button>)}
+          </div>
+        </fieldset>
+        <div className={`privacy-preview ${audience}`} data-testid="privacy-preview">
+          <div className="privacy-preview-heading"><ImageIcon size={25} /><span><strong>{context.world.artworkTitle}</strong><small>{audience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</small></span><b>{audience === "owner" ? "Nivel 4" : "Nivel 5"}</b></div>
+          {audience === "visitor" && !draft.galleryVisible ? (
+            <div className="privacy-hidden"><Eye size={24} /><strong>{t.privacyArtworkHidden}</strong><small>{t.privacyHiddenHelp}</small></div>
+          ) : (
+            <>
+              {(audience === "owner" || draft.technicalSheetVisible) && <div className="privacy-technical"><strong>{t.privacyTechnicalSheet}</strong><span>{context.world.artworkAuthor} · 100 x 120 cm · {t.simulated}</span></div>}
+              <div className="privacy-certify-list">
+                {privacyCertifyIds.filter((id) => audience === "owner" || effectivePublicCertify.includes(id)).map((id) => <div key={id}><BadgeCheck size={17} /><span>{certifyTypes[id][lang].name}</span><small>{draft.galleryVisible && draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></div>)}
+                {audience === "visitor" && effectivePublicCertify.length === 0 && <p>{t.privacyNoPublicCertify}</p>}
+              </div>
+            </>
+          )}
+        </div>
+        <label className="privacy-toggle"><span><strong>{t.privacyGalleryToggle}</strong><small>{t.privacyGalleryHelp}</small></span><input type="checkbox" disabled={completed} checked={draft.galleryVisible} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", galleryVisible: event.target.checked, ownerConfirmed: false })} /></label>
+        <label className="privacy-toggle"><span><strong>{t.privacyTechnicalToggle}</strong><small>{t.privacyTechnicalHelp}</small></span><input type="checkbox" disabled={completed || !draft.galleryVisible} checked={draft.technicalSheetVisible} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", technicalSheetVisible: event.target.checked, ownerConfirmed: false })} /></label>
+        <fieldset>
+          <legend>{t.privacyCertifyControls}</legend>
+          <div className="privacy-certify-controls">
+            {privacyCertifyIds.map((id) => <label key={id}><span><strong>{certifyTypes[id][lang].name}</strong><small>{draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></span><input type="checkbox" disabled={completed || !draft.galleryVisible} checked={draft.certifyVisibility[id]} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", certifyId: id, certifyVisible: event.target.checked, ownerConfirmed: false })} /></label>)}
+          </div>
+        </fieldset>
+        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.ownerConfirmed} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", ownerConfirmed: event.target.checked })} /><span>{t.confirmPrivacy}<small>{t.confirmPrivacyHelp}</small></span></label>
+        <div className="safety-note"><ShieldCheck size={18} />{t.privacySafety}</div>
+        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "privacy_confirmation_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}
       </div>
     );
   }
@@ -601,6 +647,33 @@ function TransferCompletion({ context }: { context: DemoContext }) {
   );
 }
 
+function PrivacyCompletion({ context }: { context: DemoContext }) {
+  if (context.flow !== "privacy" || !context.world.events.includes("privacy.completed")) return null;
+  const receipt = context.world.privacyReceipts.at(-1);
+  if (!receipt) return null;
+  const lang = context.language;
+  const t = ui[lang];
+  const timeline = {
+    es: ["Owner conserva todo", "Política confirmada", "Vista pública calculada"],
+    en: ["Owner keeps everything", "Policy confirmed", "Public view calculated"],
+    pt: ["Owner mantém tudo", "Política confirmada", "Vista pública calculada"],
+  }[lang];
+
+  return (
+    <section className="completion-result privacy-result" aria-live="polite">
+      <div className="completion-heading"><Eye size={28} /><div><strong>{t.privacyCompleted}</strong><span>{receipt.receiptId}</span></div></div>
+      <dl>
+        <div><dt>{t.privacyGalleryToggle}</dt><dd>{receipt.galleryVisible ? t.privacyVisible : t.privacyHidden}</dd></div>
+        <div><dt>{t.privacyTechnicalSheet}</dt><dd>{receipt.technicalSheetVisible ? t.privacyVisible : t.privacyHidden}</dd></div>
+        <div><dt>{t.privacyPublicCertifyCount}</dt><dd>{receipt.publicCertifyIds.length}</dd></div>
+        <div><dt>{t.privacyOwnerCertifyCount}</dt><dd>{receipt.ownerOnlyCertifyIds.length}</dd></div>
+      </dl>
+      <div className="provenance-timeline">{timeline.map((item) => <span key={item}><Check size={15} />{item}</span>)}</div>
+      <p>{t.noRealPrivacy}</p>
+    </section>
+  );
+}
+
 function VoucherBalances({ context, compact = false }: { context: DemoContext; compact?: boolean }) {
   return (
     <div className={compact ? "voucher-row compact" : "voucher-row"}>
@@ -710,6 +783,7 @@ function App() {
               <CertifyCompletion context={context} />
               <NfcCompletion context={context} />
               <TransferCompletion context={context} />
+              <PrivacyCompletion context={context} />
               {activeError && <div className="error-panel"><CircleAlert size={22} /><div><strong>{activeError.title}</strong><p>{activeError.body}</p><button onClick={() => send({ type: "RESOLVE_ERROR" })}><Check size={17} />{t.resolve}</button></div></div>}
             </div>
           </section>

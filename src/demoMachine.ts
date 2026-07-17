@@ -1,7 +1,7 @@
 import { assign, setup } from "xstate";
 import manual from "./data/atelier-manual-native-microsteps.v1.json";
 import iconAtlas from "./data/atelier-manual-native-icon-atlas.v1.json";
-import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, DemoMintReceipt, DemoNfcReceipt, DemoTransferReceipt, Language, ManualContract, MintActorId, MintMode, NfcActorId, NfcTagState, TransferDestinationType } from "./types";
+import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, DemoMintReceipt, DemoNfcReceipt, DemoPrivacyReceipt, DemoTransferReceipt, Language, ManualContract, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType } from "./types";
 
 const manualBase = manual as ManualContract;
 const actionIcons = iconAtlas.icons.filter((icon) => icon.context === "atelier_action");
@@ -63,6 +63,18 @@ export const initialContext: DemoContext = {
       signatureConfirmed: false,
     },
     transferReceipts: [],
+    privacyDraft: {
+      galleryVisible: true,
+      technicalSheetVisible: true,
+      certifyVisibility: {
+        authenticity: true,
+        exhibition: true,
+        condition: false,
+      },
+      previewAudience: "visitor",
+      ownerConfirmed: false,
+    },
+    privacyReceipts: [],
     certifyDraft: {
       actorId: "expert",
       typeId: "authenticity",
@@ -84,6 +96,7 @@ type DemoEvent =
   | { type: "SET_MINT_DRAFT"; actorId?: MintActorId; mode?: MintMode; reviewConfirmed?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_NFC_DRAFT"; actorId?: NfcActorId; tagState?: NfcTagState; scanConfirmed?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_TRANSFER_DRAFT"; destinationType?: TransferDestinationType; recipientVerified?: boolean; externalWarningAccepted?: boolean; signatureConfirmed?: boolean }
+  | { type: "SET_PRIVACY_DRAFT"; galleryVisible?: boolean; technicalSheetVisible?: boolean; certifyId?: PrivacyCertifyId; certifyVisible?: boolean; previewAudience?: PrivacyPreviewAudience; ownerConfirmed?: boolean }
   | { type: "SET_CERTIFY_DRAFT"; actorId?: CertifyActorId; typeId?: CertifyTypeId; visibility?: CertifyVisibility }
   | { type: "INJECT_ERROR"; code: string }
   | { type: "RESOLVE_ERROR" }
@@ -100,7 +113,7 @@ function mintVoucherRequirement(context: DemoContext): number {
 
 function completionError(context: DemoContext): string | null {
   const { flow, world } = context;
-  if (["account_wallet", "carga_obra", "mint", "certify", "chip", "transferencia"].includes(flow) && world.accountStatus !== "active") {
+  if (["account_wallet", "carga_obra", "mint", "certify", "chip", "transferencia", "privacy"].includes(flow) && world.accountStatus !== "active") {
     return "account_required";
   }
   if (["mint", "certify", "chip", "transferencia"].includes(flow) && world.walletStatus !== "backed_up") {
@@ -124,6 +137,8 @@ function completionError(context: DemoContext): string | null {
     return "transfer_external_warning_required";
   }
   if (flow === "transferencia" && !world.transferDraft.signatureConfirmed) return "transfer_confirmation_required";
+  if (flow === "privacy" && world.artworkStatus === "none") return "privacy_artwork_required";
+  if (flow === "privacy" && !world.privacyDraft.ownerConfirmed) return "privacy_confirmation_required";
   return null;
 }
 
@@ -209,6 +224,24 @@ function completeFlow(context: DemoContext): DemoContext {
     };
     world.currentOwnerRef = receipt.newOwnerRef;
     world.transferReceipts = [...world.transferReceipts, receipt];
+  }
+  if (context.flow === "privacy") {
+    world.galleryVisible = world.privacyDraft.galleryVisible;
+    const certifyIds: PrivacyCertifyId[] = ["authenticity", "exhibition", "condition"];
+    const publicCertifyIds = world.privacyDraft.galleryVisible
+      ? certifyIds.filter((id) => world.privacyDraft.certifyVisibility[id])
+      : [];
+    world.certifyVisible = publicCertifyIds.length > 0;
+    const sequence = String(world.privacyReceipts.length + 1).padStart(3, "0");
+    const receipt: DemoPrivacyReceipt = {
+      receiptId: `PRIVACY-DEMO-${sequence}`,
+      galleryVisible: world.privacyDraft.galleryVisible,
+      technicalSheetVisible: world.privacyDraft.galleryVisible && world.privacyDraft.technicalSheetVisible,
+      publicCertifyIds,
+      ownerOnlyCertifyIds: certifyIds.filter((id) => !publicCertifyIds.includes(id)),
+      completedAt: "2026-07-17T12:00:00.000Z",
+    };
+    world.privacyReceipts = [...world.privacyReceipts, receipt];
   }
   world.events.push(completionEvent);
   return { ...context, world, errorCode: null };
@@ -297,6 +330,23 @@ export const demoMachine = setup({
             },
           })),
         },
+        SET_PRIVACY_DRAFT: {
+          actions: assign(({ context, event }) => ({
+            ...context,
+            world: {
+              ...context.world,
+              privacyDraft: {
+                galleryVisible: event.galleryVisible ?? context.world.privacyDraft.galleryVisible,
+                technicalSheetVisible: event.technicalSheetVisible ?? context.world.privacyDraft.technicalSheetVisible,
+                certifyVisibility: event.certifyId
+                  ? { ...context.world.privacyDraft.certifyVisibility, [event.certifyId]: event.certifyVisible ?? context.world.privacyDraft.certifyVisibility[event.certifyId] }
+                  : context.world.privacyDraft.certifyVisibility,
+                previewAudience: event.previewAudience ?? context.world.privacyDraft.previewAudience,
+                ownerConfirmed: event.ownerConfirmed ?? context.world.privacyDraft.ownerConfirmed,
+              },
+            },
+          })),
+        },
         SET_CERTIFY_DRAFT: {
           actions: assign(({ context, event }) => ({
             ...context,
@@ -360,6 +410,8 @@ function normalizeContext(context: DemoContext): DemoContext {
   const nfcActorIds: NfcActorId[] = ["owner_artist", "authorized_certifier"];
   const nfcTagStates: NfcTagState[] = ["ready_to_link", "linked_artwork", "not_tokenizart"];
   const transferDestinationTypes: TransferDestinationType[] = ["tokenizart_user", "external_wallet"];
+  const privacyPreviewAudiences: PrivacyPreviewAudience[] = ["owner", "visitor"];
+  const privacyCertifyIds: PrivacyCertifyId[] = ["authenticity", "exhibition", "condition"];
   const actorIds: CertifyActorId[] = ["owner_artist", "expert", "gallery_museum"];
   const typeIds: CertifyTypeId[] = ["authenticity", "condition", "exhibition", "additional_report"];
   const visibilities: CertifyVisibility[] = ["public", "owner"];
@@ -410,6 +462,29 @@ function normalizeContext(context: DemoContext): DemoContext {
       && transferDestinationTypes.includes(item.destinationType)
       && item.vouchersConsumed === 0
       && item.networkRef === "gnosis-simulated"
+    ))
+    : [];
+  const privacyDraft = next.world.privacyDraft;
+  const legacyGalleryVisible = next.world.galleryVisible === true;
+  const legacyCertifyVisible = next.world.certifyVisible === true;
+  next.world.privacyDraft = {
+    galleryVisible: privacyDraft ? privacyDraft.galleryVisible === true : legacyGalleryVisible,
+    technicalSheetVisible: privacyDraft?.technicalSheetVisible !== false,
+    certifyVisibility: {
+      authenticity: privacyDraft ? privacyDraft.certifyVisibility?.authenticity === true : legacyCertifyVisible,
+      exhibition: privacyDraft ? privacyDraft.certifyVisibility?.exhibition === true : legacyCertifyVisible,
+      condition: privacyDraft ? privacyDraft.certifyVisibility?.condition === true : legacyCertifyVisible,
+    },
+    previewAudience: privacyPreviewAudiences.includes(privacyDraft?.previewAudience) ? privacyDraft.previewAudience : "visitor",
+    ownerConfirmed: privacyDraft?.ownerConfirmed === true,
+  };
+  next.world.privacyReceipts = Array.isArray(next.world.privacyReceipts)
+    ? next.world.privacyReceipts.filter((item) => (
+      typeof item?.receiptId === "string"
+      && Array.isArray(item.publicCertifyIds)
+      && item.publicCertifyIds.every((id) => privacyCertifyIds.includes(id))
+      && Array.isArray(item.ownerOnlyCertifyIds)
+      && item.ownerOnlyCertifyIds.every((id) => privacyCertifyIds.includes(id))
     ))
     : [];
   next.world.certifyDraft = {

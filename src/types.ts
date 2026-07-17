@@ -7,6 +7,8 @@ export type MintMode = "single" | "batch";
 export type NfcActorId = "owner_artist" | "authorized_certifier";
 export type NfcTagState = "ready_to_link" | "linked_artwork" | "not_tokenizart";
 export type TransferDestinationType = "tokenizart_user" | "external_wallet";
+export type PrivacyPreviewAudience = "owner" | "visitor";
+export type PrivacyCertifyId = "authenticity" | "exhibition" | "condition";
 
 export interface LocalizedCopy {
   title: string;
@@ -92,6 +94,15 @@ export interface DemoTransferReceipt {
   completedAt: string;
 }
 
+export interface DemoPrivacyReceipt {
+  receiptId: string;
+  galleryVisible: boolean;
+  technicalSheetVisible: boolean;
+  publicCertifyIds: PrivacyCertifyId[];
+  ownerOnlyCertifyIds: PrivacyCertifyId[];
+  completedAt: string;
+}
+
 export interface DemoWorld {
   accountStatus: "not_created" | "email_pending" | "active";
   walletStatus: "not_created" | "created" | "backed_up";
@@ -123,6 +134,14 @@ export interface DemoWorld {
     signatureConfirmed: boolean;
   };
   transferReceipts: DemoTransferReceipt[];
+  privacyDraft: {
+    galleryVisible: boolean;
+    technicalSheetVisible: boolean;
+    certifyVisibility: Record<PrivacyCertifyId, boolean>;
+    previewAudience: PrivacyPreviewAudience;
+    ownerConfirmed: boolean;
+  };
+  privacyReceipts: DemoPrivacyReceipt[];
   certifyDraft: {
     actorId: CertifyActorId;
     typeId: CertifyTypeId;
