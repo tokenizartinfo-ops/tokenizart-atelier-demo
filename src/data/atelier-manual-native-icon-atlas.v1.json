@@ -1,0 +1,302 @@
+{
+  "schema": "tokenizart.atelier_manual_native_icon_atlas.v1",
+  "version": "1.0.0",
+  "source": {
+    "filename": "Manual_Atelier 2026.pptx",
+    "sha256": "402a524390648e66966c514b357de1c468f1bb3c782a488a4012b81ddf475151",
+    "slide_count": 101,
+    "access_level": "Nivel 5",
+    "status": "verified"
+  },
+  "policy": {
+    "context_is_required": true,
+    "same_shape_can_have_context_specific_meaning": true,
+    "public_assets_are_reference_only": true,
+    "runtime_prefix": "companion/manual-atelier/native-icons/"
+  },
+  "icons": [
+    {
+      "icon_id": "artwork_status.exhibited",
+      "asset_id": "manual-native-icon-status-exhibited",
+      "context": "artwork_status",
+      "source_slide": 16,
+      "media_path": "ppt/media/image11.png",
+      "semantic_key": "artwork_exhibited",
+      "copy": {
+        "es": {"title": "Obra exhibida", "body": "Este icono indica que la obra fue marcada como exhibida en una galeria o exposicion publica o privada. La ficha puede ampliar la informacion visible de esa exhibicion."},
+        "en": {"title": "Artwork on exhibition", "body": "This icon indicates that the artwork was marked as exhibited in a public or private gallery or exhibition. The record may show further visible exhibition information."},
+        "pt": {"title": "Obra em exibicao", "body": "Este icone indica que a obra foi marcada como exibida em uma galeria ou exposicao publica ou privada. A ficha pode ampliar as informacoes visiveis da exibicao."}
+      },
+      "hotspot_label": {"es": "Estado de exhibicion", "en": "Exhibition status", "pt": "Estado de exibicao"},
+      "best_for": ["explain_artwork_status_icon", "read_public_gallery_card"],
+      "not_for": ["prove_current_location", "create_exhibition_record"]
+    },
+    {
+      "icon_id": "artwork_status.minted",
+      "asset_id": "manual-native-icon-status-minted",
+      "context": "artwork_status",
+      "source_slide": 16,
+      "media_path": "ppt/media/image8.png",
+      "source_crop_px": {"x": 0, "y": 0, "width": 108, "height": 100},
+      "semantic_key": "artwork_minted",
+      "copy": {
+        "es": {"title": "Obra minteada", "body": "La hoja azul indica que la obra posee una identidad digital registrada mediante Mint. Es una senal visual; el token y el comprobante blockchain permiten verificar el registro."},
+        "en": {"title": "Minted artwork", "body": "The blue leaf indicates that the artwork has a digital identity registered through Mint. It is a visual signal; the token and blockchain receipt are used to verify the record."},
+        "pt": {"title": "Obra minteada", "body": "A folha azul indica que a obra possui uma identidade digital registrada por Mint. E um sinal visual; o token e o comprovante blockchain permitem verificar o registro."}
+      },
+      "hotspot_label": {"es": "Estado Mint", "en": "Mint status", "pt": "Estado Mint"},
+      "best_for": ["explain_artwork_status_icon", "distinguish_preload_from_mint"],
+      "not_for": ["claim_authenticity_by_itself", "execute_mint"]
+    },
+    {
+      "icon_id": "artwork_status.nfc_linked",
+      "asset_id": "manual-native-icon-status-nfc",
+      "context": "artwork_status",
+      "source_slide": 16,
+      "media_path": "ppt/media/image10.png",
+      "semantic_key": "artwork_nfc_linked",
+      "copy": {
+        "es": {"title": "Obra vinculada a NFC", "body": "El icono verde indica una vinculacion registrada entre la identidad digital y un chip NFC asociado al objeto fisico. No debe interpretarse como garantia absoluta de autenticidad."},
+        "en": {"title": "Artwork linked to NFC", "body": "The green icon indicates a registered link between the digital identity and an NFC chip associated with the physical object. It must not be interpreted as an absolute authenticity guarantee."},
+        "pt": {"title": "Obra vinculada a NFC", "body": "O icone verde indica uma vinculacao registrada entre a identidade digital e um chip NFC associado ao objeto fisico. Nao deve ser interpretado como garantia absoluta de autenticidade."}
+      },
+      "hotspot_label": {"es": "Vinculacion NFC", "en": "NFC link", "pt": "Vinculacao NFC"},
+      "best_for": ["explain_artwork_status_icon", "explain_physical_link"],
+      "not_for": ["claim_unclonable", "execute_nfc_link"]
+    },
+    {
+      "icon_id": "artwork_status.provenance",
+      "asset_id": "manual-native-icon-status-provenance",
+      "context": "artwork_status",
+      "source_slide": 16,
+      "media_path": "ppt/media/image9.png",
+      "semantic_key": "artwork_has_certify",
+      "copy": {
+        "es": {"title": "Obra con Certify / provenance", "body": "El escudo magenta indica que la obra suma certificaciones, acciones o documentacion que complementan su provenance. Debes abrir Certificaciones para conocer que evidencia esta visible."},
+        "en": {"title": "Artwork with Certify / provenance", "body": "The magenta shield indicates that the artwork includes certifications, actions or documentation that add to its provenance. Open Certifications to see which evidence is visible."},
+        "pt": {"title": "Obra com Certify / provenance", "body": "O escudo magenta indica que a obra possui certificacoes, acoes ou documentacao que complementam sua provenance. Abra Certificacoes para ver quais evidencias estao visiveis."}
+      },
+      "hotspot_label": {"es": "Certify / provenance", "en": "Certify / provenance", "pt": "Certify / provenance"},
+      "best_for": ["explain_artwork_status_icon", "open_visible_certifications"],
+      "not_for": ["claim_all_certify_are_public", "create_certify"]
+    },
+    {
+      "icon_id": "artwork_endpoint.nft",
+      "asset_id": "manual-native-icon-endpoint-nft",
+      "context": "artwork_endpoint",
+      "source_slide": 18,
+      "media_path": "ppt/media/image19.png",
+      "source_crop_px": {"x": 0, "y": 0, "width": 69, "height": 78},
+      "semantic_key": "artwork_nft_endpoint",
+      "copy": {
+        "es": {"title": "NFT / token", "body": "El cubo abre la referencia del token asociado a la obra. Permite inspeccionar datos publicos del NFT; no modifica la obra ni transfiere titularidad."},
+        "en": {"title": "NFT / token", "body": "The cube opens the token reference associated with the artwork. It lets you inspect public NFT data; it does not modify the artwork or transfer ownership."},
+        "pt": {"title": "NFT / token", "body": "O cubo abre a referencia do token associado a obra. Permite inspecionar dados publicos do NFT; nao modifica a obra nem transfere titularidade."}
+      },
+      "hotspot_label": {"es": "Abrir NFT", "en": "Open NFT", "pt": "Abrir NFT"},
+      "best_for": ["explain_traceability_endpoint", "inspect_public_token"],
+      "not_for": ["execute_transfer", "claim_commercial_sale"]
+    },
+    {
+      "icon_id": "artwork_endpoint.image_ipfs",
+      "asset_id": "manual-native-icon-endpoint-image-ipfs",
+      "context": "artwork_endpoint",
+      "source_slide": 18,
+      "media_path": "ppt/media/image19.png",
+      "source_crop_px": {"x": 69, "y": 0, "width": 69, "height": 78},
+      "semantic_key": "artwork_image_ipfs_endpoint",
+      "copy": {
+        "es": {"title": "Imagen principal IPFS", "body": "El icono de imagen abre la imagen principal referenciada en IPFS cuando ese endpoint esta disponible publicamente."},
+        "en": {"title": "Main image on IPFS", "body": "The image icon opens the main image referenced on IPFS when that endpoint is publicly available."},
+        "pt": {"title": "Imagem principal no IPFS", "body": "O icone de imagem abre a imagem principal referenciada no IPFS quando esse endpoint esta disponivel publicamente."}
+      },
+      "hotspot_label": {"es": "Abrir imagen IPFS", "en": "Open IPFS image", "pt": "Abrir imagem IPFS"},
+      "best_for": ["explain_traceability_endpoint", "inspect_public_image"],
+      "not_for": ["upload_image", "claim_permanent_availability"]
+    },
+    {
+      "icon_id": "artwork_endpoint.metadata_ipfs",
+      "asset_id": "manual-native-icon-endpoint-metadata-ipfs",
+      "context": "artwork_endpoint",
+      "source_slide": 18,
+      "media_path": "ppt/media/image19.png",
+      "source_crop_px": {"x": 138, "y": 0, "width": 69, "height": 78},
+      "semantic_key": "artwork_metadata_ipfs_endpoint",
+      "copy": {
+        "es": {"title": "Metadata IPFS", "body": "El icono de documento abre la metadata publica asociada a la obra en IPFS: nombre, descripcion y atributos registrados cuando estan disponibles."},
+        "en": {"title": "IPFS metadata", "body": "The document icon opens the public metadata associated with the artwork on IPFS: name, description and registered attributes when available."},
+        "pt": {"title": "Metadata IPFS", "body": "O icone de documento abre a metadata publica associada a obra no IPFS: nome, descricao e atributos registrados quando disponiveis."}
+      },
+      "hotspot_label": {"es": "Abrir metadata IPFS", "en": "Open IPFS metadata", "pt": "Abrir metadata IPFS"},
+      "best_for": ["explain_traceability_endpoint", "inspect_public_metadata"],
+      "not_for": ["edit_metadata", "collect_owner_private_fields"]
+    },
+    {
+      "icon_id": "artwork_endpoint.transaction",
+      "asset_id": "manual-native-icon-endpoint-transaction",
+      "context": "artwork_endpoint",
+      "source_slide": 18,
+      "media_path": "ppt/media/image19.png",
+      "source_crop_px": {"x": 207, "y": 0, "width": 69, "height": 78},
+      "semantic_key": "artwork_transaction_endpoint",
+      "copy": {
+        "es": {"title": "Comprobante blockchain", "body": "El globo abre el explorador blockchain para consultar el comprobante publico de la transaccion vinculada al registro."},
+        "en": {"title": "Blockchain receipt", "body": "The globe opens the blockchain explorer to inspect the public receipt for the transaction linked to the record."},
+        "pt": {"title": "Comprovante blockchain", "body": "O globo abre o explorador blockchain para consultar o comprovante publico da transacao vinculada ao registro."}
+      },
+      "hotspot_label": {"es": "Abrir comprobante", "en": "Open receipt", "pt": "Abrir comprovante"},
+      "best_for": ["explain_traceability_endpoint", "inspect_public_transaction"],
+      "not_for": ["sign_transaction", "execute_blockchain_action"]
+    },
+    {
+      "icon_id": "certify_endpoint.file_ipfs",
+      "asset_id": "manual-native-icon-certify-file-ipfs",
+      "context": "certify_endpoint",
+      "source_slide": 22,
+      "media_path": "ppt/media/image22.png",
+      "semantic_key": "certify_file_ipfs_endpoint",
+      "copy": {
+        "es": {"title": "Archivo o evidencia IPFS", "body": "En una fila Certify, el portapapeles permite abrir el archivo o evidencia visible en IPFS cuando fue incorporado y el owner lo mantiene publico."},
+        "en": {"title": "IPFS file or evidence", "body": "In a Certify row, the clipboard opens the visible file or evidence on IPFS when it was added and the owner keeps it public."},
+        "pt": {"title": "Arquivo ou evidencia IPFS", "body": "Em uma linha Certify, a prancheta abre o arquivo ou evidencia visivel no IPFS quando foi incorporado e o owner o mantem publico."}
+      },
+      "hotspot_label": {"es": "Archivo IPFS", "en": "IPFS file", "pt": "Arquivo IPFS"},
+      "best_for": ["explain_certify_row_icon", "read_visible_certify"],
+      "not_for": ["upload_evidence", "claim_hidden_file_is_public"]
+    },
+    {
+      "icon_id": "certify_endpoint.documentation_ipfs",
+      "asset_id": "manual-native-icon-certify-documentation-ipfs",
+      "context": "certify_endpoint",
+      "source_slide": 22,
+      "media_path": "ppt/media/image23.png",
+      "semantic_key": "certify_documentation_ipfs_endpoint",
+      "copy": {
+        "es": {"title": "Documentacion Certify en IPFS", "body": "En el contexto Certify, el cubo permite consultar documentacion visible asociada al registro en IPFS. Su significado depende de esta fila, no del icono NFT de la ficha principal."},
+        "en": {"title": "Certify documentation on IPFS", "body": "In the Certify context, the cube opens visible documentation associated with the record on IPFS. Its meaning depends on this row, not on the NFT icon in the main artwork record."},
+        "pt": {"title": "Documentacao Certify no IPFS", "body": "No contexto Certify, o cubo abre documentacao visivel associada ao registro no IPFS. Seu significado depende desta linha, nao do icone NFT da ficha principal."}
+      },
+      "hotspot_label": {"es": "Documentacion IPFS", "en": "IPFS documentation", "pt": "Documentacao IPFS"},
+      "best_for": ["explain_certify_row_icon", "read_visible_certify"],
+      "not_for": ["interpret_as_artwork_nft_without_context", "edit_documentation"]
+    },
+    {
+      "icon_id": "certify_endpoint.transaction",
+      "asset_id": "manual-native-icon-certify-transaction",
+      "context": "certify_endpoint",
+      "source_slide": 22,
+      "media_path": "ppt/media/image24.png",
+      "semantic_key": "certify_transaction_endpoint",
+      "copy": {
+        "es": {"title": "Comprobante de transaccion Certify", "body": "En una fila Certify, el documento permite abrir el comprobante blockchain visible de la transaccion que registro esa certificacion o accion."},
+        "en": {"title": "Certify transaction receipt", "body": "In a Certify row, the document opens the visible blockchain receipt for the transaction that registered that certification or action."},
+        "pt": {"title": "Comprovante de transacao Certify", "body": "Em uma linha Certify, o documento abre o comprovante blockchain visivel da transacao que registrou essa certificacao ou acao."}
+      },
+      "hotspot_label": {"es": "Comprobante Certify", "en": "Certify receipt", "pt": "Comprovante Certify"},
+      "best_for": ["explain_certify_row_icon", "inspect_certify_transaction"],
+      "not_for": ["execute_certify", "sign_transaction"]
+    },
+    {
+      "icon_id": "atelier_action.load",
+      "asset_id": "manual-native-action-load",
+      "context": "atelier_action",
+      "source_slide": 57,
+      "source_shape_id": 1031,
+      "source_shape_png": "output/manual-pptx-native/slide57-action-shapes/manual-native-action-load.png",
+      "semantic_key": "atelier_load_artwork_action",
+      "copy": {
+        "es": {"title": "Carga de obras", "body": "Permite precargar una obra u objeto unico con imagenes, datos y documentacion. Es el paso preparatorio: no registra todavia la identidad digital en blockchain ni consume el voucher Mint."},
+        "en": {"title": "Load artwork", "body": "Lets you preload a unique artwork or object with images, data and documentation. It is the preparatory step: it does not yet register the digital identity on blockchain or consume a Mint voucher."},
+        "pt": {"title": "Carga de obras", "body": "Permite pre-carregar uma obra ou objeto unico com imagens, dados e documentacao. E a etapa preparatoria: ainda nao registra a identidade digital na blockchain nem consome o voucher Mint."}
+      },
+      "hotspot_label": {"es": "Abrir carga de obras", "en": "Open artwork loading", "pt": "Abrir carga de obras"},
+      "best_for": ["explain_atelier_action_map", "start_artwork_preload"],
+      "not_for": ["claim_artwork_is_minted", "consume_mint_voucher"]
+    },
+    {
+      "icon_id": "atelier_action.mint",
+      "asset_id": "manual-native-action-mint",
+      "context": "atelier_action",
+      "source_slide": 57,
+      "source_shape_id": 1032,
+      "source_shape_png": "output/manual-pptx-native/slide57-action-shapes/manual-native-action-mint.png",
+      "semantic_key": "atelier_mint_action",
+      "copy": {
+        "es": {"title": "Mint", "body": "Registra la identidad digital de una obra ya cargada y revisada. Requiere voucher Mint y confirmacion dentro de Atelier; el Companion puede guiar, pero no ejecuta ni firma la accion."},
+        "en": {"title": "Mint", "body": "Registers the digital identity of an artwork that has already been loaded and reviewed. It requires a Mint voucher and confirmation in Atelier; the Companion can guide but cannot execute or sign the action."},
+        "pt": {"title": "Mint", "body": "Registra a identidade digital de uma obra ja carregada e revisada. Requer voucher Mint e confirmacao no Atelier; o Companion pode orientar, mas nao executa nem assina a acao."}
+      },
+      "hotspot_label": {"es": "Abrir Mint", "en": "Open Mint", "pt": "Abrir Mint"},
+      "best_for": ["explain_atelier_action_map", "explain_mint_after_preload"],
+      "not_for": ["execute_mint", "claim_authenticity_by_itself"]
+    },
+    {
+      "icon_id": "atelier_action.chip",
+      "asset_id": "manual-native-action-chip",
+      "context": "atelier_action",
+      "source_slide": 57,
+      "source_shape_id": 1033,
+      "source_shape_png": "output/manual-pptx-native/slide57-action-shapes/manual-native-action-chip.png",
+      "semantic_key": "atelier_chip_nfc_action",
+      "copy": {
+        "es": {"title": "Chip NFC", "body": "Vincula la identidad digital con un chip NFC asociado al objeto fisico cuando ese flujo aporta valor. Usa el voucher del flujo NFC y mejora la trazabilidad fisico-digital, sin ser una garantia absoluta de autenticidad."},
+        "en": {"title": "NFC chip", "body": "Links the digital identity to an NFC chip associated with the physical object when that flow is useful. It uses the NFC-flow voucher and strengthens physical-digital traceability without being an absolute authenticity guarantee."},
+        "pt": {"title": "Chip NFC", "body": "Vincula a identidade digital a um chip NFC associado ao objeto fisico quando esse fluxo agrega valor. Usa o voucher do fluxo NFC e melhora a rastreabilidade fisico-digital, sem ser garantia absoluta de autenticidade."}
+      },
+      "hotspot_label": {"es": "Abrir vinculacion NFC", "en": "Open NFC linking", "pt": "Abrir vinculacao NFC"},
+      "best_for": ["explain_atelier_action_map", "explain_physical_digital_link"],
+      "not_for": ["execute_nfc_link", "claim_unclonable"]
+    },
+    {
+      "icon_id": "atelier_action.certify",
+      "asset_id": "manual-native-action-certify",
+      "context": "atelier_action",
+      "source_slide": 57,
+      "source_shape_id": 1034,
+      "source_shape_png": "output/manual-pptx-native/slide57-action-shapes/manual-native-action-certify.png",
+      "semantic_key": "atelier_certify_action",
+      "copy": {
+        "es": {"title": "Certify", "body": "Suma evidencia, documentos o hechos relevantes al historial verificable de una obra. No siempre es un certificado formal; el voucher Certify lo consume el actor que ejecuta esa certificacion."},
+        "en": {"title": "Certify", "body": "Adds evidence, documents or relevant events to an artwork's verifiable history. It is not always a formal certificate; the Certify voucher is consumed by the actor performing that certification."},
+        "pt": {"title": "Certify", "body": "Soma evidencias, documentos ou fatos relevantes ao historico verificavel de uma obra. Nem sempre e um certificado formal; o voucher Certify e consumido pelo ator que executa essa certificacao."}
+      },
+      "hotspot_label": {"es": "Abrir Certify", "en": "Open Certify", "pt": "Abrir Certify"},
+      "best_for": ["explain_atelier_action_map", "explain_provenance_evidence"],
+      "not_for": ["execute_certify", "promise_authenticity"]
+    },
+    {
+      "icon_id": "atelier_action.transfer",
+      "asset_id": "manual-native-action-transfer",
+      "context": "atelier_action",
+      "source_slide": 57,
+      "source_shape_id": 1035,
+      "source_shape_png": "output/manual-pptx-native/slide57-action-shapes/manual-native-action-transfer.png",
+      "semantic_key": "atelier_transfer_action",
+      "copy": {
+        "es": {"title": "Transfer", "body": "Traslada la titularidad registrada de una obra desde una wallet hacia otra. Transfer no consume vouchers y no equivale automaticamente a una venta, entrega fisica o transferencia de derechos de autor."},
+        "en": {"title": "Transfer", "body": "Moves the registered ownership of an artwork from one wallet to another. Transfer does not consume vouchers and does not automatically mean a sale, physical delivery or transfer of copyright."},
+        "pt": {"title": "Transfer", "body": "Transfere a titularidade registrada de uma obra de uma wallet para outra. Transfer nao consome vouchers e nao equivale automaticamente a venda, entrega fisica ou transferencia de direitos autorais."}
+      },
+      "hotspot_label": {"es": "Abrir Transfer", "en": "Open Transfer", "pt": "Abrir Transfer"},
+      "best_for": ["explain_atelier_action_map", "explain_title_transfer"],
+      "not_for": ["execute_transfer", "claim_commercial_sale"]
+    },
+    {
+      "icon_id": "atelier_action.privacy",
+      "asset_id": "manual-native-action-privacy",
+      "context": "atelier_action",
+      "source_slide": 57,
+      "source_shape_id": 1045,
+      "source_shape_png": "output/manual-pptx-native/slide57-action-shapes/manual-native-action-privacy.png",
+      "semantic_key": "atelier_data_privacy_action",
+      "copy": {
+        "es": {"title": "Data Privacy", "body": "Permite al owner decidir que datos, documentos o Certify quedan visibles en Gallery y cuales reserva para su administracion. Ocultar informacion no borra los registros blockchain ya existentes."},
+        "en": {"title": "Data Privacy", "body": "Lets the owner decide which data, documents or Certify entries remain visible in Gallery and which stay reserved in owner administration. Hiding information does not erase existing blockchain records."},
+        "pt": {"title": "Data Privacy", "body": "Permite ao owner decidir quais dados, documentos ou Certify ficam visiveis na Gallery e quais permanecem reservados na administracao. Ocultar informacao nao apaga registros blockchain existentes."}
+      },
+      "hotspot_label": {"es": "Abrir Data Privacy", "en": "Open Data Privacy", "pt": "Abrir Data Privacy"},
+      "best_for": ["explain_atelier_action_map", "explain_owner_visibility_control"],
+      "not_for": ["change_privacy", "erase_blockchain_history"]
+    }
+  ]
+}
