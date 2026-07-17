@@ -322,3 +322,67 @@ test("credits a synthetic Starter Kit and explains voucher consumption boundarie
   await expect(result.getByText(/un pago/)).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("voucher-starter-kit-result.png"), fullPage: true });
 });
+
+test("exchanges metadata-only A2UI bridge messages with an allowlisted Companion parent", async ({ page }) => {
+  const demoBaseUrl = process.env.DEMO_BASE_URL ?? "http://127.0.0.1:5178";
+  const companionOrigin = "https://companion-staging.tokenizart.info";
+  const runtimeDemoOrigin = process.env.DEMO_BASE_URL
+    ? new URL(process.env.DEMO_BASE_URL).origin
+    : "https://demo-atelier-staging.tokenizart.info";
+  const iframeUrl = new URL(runtimeDemoOrigin);
+  iframeUrl.search = new URLSearchParams({
+    flow: "certify",
+    step: "certify.attach-evidence",
+    lang: "es",
+    scenario: "first-artwork",
+    fixture: "painting-river-001",
+    return_origin: companionOrigin,
+  }).toString();
+
+  if (!process.env.DEMO_BASE_URL) {
+    await page.route(`${runtimeDemoOrigin}/**`, async (route) => {
+      const requested = new URL(route.request().url());
+      const local = new URL(requested.pathname + requested.search, demoBaseUrl);
+      const response = await page.request.get(local.toString());
+      await route.fulfill({
+        status: response.status(),
+        headers: response.headers(),
+        body: await response.body(),
+      });
+    });
+  }
+
+  await page.route(`${companionOrigin}/demo-bridge-test`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "text/html",
+      body: `<!doctype html><html><body><iframe id="demo" src="${iframeUrl.toString()}"></iframe><script>
+        window.demoEvents = [];
+        window.addEventListener("message", (event) => {
+          if (event.origin !== ${JSON.stringify(runtimeDemoOrigin)}) return;
+          window.demoEvents.push(event.data);
+          if (event.data && event.data.type === "demo.ready") {
+            event.source.postMessage({ ...event.data, type: "companion.bridge.ready" }, event.origin);
+          }
+          if (event.data && event.data.type === "demo.explain.requested") {
+            event.source.postMessage({ ...event.data, type: "companion.explanation.available" }, event.origin);
+          }
+        });
+      </script></body></html>`,
+    });
+  });
+
+  await page.goto(`${companionOrigin}/demo-bridge-test`);
+  const demoFrame = page.frameLocator("#demo");
+  await expect(demoFrame.getByRole("heading", { name: "Demo Atelier" })).toBeVisible();
+  await expect.poll(async () => page.evaluate(() => (window as unknown as { demoEvents: Array<{ type?: string }> }).demoEvents.map((item) => item.type))).toContain("demo.ready");
+  await expect.poll(async () => page.evaluate(() => (window as unknown as { demoEvents: Array<{ type?: string }> }).demoEvents.map((item) => item.type))).toContain("demo.step.changed");
+  await expect(demoFrame.getByText("Companion conectado")).toBeVisible();
+
+  await demoFrame.getByRole("button", { name: "Preguntar al Companion" }).click();
+  await expect.poll(async () => page.evaluate(() => (window as unknown as { demoEvents: Array<{ type?: string }> }).demoEvents.map((item) => item.type))).toContain("demo.explain.requested");
+  await expect(demoFrame.getByText("La explicacion esta disponible junto a la Demo.")).toBeVisible();
+
+  const envelopes = await page.evaluate(() => (window as unknown as { demoEvents: Array<Record<string, unknown>> }).demoEvents);
+  expect(envelopes.every((item) => !Object.hasOwn(item, "owner_context") && !Object.hasOwn(item, "real_email") && !Object.hasOwn(item, "real_wallet"))).toBe(true);
+});

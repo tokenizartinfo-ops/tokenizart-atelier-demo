@@ -13,7 +13,8 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Lets an owner compare Level 4 and visitor Level 5 views before simulating Gallery, technical-sheet and per-Certify visibility.
 - Shows the dated public Shop snapshot, who consumes each voucher, and a synthetic credit receipt without performing a purchase.
 - Keeps state only in browser `sessionStorage`.
-- Deep-links the current step to Tokenizart Companion.
+- Opens through a Companion bridge that keeps the current synthetic step synchronized with an A2UI card.
+- Requests a grounded Companion explanation for the current step without sending identity, owner context or free text from the Demo.
 
 ## What it never does
 
@@ -28,8 +29,21 @@ The UI is a React/Vite SPA. XState owns deterministic transitions. A Cloudflare 
 ```text
 Manual contract -> XState engine -> React UI -> sessionStorage
 Sanitized R2 assets -> read-only Worker route -> React UI
-Current IDs -> Companion deep link / A2UI integration
+Allowlisted synthetic IDs -> exact-origin postMessage -> Companion A2UI bridge
 ```
+
+## Companion bridge
+
+`/demo-atelier` on the Companion embeds this app and validates the versioned
+`tokenizart.demo_atelier_message.v1` contract. The Demo emits ready, step,
+error, completion, reset and explanation-request events. The Companion returns
+only transport acknowledgements; it cannot navigate the machine or execute a
+transition.
+
+The bridge requires an allowlisted `return_origin` that matches the referrer
+origin, uses an exact `targetOrigin`, checks `event.source`, rejects unknown
+fields and fails closed. Messages contain only scenario, flow, step, language
+and synthetic fixture IDs, plus an allowlisted error code when needed.
 
 ## Phase 2 status
 

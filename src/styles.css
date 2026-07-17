@@ -208,7 +208,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .world-status dl div { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; }
 .world-status dt { color: var(--muted); }
 .world-status dd { margin: 0; font-weight: 750; text-align: right; overflow-wrap: anywhere; }
-.companion-link { margin-top: 18px; min-height: 42px; border: 1px solid var(--aqua); color: #087b87; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 750; font-size: 13px; }
+.bridge-status { margin-top: 16px; display: block; color: #087b87; font-size: 12px; font-weight: 700; }
+.companion-link { width: 100%; margin-top: 10px; min-height: 42px; border: 1px solid var(--aqua); background: white; color: #087b87; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 750; font-size: 13px; }
 .companion-link:hover { background: var(--aqua-soft); }
 
 .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(18, 27, 34, .92); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: 18px; }

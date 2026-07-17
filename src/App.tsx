@@ -33,6 +33,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
+import { isCompanionBridgeMessage, postDemoBridgeMessage, resolveDemoBridgeOrigin } from "./demoBridge";
 import { flowLabels, ui } from "./i18n";
 import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType, VoucherBalances as VoucherBalanceValues, VoucherProductId } from "./types";
 
@@ -818,6 +819,7 @@ function App() {
   }, []);
   const [snapshot, send] = useMachine(demoMachine, { input: initial });
   const [zoomed, setZoomed] = useState(false);
+  const [bridgeStatus, setBridgeStatus] = useState<"disconnected" | "connected" | "explanation_ready">("disconnected");
   const context = snapshot.context;
   const lang = context.language;
   const t = ui[lang];
@@ -826,6 +828,12 @@ function App() {
   const progress = Math.round(((context.stepIndex + 1) / flow.steps.length) * 100);
   const activeError = context.errorCode ? errors[context.errorCode]?.[lang] : null;
   const flowCompleted = context.world.events.includes(`${context.flow}.completed`);
+  const bridgeOrigin = useMemo(() => resolveDemoBridgeOrigin(window.location.search, document.referrer), []);
+  const bridgeTarget = bridgeOrigin && window.parent !== window ? window.parent : null;
+
+  function emitDemoMessage(type: Parameters<typeof postDemoBridgeMessage>[2]): boolean {
+    return postDemoBridgeMessage(bridgeTarget, bridgeOrigin, type, context, step.step_id);
+  }
 
   useEffect(() => {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(context));
@@ -833,25 +841,42 @@ function App() {
   }, [context, lang]);
 
   useEffect(() => {
-    if (window.parent === window) return;
-    const allowed = new Set(["https://companion.tokenizart.info", "https://companion-staging.tokenizart.info"]);
-    let origin = "";
-    try { origin = document.referrer ? new URL(document.referrer).origin : ""; } catch { origin = ""; }
-    if (!allowed.has(origin)) return;
-    window.parent.postMessage({
-      schema: "tokenizart.demo_atelier_message.v1",
-      type: "demo.step.changed",
-      scenario_id: context.scenarioId,
-      flow: context.flow,
-      step_id: step.step_id,
-      language: lang,
-      fixture_id: context.fixtureId,
-    }, origin);
-  }, [context.flow, context.fixtureId, context.scenarioId, lang, step.step_id]);
+    emitDemoMessage("demo.ready");
+  }, [bridgeOrigin]);
+
+  useEffect(() => {
+    emitDemoMessage("demo.step.changed");
+  }, [bridgeOrigin, context.flow, context.fixtureId, context.scenarioId, lang, step.step_id]);
+
+  useEffect(() => {
+    if (context.errorCode) emitDemoMessage("demo.error.shown");
+  }, [bridgeOrigin, context.errorCode]);
+
+  useEffect(() => {
+    if (flowCompleted) emitDemoMessage("demo.flow.completed");
+  }, [bridgeOrigin, context.flow, flowCompleted]);
+
+  useEffect(() => {
+    if (!bridgeOrigin || !bridgeTarget) return;
+    const onMessage = (event: MessageEvent) => {
+      if (event.origin !== bridgeOrigin || event.source !== bridgeTarget || !isCompanionBridgeMessage(event.data)) return;
+      if (event.data.scenario_id !== context.scenarioId || event.data.flow !== context.flow || event.data.step_id !== step.step_id || event.data.synthetic_fixture_id !== context.fixtureId) return;
+      setBridgeStatus(event.data.type === "companion.explanation.available" ? "explanation_ready" : "connected");
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [bridgeOrigin, bridgeTarget, context.fixtureId, context.flow, context.scenarioId, step.step_id]);
 
   function reset() {
+    emitDemoMessage("demo.reset");
     sessionStorage.removeItem(SESSION_KEY);
     send({ type: "RESET" });
+  }
+
+  function requestExplanation() {
+    if (emitDemoMessage("demo.explain.requested")) return;
+    const url = `https://companion-staging.tokenizart.info/beta?demo_flow=${encodeURIComponent(context.flow)}&demo_step=${encodeURIComponent(step.step_id)}&lang=${lang}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -921,7 +946,8 @@ function App() {
             </dl>
             <VoucherBalances context={context} compact />
           </div>
-          <a className="companion-link" href={`https://companion-staging.tokenizart.info/beta?demo_flow=${encodeURIComponent(context.flow)}&demo_step=${encodeURIComponent(step.step_id)}&lang=${lang}`} target="_blank" rel="noreferrer"><MessageCircleQuestion size={18} />{t.explain}</a>
+          {bridgeStatus !== "disconnected" && <span className="bridge-status" aria-live="polite">{bridgeStatus === "explanation_ready" ? (lang === "en" ? "The explanation is ready beside the Demo." : lang === "pt" ? "A explicacao esta disponivel ao lado da Demo." : "La explicacion esta disponible junto a la Demo.") : (lang === "en" ? "Companion connected" : lang === "pt" ? "Companion conectado" : "Companion conectado")}</span>}
+          <button className="companion-link" type="button" onClick={requestExplanation}><MessageCircleQuestion size={18} />{t.explain}</button>
         </aside>
       </div>
 
