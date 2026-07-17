@@ -8,6 +8,7 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Supports Spanish, English and Portuguese.
 - Simulates account activation, Smart Wallet, artwork preload, Mint, Certify, NFC, transfer, privacy, vouchers and public traceability.
 - Shows controlled failure scenarios and recovery guidance.
+- Lets the user configure a synthetic Certify actor, supported fact, evidence and owner/public visibility, then renders the completed provenance state.
 - Keeps state only in browser `sessionStorage`.
 - Deep-links the current step to Tokenizart Companion.
 
@@ -26,6 +27,18 @@ Manual contract -> XState engine -> React UI -> sessionStorage
 Sanitized R2 assets -> read-only Worker route -> React UI
 Current IDs -> Companion deep link / A2UI integration
 ```
+
+## Phase 2 status
+
+The first specialized actor/result vertical is available for `Certify`:
+
+- Synthetic owner/artist, expert and gallery/museum actors.
+- Authenticity, condition, exhibition and additional-report evidence types.
+- Public or owner-only visibility.
+- Deterministic voucher consumption and idempotent completion.
+- Final receipt and provenance timeline in Spanish, English and Portuguese.
+
+Mint, NFC and transfer still use their generic deterministic completion state and will receive the same actor/result treatment incrementally.
 
 ## Local development
 

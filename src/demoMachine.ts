@@ -1,7 +1,7 @@
 import { assign, setup } from "xstate";
 import manual from "./data/atelier-manual-native-microsteps.v1.json";
 import iconAtlas from "./data/atelier-manual-native-icon-atlas.v1.json";
-import type { DemoContext, Language, ManualContract } from "./types";
+import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, Language, ManualContract } from "./types";
 
 const manualBase = manual as ManualContract;
 const actionIcons = iconAtlas.icons.filter((icon) => icon.context === "atelier_action");
@@ -41,6 +41,12 @@ export const initialContext: DemoContext = {
     artworkType: "painting",
     galleryVisible: false,
     certifyVisible: true,
+    certifyDraft: {
+      actorId: "expert",
+      typeId: "authenticity",
+      visibility: "public",
+    },
+    certifications: [],
     vouchers: { mint: 2, certify: 2, nfc: 1 },
     events: [],
   },
@@ -53,6 +59,7 @@ type DemoEvent =
   | { type: "SET_LANGUAGE"; language: Language }
   | { type: "SET_FIXTURE"; fixtureId: string; artworkType: DemoContext["world"]["artworkType"] }
   | { type: "UPDATE_ARTWORK"; title?: string; author?: string }
+  | { type: "SET_CERTIFY_DRAFT"; actorId?: CertifyActorId; typeId?: CertifyTypeId; visibility?: CertifyVisibility }
   | { type: "INJECT_ERROR"; code: string }
   | { type: "RESOLVE_ERROR" }
   | { type: "COMPLETE_STEP" }
@@ -98,7 +105,17 @@ function completeFlow(context: DemoContext): DemoContext {
   }
   if (context.flow === "certify") {
     world.artworkStatus = "certified";
+    world.certifyVisible = world.certifyDraft.visibility === "public";
     world.vouchers.certify -= 1;
+    const certification: DemoCertification = {
+      certificationId: `CERT-DEMO-${String(world.certifications.length + 1).padStart(3, "0")}`,
+      actorId: world.certifyDraft.actorId,
+      typeId: world.certifyDraft.typeId,
+      visibility: world.certifyDraft.visibility,
+      evidenceAssetId: `evidence-${world.certifyDraft.typeId}-demo`,
+      completedAt: "2026-07-17T12:00:00.000Z",
+    };
+    world.certifications = [...world.certifications, certification];
   }
   if (context.flow === "chip") {
     world.artworkStatus = "tagged";
@@ -150,6 +167,19 @@ export const demoMachine = setup({
             },
           })),
         },
+        SET_CERTIFY_DRAFT: {
+          actions: assign(({ context, event }) => ({
+            ...context,
+            world: {
+              ...context.world,
+              certifyDraft: {
+                actorId: event.actorId ?? context.world.certifyDraft.actorId,
+                typeId: event.typeId ?? context.world.certifyDraft.typeId,
+                visibility: event.visibility ?? context.world.certifyDraft.visibility,
+              },
+            },
+          })),
+        },
         INJECT_ERROR: { actions: assign(({ context, event }) => ({ ...context, errorCode: event.code })) },
         RESOLVE_ERROR: { actions: assign(({ context }) => ({ ...context, errorCode: null })) },
         COMPLETE_STEP: { actions: assign(({ context }) => completeFlow(context)) },
@@ -165,14 +195,14 @@ export function safeRestore(raw: string | null): DemoContext | undefined {
     const parsed = JSON.parse(raw) as DemoContext;
     if (!manualContract.flows[parsed.flow]) return undefined;
     if (!(["es", "en", "pt"] as string[]).includes(parsed.language)) return undefined;
-    return parsed;
+    return normalizeContext(parsed);
   } catch {
     return undefined;
   }
 }
 
 export function contextFromSearch(search: string, base: DemoContext = initialContext): DemoContext {
-  const next = structuredClone(base);
+  const next = normalizeContext(base);
   const params = new URLSearchParams(search);
   const requestedFlow = params.get("flow") ?? "";
   const requestedLanguage = params.get("lang") ?? "";
@@ -190,5 +220,27 @@ export function contextFromSearch(search: string, base: DemoContext = initialCon
   if (requestedScenario === "first-artwork") next.scenarioId = requestedScenario;
   if (["painting-river-001", "sculpture-signal-001", "sports-shirt-001"].includes(requestedFixture)) next.fixtureId = requestedFixture;
   next.errorCode = null;
+  return next;
+}
+
+function normalizeContext(context: DemoContext): DemoContext {
+  const next = structuredClone(context);
+  const actorIds: CertifyActorId[] = ["owner_artist", "expert", "gallery_museum"];
+  const typeIds: CertifyTypeId[] = ["authenticity", "condition", "exhibition", "additional_report"];
+  const visibilities: CertifyVisibility[] = ["public", "owner"];
+  const draft = next.world.certifyDraft;
+  next.world.certifyDraft = {
+    actorId: actorIds.includes(draft?.actorId) ? draft.actorId : "expert",
+    typeId: typeIds.includes(draft?.typeId) ? draft.typeId : "authenticity",
+    visibility: visibilities.includes(draft?.visibility) ? draft.visibility : "public",
+  };
+  next.world.certifications = Array.isArray(next.world.certifications)
+    ? next.world.certifications.filter((item) => (
+      typeof item?.certificationId === "string"
+      && actorIds.includes(item.actorId)
+      && typeIds.includes(item.typeId)
+      && visibilities.includes(item.visibility)
+    ))
+    : [];
   return next;
 }

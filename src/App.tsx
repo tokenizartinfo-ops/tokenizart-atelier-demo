@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 import { flowLabels, ui } from "./i18n";
-import type { DemoContext, Language, ManualStep } from "./types";
+import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep } from "./types";
 
 const SESSION_KEY = "tokenizart.demo-atelier.session.v1";
 
@@ -113,6 +113,47 @@ const errors: Record<string, Record<Language, { title: string; body: string }>> 
   },
 };
 
+const certifyActors: Record<CertifyActorId, Record<Language, { name: string; description: string }>> = {
+  owner_artist: {
+    es: { name: "Alex Rivera · owner/artista", description: "Declara un hecho propio sobre la obra." },
+    en: { name: "Alex Rivera · owner/artist", description: "Declares a first-party fact about the artwork." },
+    pt: { name: "Alex Rivera · owner/artista", description: "Declara um fato próprio sobre a obra." },
+  },
+  expert: {
+    es: { name: "Perito Demo", description: "Aporta una evaluación profesional independiente." },
+    en: { name: "Demo Expert", description: "Contributes an independent professional assessment." },
+    pt: { name: "Perito Demo", description: "Fornece uma avaliação profissional independente." },
+  },
+  gallery_museum: {
+    es: { name: "Museo Demo", description: "Documenta exhibición, custodia u otro hecho institucional." },
+    en: { name: "Demo Museum", description: "Documents an exhibition, custody, or another institutional fact." },
+    pt: { name: "Museu Demo", description: "Documenta exposição, custódia ou outro fato institucional." },
+  },
+};
+
+const certifyTypes: Record<CertifyTypeId, Record<Language, { name: string; evidence: string }>> = {
+  authenticity: {
+    es: { name: "Autenticidad", evidence: "Informe de autenticidad sintético con firma y referencia de la obra." },
+    en: { name: "Authenticity", evidence: "Synthetic authenticity report with signature and artwork reference." },
+    pt: { name: "Autenticidade", evidence: "Relatório sintético de autenticidade com assinatura e referência da obra." },
+  },
+  condition: {
+    es: { name: "Estado de conservación", evidence: "Informe sintético de condición con observaciones y fotografías de detalle." },
+    en: { name: "Condition", evidence: "Synthetic condition report with observations and detail photographs." },
+    pt: { name: "Estado de conservação", evidence: "Relatório sintético de condição com observações e fotos de detalhe." },
+  },
+  exhibition: {
+    es: { name: "Exhibición", evidence: "Constancia sintética de exhibición con institución, lugar y período." },
+    en: { name: "Exhibition", evidence: "Synthetic exhibition record with institution, venue, and period." },
+    pt: { name: "Exposição", evidence: "Comprovante sintético de exposição com instituição, local e período." },
+  },
+  additional_report: {
+    es: { name: "Informe adicional", evidence: "Documento sintético que agrega un hecho relevante a la historia de la obra." },
+    en: { name: "Additional report", evidence: "Synthetic document that adds a relevant fact to the artwork history." },
+    pt: { name: "Relatório adicional", evidence: "Documento sintético que adiciona um fato relevante ao histórico da obra." },
+  },
+};
+
 function statusText(context: DemoContext, language: Language) {
   const status = context.world.artworkStatus;
   const map: Record<string, Record<Language, string>> = {
@@ -190,11 +231,44 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
     );
   }
 
-  if (["mint", "certify"].includes(context.flow)) {
-    const balance = context.flow === "mint" ? context.world.vouchers.mint : context.world.vouchers.certify;
+  if (context.flow === "certify") {
+    const draft = context.world.certifyDraft;
+    const completed = context.world.events.includes("certify.completed");
+    return (
+      <div className="practice-fields certify-config">
+        <fieldset>
+          <legend>{t.certifierRole}</legend>
+          <div className="actor-selector">
+            {(Object.keys(certifyActors) as CertifyActorId[]).map((actorId) => {
+              const actor = certifyActors[actorId][lang];
+              return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => send({ type: "SET_CERTIFY_DRAFT", actorId })}><BadgeCheck size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
+            })}
+          </div>
+        </fieldset>
+        <label>{t.certifyType}
+          <select disabled={completed} value={draft.typeId} onChange={(event) => send({ type: "SET_CERTIFY_DRAFT", typeId: event.target.value as CertifyTypeId })}>
+            {(Object.keys(certifyTypes) as CertifyTypeId[]).map((typeId) => <option key={typeId} value={typeId}>{certifyTypes[typeId][lang].name}</option>)}
+          </select>
+        </label>
+        <fieldset>
+          <legend>{t.visibilityLabel}</legend>
+          <div className="visibility-selector">
+            <button type="button" disabled={completed} className={draft.visibility === "public" ? "selected" : ""} onClick={() => send({ type: "SET_CERTIFY_DRAFT", visibility: "public" })}><Eye size={17} />{t.publicVisibility}</button>
+            <button type="button" disabled={completed} className={draft.visibility === "owner" ? "selected" : ""} onClick={() => send({ type: "SET_CERTIFY_DRAFT", visibility: "owner" })}><ShieldCheck size={17} />{t.ownerVisibility}</button>
+          </div>
+        </fieldset>
+        <div className="evidence-preview"><FileCheck2 size={24} /><span><strong>{t.evidenceLabel}</strong><small>{certifyTypes[draft.typeId][lang].evidence}</small></span></div>
+        <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Certify {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherAvailable}: {context.world.vouchers.certify}</small></span></div>
+        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: context.world.vouchers.certify ? "wrong_wallet_password" : "missing_voucher" })}><CircleAlert size={17} />{t.errorPractice}</button>}
+      </div>
+    );
+  }
+
+  if (context.flow === "mint") {
+    const balance = context.world.vouchers.mint;
     return (
       <div className="practice-fields">
-        <div className="transaction-preview"><Fingerprint size={25} /><span><strong>{context.flow === "mint" ? "Mint" : "Certify"} {t.simulated}</strong><small>{context.world.artworkTitle} · voucher disponible: {balance}</small></span></div>
+        <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Mint {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherAvailable}: {balance}</small></span></div>
         <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: balance ? "wrong_wallet_password" : "missing_voucher" })}><CircleAlert size={17} />{t.errorPractice}</button>
       </div>
     );
@@ -214,6 +288,36 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
       <div className="safety-note"><ShieldCheck size={18} />{t.realActionBlocked}. {t.freeMode}</div>
       <VoucherBalances context={context} compact />
     </div>
+  );
+}
+
+function CertifyCompletion({ context }: { context: DemoContext }) {
+  if (context.flow !== "certify" || !context.world.events.includes("certify.completed")) return null;
+  const certification = context.world.certifications.at(-1);
+  if (!certification) return null;
+  const lang = context.language;
+  const t = ui[lang];
+  const actor = certifyActors[certification.actorId][lang];
+  const type = certifyTypes[certification.typeId][lang];
+  const visibility = certification.visibility === "public" ? t.publicVisibility : t.ownerVisibility;
+  const timeline = {
+    es: ["Obra precargada", "Identidad digital", "Certify"],
+    en: ["Artwork preloaded", "Digital identity", "Certify"],
+    pt: ["Obra pré-carregada", "Identidade digital", "Certify"],
+  }[lang];
+
+  return (
+    <section className="completion-result" aria-live="polite">
+      <div className="completion-heading"><BadgeCheck size={28} /><div><strong>{t.certifyCompleted}</strong><span>{t.traceabilityUpdated}</span></div></div>
+      <dl>
+        <div><dt>{t.certifyType}</dt><dd>{type.name}</dd></div>
+        <div><dt>{t.certifiedBy}</dt><dd>{actor.name}</dd></div>
+        <div><dt>{t.visibilityLabel}</dt><dd>{visibility}</dd></div>
+        <div><dt>{t.receiptLabel}</dt><dd>{certification.certificationId}</dd></div>
+      </dl>
+      <div className="provenance-timeline">{timeline.map((item) => <span key={item}><Check size={15} />{item}</span>)}</div>
+      <p>{t.noRealTransaction}</p>
+    </section>
   );
 }
 
@@ -258,6 +362,7 @@ function App() {
   const step = flow.steps[context.stepIndex] ?? flow.steps[0];
   const progress = Math.round(((context.stepIndex + 1) / flow.steps.length) * 100);
   const activeError = context.errorCode ? errors[context.errorCode]?.[lang] : null;
+  const flowCompleted = context.world.events.includes(`${context.flow}.completed`);
 
   useEffect(() => {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(context));
@@ -321,16 +426,17 @@ function App() {
             <div className="practice-zone">
               <div className="practice-title"><LogIn size={20} /><strong>{t.demoData}</strong><span>{t.simulated}</span></div>
               <PracticeFields context={context} send={send} />
+              <CertifyCompletion context={context} />
               {activeError && <div className="error-panel"><CircleAlert size={22} /><div><strong>{activeError.title}</strong><p>{activeError.body}</p><button onClick={() => send({ type: "RESOLVE_ERROR" })}><Check size={17} />{t.resolve}</button></div></div>}
             </div>
           </section>
 
           <section className="step-navigation">
             <button className="secondary" disabled={context.stepIndex === 0} onClick={() => send({ type: "PREVIOUS" })}><ArrowLeft size={18} />{t.previous}</button>
-            <button className="primary" onClick={() => {
+            <button className="primary" disabled={flowCompleted && context.stepIndex === flow.steps.length - 1} onClick={() => {
               if (context.stepIndex === flow.steps.length - 1) send({ type: "COMPLETE_STEP" });
               else send({ type: "NEXT" });
-            }}>{context.stepIndex === flow.steps.length - 1 ? t.complete : t.next}<ArrowRight size={18} /></button>
+            }}>{flowCompleted && context.stepIndex === flow.steps.length - 1 ? t.completed : context.stepIndex === flow.steps.length - 1 ? t.complete : t.next}<ArrowRight size={18} /></button>
           </section>
         </main>
 

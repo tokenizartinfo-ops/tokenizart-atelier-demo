@@ -27,3 +27,45 @@ test("opens an allowlisted deep link from Companion", async ({ page }) => {
   await expect(page.getByText("11 / 15")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Atelier Demo" })).toBeVisible();
 });
+
+test("configures a synthetic Certify actor and renders the completed provenance", async ({ page }, testInfo) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
+      language: "es",
+      flow: "certify",
+      stepIndex: 0,
+      scenarioId: "first-artwork",
+      fixtureId: "painting-river-001",
+      errorCode: null,
+      world: {
+        accountStatus: "active",
+        walletStatus: "backed_up",
+        artworkStatus: "minted",
+        artworkTitle: "Ecos del río",
+        artworkAuthor: "Alex Rivera",
+        artworkType: "painting",
+        galleryVisible: false,
+        certifyVisible: true,
+        certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
+        certifications: [],
+        vouchers: { mint: 1, certify: 2, nfc: 1 },
+        events: ["onboarding.completed", "account_wallet.completed", "carga_obra.completed", "mint.completed"],
+      },
+    }));
+  });
+
+  await page.goto("/?flow=certify&step=certify.open-receipt&lang=es&scenario=first-artwork");
+  await page.getByRole("button", { name: /Museo Demo/ }).click();
+  await page.getByLabel("¿Qué hecho respalda?").selectOption("exhibition");
+  await page.getByRole("button", { name: /Solo owner/ }).click();
+  await page.getByRole("button", { name: /Completar paso/ }).click();
+
+  const result = page.locator(".completion-result");
+  await expect(result.getByText("Certify agregado a la historia de la obra")).toBeVisible();
+  await expect(result.getByText("Museo Demo", { exact: true })).toBeVisible();
+  await expect(result.getByText("Exhibición", { exact: true })).toBeVisible();
+  await expect(result.getByText("CERT-DEMO-001", { exact: true })).toBeVisible();
+  await expect(result.getByText("Resultado didáctico: no se escribió en blockchain ni IPFS.")).toBeVisible();
+  await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
+  await page.screenshot({ path: testInfo.outputPath("certify-result.png"), fullPage: true });
+});
