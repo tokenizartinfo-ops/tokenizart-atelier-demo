@@ -29,7 +29,7 @@ import {
   X,
   ZoomIn,
 } from "lucide-react";
-import { demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
+import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 import { flowLabels, ui } from "./i18n";
 import type { DemoContext, Language, ManualStep } from "./types";
 
@@ -245,8 +245,11 @@ function ManualVisual({ step, language, onZoom }: { step: ManualStep; language: 
 }
 
 function App() {
-  const restored = useMemo(() => safeRestore(sessionStorage.getItem(SESSION_KEY)), []);
-  const [snapshot, send] = useMachine(demoMachine, { input: restored ?? structuredClone(initialContext) });
+  const initial = useMemo(() => {
+    const restored = safeRestore(sessionStorage.getItem(SESSION_KEY)) ?? structuredClone(initialContext);
+    return contextFromSearch(window.location.search, restored);
+  }, []);
+  const [snapshot, send] = useMachine(demoMachine, { input: initial });
   const [zoomed, setZoomed] = useState(false);
   const context = snapshot.context;
   const lang = context.language;

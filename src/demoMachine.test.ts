@@ -1,6 +1,6 @@
 import { createActor } from "xstate";
 import { describe, expect, it } from "vitest";
-import { demoMachine, initialContext, manualContract } from "./demoMachine";
+import { contextFromSearch, demoMachine, initialContext, manualContract } from "./demoMachine";
 
 describe("Demo Atelier contracts", () => {
   it("exposes all approved flows and excludes manual annotations", () => {
@@ -71,5 +71,19 @@ describe("Demo Atelier contracts", () => {
     actor.send({ type: "COMPLETE_STEP" });
     expect(actor.getSnapshot().context.world.vouchers.mint).toBe(1);
     expect(actor.getSnapshot().context.world.events.filter((event) => event === "mint.completed")).toHaveLength(1);
+  });
+
+  it("accepts only allowlisted deep-link context", () => {
+    const linked = contextFromSearch("?flow=certify&step=certify.attach-evidence&lang=pt&scenario=first-artwork&fixture=sculpture-signal-001");
+    expect(linked.flow).toBe("certify");
+    expect(manualContract.flows.certify.steps[linked.stepIndex].step_id).toBe("certify.attach-evidence");
+    expect(linked.language).toBe("pt");
+    expect(linked.fixtureId).toBe("sculpture-signal-001");
+
+    const blocked = contextFromSearch("?flow=admin&step=../../secret&lang=xx&scenario=owner-live&fixture=private-wallet");
+    expect(blocked.flow).toBe("onboarding");
+    expect(blocked.language).toBe("es");
+    expect(blocked.scenarioId).toBe("first-artwork");
+    expect(blocked.fixtureId).toBe("painting-river-001");
   });
 });

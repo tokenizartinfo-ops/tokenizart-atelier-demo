@@ -170,3 +170,25 @@ export function safeRestore(raw: string | null): DemoContext | undefined {
     return undefined;
   }
 }
+
+export function contextFromSearch(search: string, base: DemoContext = initialContext): DemoContext {
+  const next = structuredClone(base);
+  const params = new URLSearchParams(search);
+  const requestedFlow = params.get("flow") ?? "";
+  const requestedLanguage = params.get("lang") ?? "";
+  const requestedStep = params.get("step") ?? "";
+  const requestedScenario = params.get("scenario") ?? "";
+  const requestedFixture = params.get("fixture") ?? "";
+
+  if (manualContract.flows[requestedFlow]) {
+    next.flow = requestedFlow;
+    next.stepIndex = 0;
+    const stepIndex = manualContract.flows[requestedFlow].steps.findIndex((step) => step.step_id === requestedStep);
+    if (stepIndex >= 0) next.stepIndex = stepIndex;
+  }
+  if ((["es", "en", "pt"] as string[]).includes(requestedLanguage)) next.language = requestedLanguage as Language;
+  if (requestedScenario === "first-artwork") next.scenarioId = requestedScenario;
+  if (["painting-river-001", "sculpture-signal-001", "sports-shirt-001"].includes(requestedFixture)) next.fixtureId = requestedFixture;
+  next.errorCode = null;
+  return next;
+}

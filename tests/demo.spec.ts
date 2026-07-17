@@ -21,3 +21,9 @@ test("changes language without changing the selected flow", async ({ page }) => 
   await expect(page.getByText("Smart Wallet de práctica")).toBeVisible();
 });
 
+test("opens an allowlisted deep link from Companion", async ({ page }) => {
+  await page.goto("/?flow=certify&step=certify.attach-evidence&lang=en&scenario=first-artwork&fixture=sculpture-signal-001");
+  await expect(page.getByRole("heading", { name: "Attach relevant evidence" })).toBeVisible();
+  await expect(page.getByText("11 / 15")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Atelier Demo" })).toBeVisible();
+});
