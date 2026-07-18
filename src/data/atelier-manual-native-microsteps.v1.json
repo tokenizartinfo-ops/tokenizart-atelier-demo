@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.atelier_manual_native_microsteps.v1",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "source": {
     "filename": "Manual_Atelier 2026.pptx",
     "sha256": "402a524390648e66966c514b357de1c468f1bb3c782a488a4012b81ddf475151",
@@ -4464,6 +4464,23 @@
         89
       ],
       "description": "Native-image vertical slice for the full Certify request and completion flow.",
+      "phase_map": [
+        {
+          "from_order": 1,
+          "to_order": 7,
+          "label": { "es": "Solicitud", "en": "Request", "pt": "Solicitacao" }
+        },
+        {
+          "from_order": 8,
+          "to_order": 9,
+          "label": { "es": "Seguimiento y cambio de actor", "en": "Tracking and actor handoff", "pt": "Acompanhamento e troca de ator" }
+        },
+        {
+          "from_order": 10,
+          "to_order": 15,
+          "label": { "es": "Ejecucion y registro", "en": "Execution and record", "pt": "Execucao e registro" }
+        }
+      ],
       "steps": [
         {
           "step_id": "certify.select-minted-artwork",
@@ -4474,7 +4491,7 @@
           "media_path": "ppt/media/image89.png",
           "source_crop_px": {
             "x": 420,
-            "y": 120,
+            "y": 180,
             "width": 740,
             "height": 1650
           },
@@ -4797,10 +4814,13 @@
           "media_path": "ppt/media/image147.png",
           "source_crop_px": {
             "x": 420,
-            "y": 180,
-            "width": 1300,
-            "height": 360
+            "y": 120,
+            "width": 2700,
+            "height": 650
           },
+          "mask_rects_px": [
+            { "x": 550, "y": 330, "width": 500, "height": 305, "fill": "#ffffff" }
+          ],
           "copy": {
             "es": {
               "title": "El solicitante ve el pedido pendiente",
@@ -4820,14 +4840,25 @@
           },
           "hotspots": [
             {
-              "x_pct": 2,
-              "y_pct": 45,
-              "width_pct": 58,
-              "height_pct": 42,
+              "x_pct": 0,
+              "y_pct": 20,
+              "width_pct": 38,
+              "height_pct": 75,
               "label": {
-                "es": "Solicitudes pendientes",
-                "en": "Pending requests",
-                "pt": "Solicitacoes pendentes"
+                "es": "Obras solicitadas",
+                "en": "Requested artworks",
+                "pt": "Obras solicitadas"
+              }
+            },
+            {
+              "x_pct": 38,
+              "y_pct": 48,
+              "width_pct": 50,
+              "height_pct": 45,
+              "label": {
+                "es": "Tipo y estado de la solicitud",
+                "en": "Request type and status",
+                "pt": "Tipo e estado da solicitacao"
               }
             }
           ]
@@ -4841,10 +4872,13 @@
           "media_path": "ppt/media/image148.png",
           "source_crop_px": {
             "x": 350,
-            "y": 180,
-            "width": 1450,
-            "height": 430
+            "y": 150,
+            "width": 2500,
+            "height": 800
           },
+          "mask_rects_px": [
+            { "x": 500, "y": 390, "width": 450, "height": 390, "fill": "#ffffff" }
+          ],
           "copy": {
             "es": {
               "title": "El certificador abre la solicitud recibida",
@@ -4864,14 +4898,25 @@
           },
           "hotspots": [
             {
-              "x_pct": 2,
-              "y_pct": 40,
-              "width_pct": 58,
-              "height_pct": 40,
+              "x_pct": 0,
+              "y_pct": 20,
+              "width_pct": 38,
+              "height_pct": 72,
               "label": {
-                "es": "Solicitudes recibidas pendientes",
-                "en": "Pending received requests",
-                "pt": "Solicitacoes recebidas pendentes"
+                "es": "Obras recibidas",
+                "en": "Received artworks",
+                "pt": "Obras recebidas"
+              }
+            },
+            {
+              "x_pct": 38,
+              "y_pct": 44,
+              "width_pct": 58,
+              "height_pct": 48,
+              "label": {
+                "es": "Tipo, estado y accion del certificador",
+                "en": "Type, status and certifier action",
+                "pt": "Tipo, estado e acao do certificador"
               }
             }
           ]
@@ -5157,6 +5202,92 @@
         82
       ],
       "description": "Native-image NFC flow covering prerequisites, requester/certifier roles, mobile tag linking, blockchain completion, reading and states.",
+      "phase_map": [
+        {
+          "from_order": 1,
+          "to_order": 3,
+          "label": { "es": "Preparacion", "en": "Preparation", "pt": "Preparacao" }
+        },
+        {
+          "from_order": 4,
+          "to_order": 10,
+          "label": { "es": "Solicitud", "en": "Request", "pt": "Solicitacao" }
+        },
+        {
+          "from_order": 11,
+          "to_order": 12,
+          "label": { "es": "Seguimiento y cambio de actor", "en": "Tracking and actor handoff", "pt": "Acompanhamento e troca de ator" }
+        },
+        {
+          "from_order": 13,
+          "to_order": 19,
+          "label": { "es": "Lectura y vinculacion movil", "en": "Mobile reading and linking", "pt": "Leitura e vinculacao movel" }
+        },
+        {
+          "from_order": 20,
+          "to_order": 24,
+          "label": { "es": "Cierre y registro", "en": "Completion and record", "pt": "Conclusao e registro" }
+        },
+        {
+          "from_order": 25,
+          "to_order": 26,
+          "label": { "es": "Lectura posterior y diagnostico", "en": "Later reading and diagnosis", "pt": "Leitura posterior e diagnostico" }
+        }
+      ],
+      "step_enrichment": {
+        "chip.interpret-reading-states": {
+          "state_legend": [
+            {
+              "state": "ready_to_link",
+              "tone": "ready",
+              "label": { "es": "Disponible para vincular", "en": "Available to link", "pt": "Disponivel para vincular" },
+              "message": { "es": "Listo para vincular etiqueta", "en": "Ready to link", "pt": "Pronto para vincular etiqueta" },
+              "meaning": {
+                "es": "El tag Tokenizart esta disponible y puede asociarse a la obra correcta.",
+                "en": "The Tokenizart tag is available and can be linked to the correct artwork.",
+                "pt": "O tag Tokenizart esta disponivel e pode ser vinculado a obra correta."
+              },
+              "source_basis": "literal_verified_ui"
+            },
+            {
+              "state": "generic_or_unencoded",
+              "tone": "blocked",
+              "label": { "es": "Tag generico o no codificado", "en": "Generic or unencoded tag", "pt": "Tag generico ou nao codificado" },
+              "message": { "es": "This is not a Tokenizart NFC tag", "en": "This is not a Tokenizart NFC tag", "pt": "This is not a Tokenizart NFC tag" },
+              "meaning": {
+                "es": "Ese chip no esta preparado para el flujo Tokenizart y no debe vincularse.",
+                "en": "That chip is not prepared for the Tokenizart flow and must not be linked.",
+                "pt": "Esse chip nao esta preparado para o fluxo Tokenizart e nao deve ser vinculado."
+              },
+              "source_basis": "verified_manual_explanation"
+            },
+            {
+              "state": "incompatible_encoding",
+              "tone": "warning",
+              "label": { "es": "Lectura incompatible", "en": "Incompatible reading", "pt": "Leitura incompativel" },
+              "message": { "es": "La codificacion no coincide con Tokenizart", "en": "The encoding does not match Tokenizart", "pt": "A codificacao nao corresponde a Tokenizart" },
+              "meaning": {
+                "es": "La app bloquea la vinculacion. Revisa tag, dispositivo y soporte antes de sacar conclusiones sobre el objeto.",
+                "en": "The app blocks linking. Check the tag, device and support before drawing conclusions about the object.",
+                "pt": "O app bloqueia a vinculacao. Verifique tag, aparelho e suporte antes de concluir algo sobre o objeto."
+              },
+              "source_basis": "verified_manual_explanation"
+            },
+            {
+              "state": "already_linked",
+              "tone": "linked",
+              "label": { "es": "Tag ya vinculado", "en": "Already linked tag", "pt": "Tag ja vinculado" },
+              "message": { "es": "Abre la informacion de la obra asociada", "en": "Opens the linked artwork information", "pt": "Abre as informacoes da obra vinculada" },
+              "meaning": {
+                "es": "La lectura lleva a la ficha disponible de la obra; comprueba que sea la obra esperada.",
+                "en": "Reading opens the available artwork record; verify that it is the expected artwork.",
+                "pt": "A leitura abre o registro disponivel da obra; confirme que seja a obra esperada."
+              },
+              "source_basis": "literal_verified_ui"
+            }
+          ]
+        }
+      },
       "steps": [
         {
           "step_id": "chip.understand-link",

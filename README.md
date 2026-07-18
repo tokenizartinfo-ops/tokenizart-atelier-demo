@@ -9,7 +9,7 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Simulates account activation, Smart Wallet, artwork preload, Mint, Certify, NFC, transfer, privacy, vouchers and public traceability.
 - Shows controlled failure scenarios and recovery guidance.
 - Lets the user configure a synthetic Certify actor, supported fact, evidence and owner/public visibility, then renders the completed provenance state.
-- Teaches the three NFC readings, the mobile scan, voucher/signature gates and the final linked-tag receipt without touching a physical tag.
+- Teaches four verified NFC readings, the mobile scan, voucher/signature gates and the final linked-tag receipt without touching a physical tag.
 - Lets an owner compare Level 4 and visitor Level 5 views before simulating Gallery, technical-sheet and per-Certify visibility.
 - Shows the dated public Shop snapshot, who consumes each voucher, and a synthetic credit receipt without performing a purchase.
 - Keeps state only in browser `sessionStorage`.
@@ -68,7 +68,7 @@ Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `
 `NFC` includes:
 
 - Synthetic owner/artist and authorized-certifier actors.
-- Explicit `Ready to link`, already-linked artwork and non-Tokenizart tag readings.
+- Explicit `Ready to link`, already-linked artwork, non-Tokenizart/unencoded tag and incompatible-encoding readings.
 - Mobile-scan, voucher and simulated-wallet-signature gates.
 - Deterministic tag, Certify, token and transaction references.
 - Idempotent voucher consumption and a final physical/digital-link timeline in Spanish, English and Portuguese.
@@ -128,5 +128,10 @@ The contract snapshot comes from:
 `tokenizart-cloudflare-ai/tokenizart-companion-agent/contracts/atelier-manual-native-microsteps.v1.json`
 
 Update the snapshot only after the source contract passes its native asset audit and human visual QA.
+
+Current snapshot: contract `1.8.0`, with 15 Certify steps and 26 NFC steps
+grouped into localized ES/EN/PT phases. States described by the verified manual
+without a literal screenshot are rendered as explanatory UI, not fabricated
+Atelier captures.
 
 `audit:visual:staging` checks all 151 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. The runtime presents exceptional aspect ratios as full context plus an enlarged hotspot detail or a horizontally scrollable capture.
