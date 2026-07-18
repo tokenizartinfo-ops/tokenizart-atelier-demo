@@ -859,6 +859,8 @@ function App() {
   const t = ui[lang];
   const flow = manualContract.flows[context.flow];
   const step = flow.steps[context.stepIndex] ?? flow.steps[0];
+  const phase = flow.phase_map?.find((item) => step.order >= item.from_order && step.order <= item.to_order);
+  const enrichment = flow.step_enrichment?.[step.step_id];
   const progress = Math.round(((context.stepIndex + 1) / flow.steps.length) * 100);
   const activeError = context.errorCode ? errors[context.errorCode]?.[lang] : null;
   const flowCompleted = context.world.events.includes(`${context.flow}.completed`);
@@ -969,8 +971,23 @@ function App() {
 
         <aside className="guide-panel">
           <div className="guide-heading"><MessageCircleQuestion size={21} /><strong>{t.guide}</strong></div>
+          {phase && <span className="phase-badge">{phase.label[lang]}</span>}
           <p>{step.copy[lang].body}</p>
           {step.copy[lang].next_question && <blockquote>{step.copy[lang].next_question}</blockquote>}
+          {enrichment && (
+            <section className="state-legend" aria-label={enrichment.state_legend_title[lang]}>
+              <h3>{enrichment.state_legend_title[lang]}</h3>
+              <div>
+                {enrichment.state_legend.map((item) => (
+                  <article key={item.state} data-tone={item.tone}>
+                    <strong>{item.label[lang]}</strong>
+                    <span>{item.message[lang]}</span>
+                    <small>{item.meaning[lang]}</small>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
           <div className="world-status">
             <h3>{t.session}</h3>
             <dl>

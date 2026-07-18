@@ -187,9 +187,9 @@ test("interprets NFC tag states and completes a safe synthetic link", async ({ p
   await page.goto("/?flow=chip&step=chip.interpret-reading-states&lang=es&scenario=first-artwork");
   await page.getByRole("button", { name: /Certificador Demo autorizado/ }).click();
   await page.getByRole("button", { name: /Tag no válido/ }).click();
-  await expect(page.getByText("This is not a Tokenizart NFC tag", { exact: true })).toBeVisible();
+  await expect(page.locator(".phone-simulation").getByText("This is not a Tokenizart NFC tag", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: /Tag disponible/ }).click();
-  await expect(page.getByText("Ready to link", { exact: true })).toBeVisible();
+  await expect(page.locator(".phone-simulation").getByText("Ready to link", { exact: true })).toBeVisible();
   await page.getByLabel("Confirmo la lectura móvil simulada").check();
   await page.getByLabel("Confirmo el cierre con firma simulada").check();
   await page.getByRole("button", { name: /Completar paso/ }).click();
@@ -237,7 +237,13 @@ test("transfers synthetic ownership to an external wallet without vouchers", asy
     }));
   });
 
+  await page.goto("/?flow=transferencia&step=transferencia.verify-blockchain-record&lang=es&scenario=first-artwork");
+  await expect(page.getByText("Verificar el registro de transferencia", { exact: true })).toBeVisible();
+  await expect(page.getByText("Resultado y verificacion", { exact: true })).toBeVisible();
+  await expect(page.getByText("Estados posibles de Transferencia", { exact: true })).toBeVisible();
+
   await page.goto("/?flow=transferencia&step=transferencia.external-wallet-boundary&lang=es&scenario=first-artwork");
+  await expect(page.getByText("Recuperacion o salida externa", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: /Wallet externa/ }).click();
   await page.getByLabel("Confirmo que verifiqué el destinatario").check();
   await page.getByLabel("Comprendo que sale de la gestión de Atelier").check();
@@ -289,7 +295,12 @@ test("compares owner and visitor privacy before applying a partial public view",
     }));
   });
 
+  await page.goto("/?flow=privacy&step=privacy.understand-owner-control&lang=es&scenario=first-artwork");
+  await expect(page.getByText("Entender quien decide la visibilidad", { exact: true })).toBeVisible();
+  await expect(page.getByText("Decision de visibilidad", { exact: true })).toBeVisible();
+
   await page.goto("/?flow=privacy&step=privacy.partial-restriction&lang=es&scenario=first-artwork");
+  await expect(page.getByText("Que ve cada audiencia", { exact: true })).toBeVisible();
   const preview = page.getByTestId("privacy-preview");
   await expect(preview.getByText("Vista visitante", { exact: true })).toBeVisible();
   await expect(preview.getByText("Autenticidad", { exact: true })).toBeVisible();

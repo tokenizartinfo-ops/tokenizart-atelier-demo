@@ -40,9 +40,31 @@ export interface ManualStep {
   hotspots?: Hotspot[];
 }
 
+export interface ManualPhase {
+  from_order: number;
+  to_order: number;
+  label: Record<Language, string>;
+}
+
+export interface ManualStateLegendItem {
+  state: string;
+  tone: string;
+  label: Record<Language, string>;
+  message: Record<Language, string>;
+  meaning: Record<Language, string>;
+  source_basis?: string;
+}
+
+export interface ManualStepEnrichment {
+  state_legend_title: Record<Language, string>;
+  state_legend: ManualStateLegendItem[];
+}
+
 export interface ManualFlow {
   source_slides: number[];
   description: string;
+  phase_map?: ManualPhase[];
+  step_enrichment?: Record<string, ManualStepEnrichment>;
   steps: ManualStep[];
 }
 

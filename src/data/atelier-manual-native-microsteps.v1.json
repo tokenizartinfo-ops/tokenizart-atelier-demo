@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.atelier_manual_native_microsteps.v1",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "source": {
     "filename": "Manual_Atelier 2026.pptx",
     "sha256": "402a524390648e66966c514b357de1c468f1bb3c782a488a4012b81ddf475151",
@@ -6872,7 +6872,174 @@
         94,
         95
       ],
-      "description": "Native-image flow for a transfer of ownership, including destination validation, confirmation, success and external-wallet boundary.",
+      "description": "Native-image flow for a transfer of ownership, including destination validation, confirmation, blockchain verification, recoverable recipient errors and the external-wallet boundary.",
+      "phase_map": [
+        {
+          "from_order": 1,
+          "to_order": 3,
+          "label": { "es": "Seleccion y revision", "en": "Selection and review", "pt": "Selecao e revisao" }
+        },
+        {
+          "from_order": 4,
+          "to_order": 6,
+          "label": { "es": "Destinatario y autorizacion", "en": "Recipient and authorization", "pt": "Destinatario e autorizacao" }
+        },
+        {
+          "from_order": 7,
+          "to_order": 8,
+          "label": { "es": "Confirmacion y procesamiento", "en": "Confirmation and processing", "pt": "Confirmacao e processamento" }
+        },
+        {
+          "from_order": 9,
+          "to_order": 10,
+          "label": { "es": "Resultado y verificacion", "en": "Result and verification", "pt": "Resultado e verificacao" }
+        },
+        {
+          "from_order": 11,
+          "to_order": 12,
+          "label": { "es": "Recuperacion o salida externa", "en": "Recovery or external exit", "pt": "Recuperacao ou saida externa" }
+        }
+      ],
+      "step_enrichment": {
+        "transferencia.verify-blockchain-record": {
+          "state_legend_title": {
+            "es": "Estados posibles de Transferencia",
+            "en": "Possible Transfer states",
+            "pt": "Estados possiveis de Transferencia"
+          },
+          "state_legend": [
+            {
+              "state": "recipient_ready",
+              "tone": "ready",
+              "label": { "es": "Destinatario listo", "en": "Recipient ready", "pt": "Destinatario pronto" },
+              "message": { "es": "Wallet encontrada y boton habilitado", "en": "Wallet found and button enabled", "pt": "Wallet encontrada e botao habilitado" },
+              "meaning": {
+                "es": "La obra, el usuario y la wallet de destino deben coincidir antes de autorizar.",
+                "en": "The artwork, user and destination wallet must match before authorization.",
+                "pt": "A obra, o usuario e a wallet de destino devem coincidir antes da autorizacao."
+              },
+              "source_basis": "verified_manual_explanation"
+            },
+            {
+              "state": "processing",
+              "tone": "processing",
+              "label": { "es": "Procesando", "en": "Processing", "pt": "Processando" },
+              "message": { "es": "Esperando confirmacion blockchain", "en": "Waiting for blockchain confirmation", "pt": "Aguardando confirmacao blockchain" },
+              "meaning": {
+                "es": "No repitas la transferencia mientras Atelier espera la red.",
+                "en": "Do not repeat the transfer while Atelier is waiting for the network.",
+                "pt": "Nao repita a transferencia enquanto o Atelier aguarda a rede."
+              },
+              "source_basis": "literal_verified_ui"
+            },
+            {
+              "state": "transferred",
+              "tone": "success",
+              "label": { "es": "Transferida", "en": "Transferred", "pt": "Transferida" },
+              "message": { "es": "Nuevo owner y registro disponibles", "en": "New owner and record available", "pt": "Novo owner e registro disponiveis" },
+              "meaning": {
+                "es": "El resultado se verifica con Token ID, wallet del nuevo owner y hash de transferencia.",
+                "en": "The result is checked through Token ID, the new owner's wallet and the transfer hash.",
+                "pt": "O resultado e verificado por Token ID, wallet do novo owner e hash da transferencia."
+              },
+              "source_basis": "literal_verified_ui"
+            },
+            {
+              "state": "recipient_unresolved",
+              "tone": "blocked",
+              "label": { "es": "Destinatario sin resolver", "en": "Recipient unresolved", "pt": "Destinatario nao resolvido" },
+              "message": { "es": "Email o wallet sin validar", "en": "Email or wallet not validated", "pt": "Email ou wallet nao validado" },
+              "meaning": {
+                "es": "Corrige el dato y vuelve a buscar; un boton gris no autoriza la transferencia.",
+                "en": "Correct the data and search again; a disabled button does not authorize transfer.",
+                "pt": "Corrija o dado e busque novamente; um botao cinza nao autoriza a transferencia."
+              },
+              "source_basis": "literal_verified_ui"
+            },
+            {
+              "state": "external_wallet",
+              "tone": "warning",
+              "label": { "es": "Wallet externa", "en": "External wallet", "pt": "Wallet externa" },
+              "message": { "es": "Salida elegida fuera del usuario Tokenizart", "en": "Chosen exit outside a Tokenizart user", "pt": "Saida escolhida fora de um usuario Tokenizart" },
+              "meaning": {
+                "es": "Exige verificar la direccion; el seguimiento posterior deja de estar integrado en Atelier.",
+                "en": "The address must be verified; later tracking is no longer integrated in Atelier.",
+                "pt": "O endereco deve ser verificado; o acompanhamento posterior deixa de estar integrado ao Atelier."
+              },
+              "source_basis": "verified_manual_explanation"
+            },
+            {
+              "state": "confirmation_uncertain",
+              "tone": "warning",
+              "label": { "es": "Confirmacion incierta", "en": "Uncertain confirmation", "pt": "Confirmacao incerta" },
+              "message": { "es": "Sin exito o registro verificable", "en": "No success or verifiable record", "pt": "Sem sucesso ou registro verificavel" },
+              "meaning": {
+                "es": "No asumas el traspaso ni lo repitas hasta revisar Atelier y blockchain.",
+                "en": "Do not assume or repeat the transfer until Atelier and blockchain are checked.",
+                "pt": "Nao presuma nem repita a transferencia antes de revisar Atelier e blockchain."
+              },
+              "source_basis": "verified_manual_explanation"
+            }
+          ]
+        },
+        "transferencia.external-wallet-boundary": {
+          "state_legend_title": {
+            "es": "Estados posibles de Transferencia",
+            "en": "Possible Transfer states",
+            "pt": "Estados possiveis de Transferencia"
+          },
+          "state_legend": [
+            {
+              "state": "recipient_ready",
+              "tone": "ready",
+              "label": { "es": "Destinatario listo", "en": "Recipient ready", "pt": "Destinatario pronto" },
+              "message": { "es": "Wallet encontrada y boton habilitado", "en": "Wallet found and button enabled", "pt": "Wallet encontrada e botao habilitado" },
+              "meaning": { "es": "Revisa obra, usuario y wallet antes de autorizar.", "en": "Review artwork, user and wallet before authorizing.", "pt": "Revise obra, usuario e wallet antes de autorizar." },
+              "source_basis": "verified_manual_explanation"
+            },
+            {
+              "state": "processing",
+              "tone": "processing",
+              "label": { "es": "Procesando", "en": "Processing", "pt": "Processando" },
+              "message": { "es": "Esperando confirmacion blockchain", "en": "Waiting for blockchain confirmation", "pt": "Aguardando confirmacao blockchain" },
+              "meaning": { "es": "No repitas mientras Atelier espera la red.", "en": "Do not repeat while Atelier waits for the network.", "pt": "Nao repita enquanto o Atelier aguarda a rede." },
+              "source_basis": "literal_verified_ui"
+            },
+            {
+              "state": "transferred",
+              "tone": "success",
+              "label": { "es": "Transferida", "en": "Transferred", "pt": "Transferida" },
+              "message": { "es": "Nuevo owner y registro disponibles", "en": "New owner and record available", "pt": "Novo owner e registro disponiveis" },
+              "meaning": { "es": "Verifica Token ID, nuevo owner y hash.", "en": "Check Token ID, new owner and hash.", "pt": "Verifique Token ID, novo owner e hash." },
+              "source_basis": "literal_verified_ui"
+            },
+            {
+              "state": "recipient_unresolved",
+              "tone": "blocked",
+              "label": { "es": "Destinatario sin resolver", "en": "Recipient unresolved", "pt": "Destinatario nao resolvido" },
+              "message": { "es": "Email o wallet sin validar", "en": "Email or wallet not validated", "pt": "Email ou wallet nao validado" },
+              "meaning": { "es": "Corrige el dato; el boton gris no autoriza.", "en": "Correct the data; the disabled button does not authorize.", "pt": "Corrija o dado; o botao cinza nao autoriza." },
+              "source_basis": "literal_verified_ui"
+            },
+            {
+              "state": "external_wallet",
+              "tone": "warning",
+              "label": { "es": "Wallet externa", "en": "External wallet", "pt": "Wallet externa" },
+              "message": { "es": "Salida elegida fuera del usuario Tokenizart", "en": "Chosen exit outside a Tokenizart user", "pt": "Saida escolhida fora de um usuario Tokenizart" },
+              "meaning": { "es": "El seguimiento posterior deja de estar integrado en Atelier.", "en": "Later tracking is no longer integrated in Atelier.", "pt": "O acompanhamento posterior deixa de estar integrado ao Atelier." },
+              "source_basis": "verified_manual_explanation"
+            },
+            {
+              "state": "confirmation_uncertain",
+              "tone": "warning",
+              "label": { "es": "Confirmacion incierta", "en": "Uncertain confirmation", "pt": "Confirmacao incerta" },
+              "message": { "es": "Sin exito o registro verificable", "en": "No success or verifiable record", "pt": "Sem sucesso ou registro verificavel" },
+              "meaning": { "es": "No asumas ni repitas hasta revisar Atelier y blockchain.", "en": "Do not assume or repeat until Atelier and blockchain are checked.", "pt": "Nao presuma nem repita antes de revisar Atelier e blockchain." },
+              "source_basis": "verified_manual_explanation"
+            }
+          ]
+        }
+      },
       "steps": [
         {
           "step_id": "transferencia.select-minted-artwork",
@@ -7240,17 +7407,17 @@
             "es": {
               "title": "Abrir Ver NFT",
               "body": "Despues del exito, Ver NFT permite revisar la referencia blockchain disponible. Esta lectura ayuda a verificar la operacion; no sustituye acuerdos, entrega fisica ni documentacion legal entre las partes.",
-              "next_question": "Queres entender que ocurre si el destinatario no es usuario?"
+              "next_question": "Queres revisar Token ID, nuevo owner y hash de transferencia?"
             },
             "en": {
               "title": "Open View NFT",
               "body": "After success, View NFT lets you inspect the available blockchain reference. This reading helps verify the operation; it does not replace agreements, physical delivery or legal documents between the parties.",
-              "next_question": "Do you want to understand what happens if the recipient is not a user?"
+              "next_question": "Do you want to review Token ID, new owner and transfer hash?"
             },
             "pt": {
               "title": "Abrir Ver NFT",
               "body": "Depois do sucesso, Ver NFT permite revisar a referencia blockchain disponivel. Essa leitura ajuda a verificar a operacao; nao substitui acordos, entrega fisica nem documentos juridicos entre as partes.",
-              "next_question": "Quer entender o que ocorre se o destinatario nao for usuario?"
+              "next_question": "Quer revisar Token ID, novo owner e hash da transferencia?"
             }
           },
           "hotspots": [
@@ -7268,23 +7435,121 @@
           ]
         },
         {
-          "step_id": "transferencia.external-wallet-boundary",
+          "step_id": "transferencia.verify-blockchain-record",
           "order": 10,
+          "manual_step": "verificacion",
+          "source_slide": 94,
+          "asset_id": "manual-native-transfer-verify-blockchain-record",
+          "media_path": "ppt/media/image157.png",
+          "mask_rects_px": [
+            { "x": 2080, "y": 530, "width": 1240, "height": 285, "fill": "#ffffff" },
+            { "x": 300, "y": 1450, "width": 980, "height": 320, "fill": "#ffffff" },
+            { "x": 1640, "y": 1450, "width": 1690, "height": 320, "fill": "#ffffff" }
+          ],
+          "copy": {
+            "es": {
+              "title": "Verificar el registro de transferencia",
+              "body": "La vista blockchain permite comprobar tres referencias: el Token ID de la obra, la wallet del nuevo owner y el hash de Transfer. Los valores de ejemplo estan ocultos en esta guia; verifica los reales desde los endpoints de la obra.",
+              "next_question": "Queres ver que hacer si Atelier no encuentra al destinatario?"
+            },
+            "en": {
+              "title": "Verify the transfer record",
+              "body": "The blockchain view lets you check three references: the artwork Token ID, the new owner's wallet and the Transfer hash. Example values are hidden in this guide; verify real values through the artwork endpoints.",
+              "next_question": "Do you want to see what to do if Atelier cannot find the recipient?"
+            },
+            "pt": {
+              "title": "Verificar o registro da transferencia",
+              "body": "A vista blockchain permite verificar tres referencias: Token ID da obra, wallet do novo owner e hash de Transfer. Os valores de exemplo estao ocultos neste guia; verifique os reais nos endpoints da obra.",
+              "next_question": "Quer ver o que fazer se o Atelier nao encontrar o destinatario?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 66,
+              "y_pct": 39,
+              "width_pct": 25,
+              "height_pct": 13,
+              "label": { "es": "Token ID y nuevo owner", "en": "Token ID and new owner", "pt": "Token ID e novo owner" }
+            },
+            {
+              "x_pct": 8,
+              "y_pct": 76,
+              "width_pct": 84,
+              "height_pct": 17,
+              "label": { "es": "Actividad y hash de Transfer", "en": "Activity and Transfer hash", "pt": "Atividade e hash de Transfer" }
+            }
+          ]
+        },
+        {
+          "step_id": "transferencia.handle-recipient-not-found",
+          "order": 11,
+          "manual_step": "error recuperable",
+          "source_slide": 95,
+          "asset_id": "manual-native-transfer-recipient-not-found",
+          "media_path": "ppt/media/image158.png",
+          "source_crop_px": { "x": 30, "y": 520, "width": 880, "height": 390 },
+          "mask_rects_px": [
+            { "x": 25, "y": 72, "width": 760, "height": 68, "fill": "#ffffff" },
+            { "x": 450, "y": 190, "width": 90, "height": 46, "fill": "#eefaff" }
+          ],
+          "copy": {
+            "es": {
+              "title": "Corregir un destinatario no encontrado",
+              "body": "Si Atelier no encuentra un usuario o el boton sigue gris, revisa el email y confirma que aparezca su wallet. No es una transferencia fallida: todavia falta resolver correctamente el destinatario.",
+              "next_question": "Queres entender la alternativa de wallet externa?"
+            },
+            "en": {
+              "title": "Correct a recipient that was not found",
+              "body": "If Atelier cannot find a user or the button stays disabled, review the email and confirm that the wallet appears. This is not a failed transfer; the recipient still needs to be resolved correctly.",
+              "next_question": "Do you want to understand the external-wallet alternative?"
+            },
+            "pt": {
+              "title": "Corrigir um destinatario nao encontrado",
+              "body": "Se o Atelier nao encontrar um usuario ou o botao continuar cinza, revise o email e confirme que a wallet apareca. Nao e uma transferencia falha; ainda falta resolver corretamente o destinatario.",
+              "next_question": "Quer entender a alternativa de wallet externa?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 4,
+              "y_pct": 30,
+              "width_pct": 92,
+              "height_pct": 55,
+              "label": { "es": "Mensaje y dato a corregir", "en": "Message and data to correct", "pt": "Mensagem e dado a corrigir" }
+            }
+          ]
+        },
+        {
+          "step_id": "transferencia.external-wallet-boundary",
+          "order": 12,
           "manual_step": "observacion",
           "source_slide": 95,
           "asset_id": "manual-native-transfer-external-wallet",
           "media_path": "ppt/media/image158.png",
+          "source_crop_px": {
+            "x": 30,
+            "y": 500,
+            "width": 880,
+            "height": 760
+          },
           "mask_rects_px": [
             {
-              "x": 55,
-              "y": 595,
+              "x": 25,
+              "y": 92,
               "width": 760,
-              "height": 62,
+              "height": 68,
               "fill": "#ffffff"
             },
             {
-              "x": 55,
-              "y": 1060,
+              "x": 450,
+              "y": 210,
+              "width": 90,
+              "height": 46,
+              "fill": "#eefaff"
+            },
+            {
+              "x": 25,
+              "y": 555,
               "width": 840,
               "height": 76,
               "fill": "#ffffff"
@@ -7294,25 +7559,25 @@
             "es": {
               "title": "Distinguir una wallet externa",
               "body": "Si el email no corresponde a un usuario Tokenizart, Atelier puede ofrecer una transferencia a wallet externa. Verifica la direccion con extremo cuidado: fuera de Atelier, el seguimiento deja de estar integrado en la experiencia del usuario.",
-              "next_question": "Queres repasar la diferencia entre usuario Tokenizart y wallet externa?"
+              "next_question": "Queres revisar uno de los estados posibles de Transferencia?"
             },
             "en": {
               "title": "Distinguish an external wallet",
               "body": "If the email does not match a Tokenizart user, Atelier may offer a transfer to an external wallet. Verify the address with extreme care: outside Atelier, tracking is no longer integrated into the user experience.",
-              "next_question": "Do you want to review the difference between a Tokenizart user and an external wallet?"
+              "next_question": "Do you want to review one of the possible Transfer states?"
             },
             "pt": {
               "title": "Distinguir uma wallet externa",
               "body": "Se o email nao corresponder a um usuario Tokenizart, o Atelier pode oferecer transferencia para uma wallet externa. Verifique o endereco com extremo cuidado: fora do Atelier, o acompanhamento deixa de estar integrado a experiencia.",
-              "next_question": "Quer revisar a diferenca entre usuario Tokenizart e wallet externa?"
+              "next_question": "Quer revisar um dos estados possiveis de Transferencia?"
             }
           },
           "hotspots": [
             {
               "x_pct": 5,
-              "y_pct": 70,
+              "y_pct": 32,
               "width_pct": 90,
-              "height_pct": 20,
+              "height_pct": 58,
               "label": {
                 "es": "Wallet externa",
                 "en": "External wallet",
@@ -7328,11 +7593,145 @@
         97,
         98
       ],
-      "description": "Native-image flow for owner-controlled Gallery and Certify visibility.",
+      "description": "Native-image flow for owner-controlled Gallery and Certify visibility, distinguishing the public Nivel 5 view from the authenticated owner Nivel 4 view.",
+      "phase_map": [
+        {
+          "from_order": 1,
+          "to_order": 1,
+          "label": { "es": "Decision de visibilidad", "en": "Visibility decision", "pt": "Decisao de visibilidade" }
+        },
+        {
+          "from_order": 2,
+          "to_order": 4,
+          "label": { "es": "Configuracion owner", "en": "Owner configuration", "pt": "Configuracao do owner" }
+        },
+        {
+          "from_order": 5,
+          "to_order": 6,
+          "label": { "es": "Comparacion y resultado", "en": "Comparison and result", "pt": "Comparacao e resultado" }
+        }
+      ],
+      "step_enrichment": {
+        "privacy.partial-restriction": {
+          "state_legend_title": {
+            "es": "Que ve cada audiencia",
+            "en": "What each audience sees",
+            "pt": "O que cada publico ve"
+          },
+          "state_legend": [
+            {
+              "state": "visitor_public_view",
+              "tone": "public",
+              "label": { "es": "Visitante Nivel 5", "en": "Level 5 visitor", "pt": "Visitante Nivel 5" },
+              "message": { "es": "Solo contenido expuesto por el owner", "en": "Only owner-exposed content", "pt": "Somente conteudo exposto pelo owner" },
+              "meaning": {
+                "es": "Gallery muestra la obra y los Certify que el owner dejo visibles; no abre su Administracion.",
+                "en": "Gallery shows the artwork and Certify records exposed by the owner; it does not open Administration.",
+                "pt": "A Gallery mostra a obra e os Certify expostos pelo owner; nao abre a Administracao."
+              },
+              "source_basis": "verified_manual_explanation"
+            },
+            {
+              "state": "owner_complete_view",
+              "tone": "owner",
+              "label": { "es": "Owner Nivel 4", "en": "Level 4 owner", "pt": "Owner Nivel 4" },
+              "message": { "es": "Conserva la informacion en Administracion", "en": "Keeps information in Administration", "pt": "Mantem as informacoes em Administracao" },
+              "meaning": {
+                "es": "Ocultar de Gallery no borra la obra ni sus Certify del entorno autenticado del owner.",
+                "en": "Hiding from Gallery does not delete the artwork or Certify records from the authenticated owner environment.",
+                "pt": "Ocultar da Gallery nao apaga a obra nem os Certify do ambiente autenticado do owner."
+              },
+              "source_basis": "verified_manual_explanation"
+            },
+            {
+              "state": "artwork_hidden_from_gallery",
+              "tone": "hidden",
+              "label": { "es": "Obra fuera de Gallery", "en": "Artwork outside Gallery", "pt": "Obra fora da Gallery" },
+              "message": { "es": "La vista publica deja de mostrarla", "en": "The public view stops showing it", "pt": "A vista publica deixa de mostra-la" },
+              "meaning": {
+                "es": "Desactivar Mostrar en galeria cambia la exposicion publica, no la titularidad ni el historial owner.",
+                "en": "Disabling Show in Gallery changes public exposure, not ownership or the owner history.",
+                "pt": "Desativar Mostrar na Gallery muda a exposicao publica, nao a titularidade nem o historico do owner."
+              },
+              "source_basis": "literal_verified_ui"
+            },
+            {
+              "state": "partial_public_view",
+              "tone": "partial",
+              "label": { "es": "Visibilidad parcial", "en": "Partial visibility", "pt": "Visibilidade parcial" },
+              "message": { "es": "Algunos Certify publicos y otros solo-owner", "en": "Some public Certify records and others owner-only", "pt": "Alguns Certify publicos e outros somente-owner" },
+              "meaning": {
+                "es": "Cada control permite modular que evidencia se muestra sin eliminar la informacion privada del owner.",
+                "en": "Each control adjusts which evidence is shown without deleting the owner's private information.",
+                "pt": "Cada controle ajusta qual evidencia aparece sem apagar as informacoes privadas do owner."
+              },
+              "source_basis": "literal_verified_ui"
+            },
+            {
+              "state": "new_owner_control",
+              "tone": "transferred",
+              "label": { "es": "Nuevo owner", "en": "New owner", "pt": "Novo owner" },
+              "message": { "es": "Administra la visibilidad futura", "en": "Manages future visibility", "pt": "Administra a visibilidade futura" },
+              "meaning": {
+                "es": "Despues de una transferencia, el nuevo owner controla la publicidad o privacidad disponible.",
+                "en": "After a transfer, the new owner controls the available public or private visibility.",
+                "pt": "Depois da transferencia, o novo owner controla a publicidade ou privacidade disponivel."
+              },
+              "source_basis": "verified_manual_explanation"
+            }
+          ]
+        }
+      },
       "steps": [
         {
-          "step_id": "privacy.open-edit",
+          "step_id": "privacy.understand-owner-control",
           "order": 1,
+          "manual_step": "principio",
+          "source_slide": 97,
+          "asset_id": "manual-native-privacy-understand-owner-control",
+          "media_path": "ppt/media/image159.png",
+          "mask_rects_px": [
+            { "x": 45, "y": 170, "width": 1135, "height": 70, "fill": "#ffffff" },
+            { "x": 45, "y": 292, "width": 560, "height": 66, "fill": "#ffffff" },
+            { "x": 45, "y": 408, "width": 560, "height": 66, "fill": "#ffffff" }
+          ],
+          "copy": {
+            "es": {
+              "title": "Entender quien decide la visibilidad",
+              "body": "Tokenizart permite que el owner autogestione que informacion publica en Gallery y que conserva en su entorno Nivel 4. La privacidad no tiene una configuracion unica: debe responder al contexto de la obra y a la evidencia que el owner quiere exponer.",
+              "next_question": "Queres abrir los controles de la obra?"
+            },
+            "en": {
+              "title": "Understand who decides visibility",
+              "body": "Tokenizart lets the owner manage which information is public in Gallery and which remains in the Level 4 environment. Privacy has no single configuration; it should match the artwork context and the evidence the owner wants to expose.",
+              "next_question": "Do you want to open the artwork controls?"
+            },
+            "pt": {
+              "title": "Entender quem decide a visibilidade",
+              "body": "A Tokenizart permite que o owner administre quais informacoes sao publicas na Gallery e quais ficam no ambiente Nivel 4. A privacidade nao tem configuracao unica; deve responder ao contexto da obra e a evidencia que o owner quer expor.",
+              "next_question": "Quer abrir os controles da obra?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 2,
+              "y_pct": 8,
+              "width_pct": 70,
+              "height_pct": 20,
+              "label": { "es": "Datos y Certificaciones", "en": "Data and Certifications", "pt": "Dados e Certificacoes" }
+            },
+            {
+              "x_pct": 2,
+              "y_pct": 70,
+              "width_pct": 48,
+              "height_pct": 18,
+              "label": { "es": "Mostrar en Gallery", "en": "Show in Gallery", "pt": "Mostrar na Gallery" }
+            }
+          ]
+        },
+        {
+          "step_id": "privacy.open-edit",
+          "order": 2,
           "manual_step": "entrada",
           "source_slide": 97,
           "asset_id": "manual-native-privacy-open-edit",
@@ -7376,7 +7775,7 @@
         },
         {
           "step_id": "privacy.toggle-gallery",
-          "order": 2,
+          "order": 3,
           "manual_step": "mostrar en galeria",
           "source_slide": 97,
           "asset_id": "manual-native-privacy-toggle-gallery",
@@ -7431,7 +7830,7 @@
         },
         {
           "step_id": "privacy.review-certify-visibility",
-          "order": 3,
+          "order": 4,
           "manual_step": "certificaciones",
           "source_slide": 98,
           "asset_id": "manual-native-privacy-review-certify",
@@ -7484,7 +7883,7 @@
         },
         {
           "step_id": "privacy.all-certify-visible",
-          "order": 4,
+          "order": 5,
           "manual_step": "visible",
           "source_slide": 98,
           "asset_id": "manual-native-privacy-all-visible",
@@ -7528,7 +7927,7 @@
         },
         {
           "step_id": "privacy.partial-restriction",
-          "order": 5,
+          "order": 6,
           "manual_step": "restriccion parcial",
           "source_slide": 98,
           "asset_id": "manual-native-privacy-partial-restriction",
@@ -7543,17 +7942,17 @@
             "es": {
               "title": "Aplicar una restriccion parcial",
               "body": "Un control sin marcar oculta ese Certify a terceros sin borrar la informacion del owner. Si la obra se transfiere, el nuevo owner pasa a administrar la visibilidad disponible.",
-              "next_question": "Queres repasar que ve un visitante y que conserva el owner?"
+              "next_question": "Queres revisar que ve cada audiencia?"
             },
             "en": {
               "title": "Apply a partial restriction",
               "body": "An unchecked control hides that Certify record from third parties without deleting the owner's information. If the artwork is transferred, the new owner manages the available visibility.",
-              "next_question": "Do you want to review what a visitor sees and what the owner keeps?"
+              "next_question": "Do you want to review what each audience sees?"
             },
             "pt": {
               "title": "Aplicar uma restricao parcial",
               "body": "Um controle desmarcado oculta esse Certify de terceiros sem apagar a informacao do owner. Se a obra for transferida, o novo owner passa a administrar a visibilidade disponivel.",
-              "next_question": "Quer revisar o que um visitante ve e o que o owner conserva?"
+              "next_question": "Quer revisar o que cada publico ve?"
             }
           },
           "hotspots": [

@@ -80,6 +80,8 @@ Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `
 
 - Synthetic Tokenizart-user and external-wallet destinations.
 - Recipient, external-boundary and simulated-signature confirmations.
+- Twelve native visual steps grouped into selection, authorization, processing, verification and recovery phases.
+- Explicit recipient-ready, processing, transferred, unresolved-recipient, external-wallet and uncertain-confirmation states.
 - Previous owner, new owner, destination wallet, token and transaction references.
 - Explicit zero-voucher behavior and an Atelier-management boundary.
 - A final ownership timeline in Spanish, English and Portuguese without implying a sale, price, payment, physical delivery or copyright assignment.
@@ -87,6 +89,8 @@ Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `
 `Privacy` includes:
 
 - A side-by-side audience model for the authenticated owner (Level 4) and public visitor (Level 5).
+- Six native visual steps grouped into visibility decision, owner configuration and audience-result phases.
+- Explicit public, owner-complete, hidden-artwork, partial-public and future-owner states.
 - An artwork-level Gallery control plus technical-sheet and individual Certify visibility.
 - Explicit owner confirmation before applying the synthetic policy.
 - A deterministic receipt that distinguishes public Certify records from owner-only records.
@@ -124,8 +128,8 @@ npm run deploy:staging
 
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
-Validated staging Worker for the phased Mint walkthrough:
-`c8577b55-2f23-4eea-8b9e-37179b3761af`. Production was not changed.
+Validated staging Worker for the current shared visual contract:
+`d876ccf3-a58c-47d6-819d-09d16e7d1ba7`. Production was not changed.
 
 ## Source synchronization
 
@@ -135,9 +139,9 @@ The contract snapshot comes from:
 
 Update the snapshot only after the source contract passes its native asset audit and human visual QA.
 
-Current snapshot: contract `1.9.0`, with 15 Mint steps, 15 Certify steps and 26 NFC steps
+Current snapshot: contract `1.10.0`, with 15 Mint, 15 Certify, 26 NFC, 12 Transfer and 6 Privacy steps
 grouped into localized ES/EN/PT phases. States described by the verified manual
 without a literal screenshot are rendered as explanatory UI, not fabricated
 Atelier captures.
 
-`audit:visual:staging` checks all 154 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. The runtime presents exceptional aspect ratios as full context plus an enlarged hotspot detail or a horizontally scrollable capture.
+`audit:visual:staging` checks all 157 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. The runtime presents exceptional aspect ratios as full context plus an enlarged hotspot detail or a horizontally scrollable capture.

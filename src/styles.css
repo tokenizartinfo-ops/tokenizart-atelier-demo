@@ -216,8 +216,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .guide-panel { border-left: 1px solid var(--line); padding: 22px 18px; }
 .guide-heading { display: flex; align-items: center; gap: 8px; color: var(--aqua); }
+.phase-badge { display: inline-flex; margin-top: 14px; padding: 5px 8px; border-left: 3px solid var(--aqua); background: var(--aqua-soft); color: #087b87; font-size: 11px; font-weight: 800; }
 .guide-panel > p { margin: 18px 0; line-height: 1.62; font-size: 14px; }
 .guide-panel blockquote { margin: 0 0 20px; border-left: 3px solid var(--yellow); padding: 4px 0 4px 12px; color: #495965; font-size: 13px; line-height: 1.5; }
+.state-legend { margin: 0 0 20px; border-top: 1px solid var(--line); padding-top: 14px; }
+.state-legend h3 { margin: 0 0 9px; font-size: 12px; }
+.state-legend > div { display: grid; gap: 7px; }
+.state-legend article { display: grid; gap: 2px; border-left: 3px solid var(--muted); padding: 7px 8px; background: #f7f9fa; }
+.state-legend article[data-tone="success"], .state-legend article[data-tone="public"] { border-left-color: #1c9b74; }
+.state-legend article[data-tone="ready"] { border-left-color: var(--aqua); }
+.state-legend article[data-tone="warning"] { border-left-color: var(--yellow); }
+.state-legend article[data-tone="blocked"] { border-left-color: var(--coral); }
+.state-legend article strong { font-size: 11px; }
+.state-legend article span { color: #40515c; font-size: 10px; font-weight: 700; }
+.state-legend article small { color: var(--muted); font-size: 10px; line-height: 1.35; }
 .world-status { border-top: 1px solid var(--line); padding-top: 16px; }
 .world-status h3 { margin: 0 0 10px; font-size: 13px; }
 .world-status dl { margin: 0 0 13px; display: grid; gap: 7px; }
@@ -237,7 +249,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @media (max-width: 1180px) {
   .workspace { grid-template-columns: 210px minmax(0, 1fr); }
   .guide-panel { grid-column: 2; border-left: 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .guide-heading, .guide-panel > p, .guide-panel blockquote { grid-column: 1; }
+  .guide-heading, .phase-badge, .guide-panel > p, .guide-panel blockquote, .state-legend { grid-column: 1; }
   .world-status, .companion-link { grid-column: 2; }
 }
 
