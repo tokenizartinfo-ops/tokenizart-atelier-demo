@@ -23,7 +23,30 @@
   },
   "flows": {
     "atelier_navigation": {
-      "source_slides": [35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56],
+      "source_slides": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56
+      ],
       "description": "Sanitized native-image route through visitor/user mode, owner and managed artworks, Certify queues, managers and contacts.",
       "steps": [
         {
@@ -34,11 +57,35 @@
           "asset_id": "manual-native-navigation-tour-cover",
           "media_path": "ppt/media/image1.png",
           "copy": {
-            "es": {"title": "Ubicar el recorrido de Atelier", "body": "El recorrido separa dos experiencias: Gallery publica para visitantes y el espacio de administracion para usuarios autenticados. Desde administracion aparecen Obras, Certificaciones, Gestores y Contactos.", "next_question": "Queres empezar por la vista visitante o por la administracion de usuario?"},
-            "en": {"title": "Locate the Atelier tour", "body": "The tour separates two experiences: public Gallery for visitors and the administration workspace for authenticated users. Administration contains Artworks, Certifications, Managers and Contacts.", "next_question": "Do you want to start with visitor view or user administration?"},
-            "pt": {"title": "Localizar o recorrido do Atelier", "body": "O recorrido separa duas experiencias: Gallery publica para visitantes e o espaco de administracao para usuarios autenticados. A administracao contem Obras, Certificacoes, Gestores e Contatos.", "next_question": "Quer comecar pela vista visitante ou pela administracao do usuario?"}
+            "es": {
+              "title": "Ubicar el recorrido de Atelier",
+              "body": "El recorrido separa dos experiencias: Gallery publica para visitantes y el espacio de administracion para usuarios autenticados. Desde administracion aparecen Obras, Certificaciones, Gestores y Contactos.",
+              "next_question": "Queres empezar por la vista visitante o por la administracion de usuario?"
+            },
+            "en": {
+              "title": "Locate the Atelier tour",
+              "body": "The tour separates two experiences: public Gallery for visitors and the administration workspace for authenticated users. Administration contains Artworks, Certifications, Managers and Contacts.",
+              "next_question": "Do you want to start with visitor view or user administration?"
+            },
+            "pt": {
+              "title": "Localizar o recorrido do Atelier",
+              "body": "O recorrido separa duas experiencias: Gallery publica para visitantes e o espaco de administracao para usuarios autenticados. A administracao contem Obras, Certificacoes, Gestores e Contatos.",
+              "next_question": "Quer comecar pela vista visitante ou pela administracao do usuario?"
+            }
           },
-          "hotspots": [{"x_pct": 12, "y_pct": 8, "width_pct": 76, "height_pct": 84, "label": {"es": "Identidad visual del recorrido", "en": "Tour visual identity", "pt": "Identidade visual do recorrido"}}]
+          "hotspots": [
+            {
+              "x_pct": 12,
+              "y_pct": 8,
+              "width_pct": 76,
+              "height_pct": 84,
+              "label": {
+                "es": "Identidad visual del recorrido",
+                "en": "Tour visual identity",
+                "pt": "Identidade visual do recorrido"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.visitor-mode",
@@ -48,10 +95,57 @@
           "asset_id": "manual-native-navigation-visitor-mode",
           "media_path": "ppt/media/image47.png",
           "copy": {
-            "es": {"title": "Recorrer Gallery como visitante", "body": "Sin iniciar sesion podes explorar las obras y filtros que sus owners mantienen publicos. No ves datos reservados ni podes realizar acciones owner.", "next_question": "Queres que te muestre como cambia la pantalla al iniciar sesion?"},
-            "en": {"title": "Browse Gallery as a visitor", "body": "Without signing in, you can explore artworks and filters that their owners keep public. You cannot see reserved data or perform owner actions.", "next_question": "Do you want to see how the screen changes after sign-in?"},
-            "pt": {"title": "Navegar na Gallery como visitante", "body": "Sem iniciar sessao, voce pode explorar obras e filtros que seus owners mantem publicos. Nao ve dados reservados nem pode realizar acoes owner.", "next_question": "Quer ver como a tela muda depois do login?"}
-          }
+            "es": {
+              "title": "Recorrer Gallery como visitante",
+              "body": "Sin iniciar sesion podes explorar las obras y filtros que sus owners mantienen publicos. No ves datos reservados ni podes realizar acciones owner.",
+              "next_question": "Queres que te muestre como cambia la pantalla al iniciar sesion?"
+            },
+            "en": {
+              "title": "Browse Gallery as a visitor",
+              "body": "Without signing in, you can explore artworks and filters that their owners keep public. You cannot see reserved data or perform owner actions.",
+              "next_question": "Do you want to see how the screen changes after sign-in?"
+            },
+            "pt": {
+              "title": "Navegar na Gallery como visitante",
+              "body": "Sem iniciar sessao, voce pode explorar obras e filtros que seus owners mantem publicos. Nao ve dados reservados nem pode realizar acoes owner.",
+              "next_question": "Quer ver como a tela muda depois do login?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 81,
+              "y_pct": 1,
+              "width_pct": 18,
+              "height_pct": 15,
+              "label": {
+                "es": "Acceso o registro",
+                "en": "Sign in or register",
+                "pt": "Acesso ou registro"
+              }
+            },
+            {
+              "x_pct": 4,
+              "y_pct": 18,
+              "width_pct": 92,
+              "height_pct": 20,
+              "label": {
+                "es": "Filtros publicos de Gallery",
+                "en": "Public Gallery filters",
+                "pt": "Filtros publicos da Gallery"
+              }
+            },
+            {
+              "x_pct": 4,
+              "y_pct": 41,
+              "width_pct": 92,
+              "height_pct": 56,
+              "label": {
+                "es": "Obras publicas visibles",
+                "en": "Visible public artworks",
+                "pt": "Obras publicas visiveis"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.user-mode",
@@ -60,12 +154,53 @@
           "source_slide": 36,
           "asset_id": "manual-native-navigation-user-mode",
           "media_path": "ppt/media/image48.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 2250, "height": 582},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 2250,
+            "height": 582
+          },
           "copy": {
-            "es": {"title": "Reconocer el modo usuario", "body": "Al iniciar sesion seguis viendo Gallery, pero aparece el acceso a tu administracion. Ese acceso no vuelve publicas tus obras ni tus datos privados.", "next_question": "Seguimos con el ingreso a administracion?"},
-            "en": {"title": "Recognize user mode", "body": "After signing in you still see Gallery, but access to your administration becomes available. Signing in does not make your artworks or private data public.", "next_question": "Shall we continue to administration?"},
-            "pt": {"title": "Reconhecer o modo usuario", "body": "Depois do login voce continua vendo a Gallery, mas aparece o acesso a sua administracao. O login nao torna suas obras nem seus dados privados publicos.", "next_question": "Continuamos para a administracao?"}
-          }
+            "es": {
+              "title": "Reconocer el modo usuario",
+              "body": "Al iniciar sesion seguis viendo Gallery, pero aparece el acceso a tu administracion. Ese acceso no vuelve publicas tus obras ni tus datos privados.",
+              "next_question": "Seguimos con el ingreso a administracion?"
+            },
+            "en": {
+              "title": "Recognize user mode",
+              "body": "After signing in you still see Gallery, but access to your administration becomes available. Signing in does not make your artworks or private data public.",
+              "next_question": "Shall we continue to administration?"
+            },
+            "pt": {
+              "title": "Reconhecer o modo usuario",
+              "body": "Depois do login voce continua vendo a Gallery, mas aparece o acesso a sua administracao. O login nao torna suas obras nem seus dados privados publicos.",
+              "next_question": "Continuamos para a administracao?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 4,
+              "y_pct": 27,
+              "width_pct": 92,
+              "height_pct": 22,
+              "label": {
+                "es": "Filtros disponibles",
+                "en": "Available filters",
+                "pt": "Filtros disponiveis"
+              }
+            },
+            {
+              "x_pct": 7,
+              "y_pct": 53,
+              "width_pct": 88,
+              "height_pct": 44,
+              "label": {
+                "es": "Obras y estados visibles",
+                "en": "Visible artworks and states",
+                "pt": "Obras e estados visiveis"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.enter-administration",
@@ -74,12 +209,56 @@
           "source_slide": 36,
           "asset_id": "manual-native-navigation-enter-administration",
           "media_path": "ppt/media/image49.png",
-          "mask_rects_px": [{"x": 1660, "y": 0, "width": 1142, "height": 132, "fill": "#ffffff"}],
+          "mask_rects_px": [
+            {
+              "x": 1660,
+              "y": 0,
+              "width": 1142,
+              "height": 132,
+              "fill": "#ffffff"
+            }
+          ],
           "copy": {
-            "es": {"title": "Entrar a administracion", "body": "En administracion aparecen el menu owner y las acciones Cargar Obra y Mintear Obras. El Companion solo explica y prepara: no pulsa esos botones ni firma transacciones.", "next_question": "Queres ubicar primero el menu lateral?"},
-            "en": {"title": "Enter administration", "body": "Administration shows the owner menu and the Load Artwork and Mint Artworks actions. The Companion only explains and prepares; it does not click those buttons or sign transactions.", "next_question": "Do you want to locate the side menu first?"},
-            "pt": {"title": "Entrar na administracao", "body": "A administracao mostra o menu owner e as acoes Carga de Obras e Mint. O Companion apenas explica e prepara; nao clica nesses botoes nem assina transacoes.", "next_question": "Quer localizar primeiro o menu lateral?"}
-          }
+            "es": {
+              "title": "Entrar a administracion",
+              "body": "En administracion aparecen el menu owner y las acciones Cargar Obra y Mintear Obras. El Companion solo explica y prepara: no pulsa esos botones ni firma transacciones.",
+              "next_question": "Queres ubicar primero el menu lateral?"
+            },
+            "en": {
+              "title": "Enter administration",
+              "body": "Administration shows the owner menu and the Load Artwork and Mint Artworks actions. The Companion only explains and prepares; it does not click those buttons or sign transactions.",
+              "next_question": "Do you want to locate the side menu first?"
+            },
+            "pt": {
+              "title": "Entrar na administracao",
+              "body": "A administracao mostra o menu owner e as acoes Carga de Obras e Mint. O Companion apenas explica e prepara; nao clica nesses botoes nem assina transacoes.",
+              "next_question": "Quer localizar primeiro o menu lateral?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 0,
+              "y_pct": 2,
+              "width_pct": 14,
+              "height_pct": 96,
+              "label": {
+                "es": "Menu de administracion",
+                "en": "Administration menu",
+                "pt": "Menu de administracao"
+              }
+            },
+            {
+              "x_pct": 58,
+              "y_pct": 37,
+              "width_pct": 40,
+              "height_pct": 60,
+              "label": {
+                "es": "Acciones de Obras Propias",
+                "en": "Own Artworks actions",
+                "pt": "Acoes de Obras Proprias"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.main-menu",
@@ -88,12 +267,53 @@
           "source_slide": 37,
           "asset_id": "manual-native-navigation-main-menu",
           "media_path": "ppt/media/image3.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 980},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 980
+          },
           "copy": {
-            "es": {"title": "Leer el menu principal", "body": "El menu lateral organiza Gallery, Obras Propias y Gestionadas, Certificaciones Recibidas y Solicitadas, Gestores y Contactos. La pestaña activa indica donde estas parado.", "next_question": "Queres recorrer primero Obras Propias?"},
-            "en": {"title": "Read the main menu", "body": "The side menu organizes Gallery, Own and Managed Artworks, Received and Requested Certifications, Managers and Contacts. The active item shows your current section.", "next_question": "Do you want to tour Own Artworks first?"},
-            "pt": {"title": "Ler o menu principal", "body": "O menu lateral organiza Gallery, Obras Proprias e Gerenciadas, Certificacoes Recebidas e Solicitadas, Gestores e Contatos. O item ativo mostra sua secao atual.", "next_question": "Quer percorrer primeiro Obras Proprias?"}
-          }
+            "es": {
+              "title": "Leer el menu principal",
+              "body": "El menu lateral organiza Gallery, Obras Propias y Gestionadas, Certificaciones Recibidas y Solicitadas, Gestores y Contactos. La pestaña activa indica donde estas parado.",
+              "next_question": "Queres recorrer primero Obras Propias?"
+            },
+            "en": {
+              "title": "Read the main menu",
+              "body": "The side menu organizes Gallery, Own and Managed Artworks, Received and Requested Certifications, Managers and Contacts. The active item shows your current section.",
+              "next_question": "Do you want to tour Own Artworks first?"
+            },
+            "pt": {
+              "title": "Ler o menu principal",
+              "body": "O menu lateral organiza Gallery, Obras Proprias e Gerenciadas, Certificacoes Recebidas e Solicitadas, Gestores e Contatos. O item ativo mostra sua secao atual.",
+              "next_question": "Quer percorrer primeiro Obras Proprias?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 0,
+              "y_pct": 18,
+              "width_pct": 13,
+              "height_pct": 72,
+              "label": {
+                "es": "Menu principal",
+                "en": "Main menu",
+                "pt": "Menu principal"
+              }
+            },
+            {
+              "x_pct": 12,
+              "y_pct": 55,
+              "width_pct": 32,
+              "height_pct": 20,
+              "label": {
+                "es": "Filtros de Obras Propias",
+                "en": "Own Artworks filters",
+                "pt": "Filtros de Obras Proprias"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.own-all",
@@ -102,12 +322,42 @@
           "source_slide": 41,
           "asset_id": "manual-native-navigation-own-all",
           "media_path": "ppt/media/image53.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 850},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 850
+          },
           "copy": {
-            "es": {"title": "Ver todas las Obras Propias", "body": "Obras Propias reune las obras cargadas por vos, por un gestor autorizado o recibidas por transferencia. El filtro Todas sirve como punto de partida owner.", "next_question": "Queres separar las minteadas de las que todavia estan por mintear?"},
-            "en": {"title": "View all Own Artworks", "body": "Own Artworks gathers works loaded by you, by an authorized manager or received through transfer. The All filter is the owner starting point.", "next_question": "Do you want to separate minted artworks from those still awaiting Mint?"},
-            "pt": {"title": "Ver todas as Obras Proprias", "body": "Obras Proprias reune obras carregadas por voce, por um gestor autorizado ou recebidas por transferencia. O filtro Todas e o ponto de partida owner.", "next_question": "Quer separar as obras minteadas das que ainda aguardam Mint?"}
-          }
+            "es": {
+              "title": "Ver todas las Obras Propias",
+              "body": "Obras Propias reune las obras cargadas por vos, por un gestor autorizado o recibidas por transferencia. El filtro Todas sirve como punto de partida owner.",
+              "next_question": "Queres separar las minteadas de las que todavia estan por mintear?"
+            },
+            "en": {
+              "title": "View all Own Artworks",
+              "body": "Own Artworks gathers works loaded by you, by an authorized manager or received through transfer. The All filter is the owner starting point.",
+              "next_question": "Do you want to separate minted artworks from those still awaiting Mint?"
+            },
+            "pt": {
+              "title": "Ver todas as Obras Proprias",
+              "body": "Obras Proprias reune obras carregadas por voce, por um gestor autorizado ou recebidas por transferencia. O filtro Todas e o ponto de partida owner.",
+              "next_question": "Quer separar as obras minteadas das que ainda aguardam Mint?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 15,
+              "y_pct": 66,
+              "width_pct": 6,
+              "height_pct": 20,
+              "label": {
+                "es": "Todas",
+                "en": "All",
+                "pt": "Todas"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.own-minted",
@@ -116,12 +366,42 @@
           "source_slide": 41,
           "asset_id": "manual-native-navigation-own-minted",
           "media_path": "ppt/media/image53.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 850},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 850
+          },
           "copy": {
-            "es": {"title": "Filtrar Obras Propias minteadas", "body": "Minteadas muestra obras que ya tienen identidad digital registrada. Desde aca podes revisar su ficha y trazabilidad; ver el filtro no ejecuta una accion blockchain.", "next_question": "Seguimos con las obras por mintear?"},
-            "en": {"title": "Filter minted Own Artworks", "body": "Minted shows artworks that already have a registered digital identity. From here you can review their record and traceability; viewing the filter performs no blockchain action.", "next_question": "Shall we continue with artworks awaiting Mint?"},
-            "pt": {"title": "Filtrar Obras Proprias minteadas", "body": "Minteadas mostra obras que ja possuem identidade digital registrada. Aqui voce pode revisar ficha e rastreabilidade; ver o filtro nao executa acao blockchain.", "next_question": "Continuamos com as obras por mintear?"}
-          }
+            "es": {
+              "title": "Filtrar Obras Propias minteadas",
+              "body": "Minteadas muestra obras que ya tienen identidad digital registrada. Desde aca podes revisar su ficha y trazabilidad; ver el filtro no ejecuta una accion blockchain.",
+              "next_question": "Seguimos con las obras por mintear?"
+            },
+            "en": {
+              "title": "Filter minted Own Artworks",
+              "body": "Minted shows artworks that already have a registered digital identity. From here you can review their record and traceability; viewing the filter performs no blockchain action.",
+              "next_question": "Shall we continue with artworks awaiting Mint?"
+            },
+            "pt": {
+              "title": "Filtrar Obras Proprias minteadas",
+              "body": "Minteadas mostra obras que ja possuem identidade digital registrada. Aqui voce pode revisar ficha e rastreabilidade; ver o filtro nao executa acao blockchain.",
+              "next_question": "Continuamos com as obras por mintear?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 19,
+              "y_pct": 66,
+              "width_pct": 7,
+              "height_pct": 20,
+              "label": {
+                "es": "Minteadas",
+                "en": "Minted",
+                "pt": "Mintadas"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.own-to-mint",
@@ -130,12 +410,42 @@
           "source_slide": 42,
           "asset_id": "manual-native-navigation-own-to-mint",
           "media_path": "ppt/media/image54.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 850},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 850
+          },
           "copy": {
-            "es": {"title": "Filtrar obras por mintear", "body": "Por Mintear identifica precargas que todavia no consolidaron su identidad digital. Conviene revisar imagenes, ficha tecnica y datos antes de usar el voucher Mint.", "next_question": "Queres ver los filtros vinculados con Certify?"},
-            "en": {"title": "Filter artworks awaiting Mint", "body": "Awaiting Mint identifies preloads that have not yet consolidated their digital identity. Review images, technical sheet and data before using a Mint voucher.", "next_question": "Do you want to see the Certify-related filters?"},
-            "pt": {"title": "Filtrar obras por mintear", "body": "Por Mintear identifica pre-cargas que ainda nao consolidaram sua identidade digital. Revise imagens, ficha tecnica e dados antes de usar o voucher Mint.", "next_question": "Quer ver os filtros relacionados a Certify?"}
-          }
+            "es": {
+              "title": "Filtrar obras por mintear",
+              "body": "Por Mintear identifica precargas que todavia no consolidaron su identidad digital. Conviene revisar imagenes, ficha tecnica y datos antes de usar el voucher Mint.",
+              "next_question": "Queres ver los filtros vinculados con Certify?"
+            },
+            "en": {
+              "title": "Filter artworks awaiting Mint",
+              "body": "Awaiting Mint identifies preloads that have not yet consolidated their digital identity. Review images, technical sheet and data before using a Mint voucher.",
+              "next_question": "Do you want to see the Certify-related filters?"
+            },
+            "pt": {
+              "title": "Filtrar obras por mintear",
+              "body": "Por Mintear identifica pre-cargas que ainda nao consolidaram sua identidade digital. Revise imagens, ficha tecnica e dados antes de usar o voucher Mint.",
+              "next_question": "Quer ver os filtros relacionados a Certify?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 23,
+              "y_pct": 66,
+              "width_pct": 8,
+              "height_pct": 20,
+              "label": {
+                "es": "Por Mintear",
+                "en": "To Mint",
+                "pt": "Por Mintar"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.own-certified",
@@ -144,12 +454,42 @@
           "source_slide": 43,
           "asset_id": "manual-native-navigation-own-certified",
           "media_path": "ppt/media/image55.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 850},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 850
+          },
           "copy": {
-            "es": {"title": "Ver obras con certificaciones", "body": "Con Certificaciones agrupa obras que ya sumaron Certify o evidencia al historial. Para saber que demuestra cada uno hay que abrir la obra y leer sus registros visibles.", "next_question": "Queres diferenciarlo de Por Certificar?"},
-            "en": {"title": "View artworks with certifications", "body": "With Certifications groups artworks that already added Certify records or evidence to their history. Open the artwork and read its visible records to understand what each one supports.", "next_question": "Do you want to distinguish it from Awaiting Certification?"},
-            "pt": {"title": "Ver obras com certificacoes", "body": "Com Certificacoes agrupa obras que ja somaram Certify ou evidencias ao historico. Abra a obra e leia os registros visiveis para entender o que cada um respalda.", "next_question": "Quer diferenciar de Por Certificar?"}
-          }
+            "es": {
+              "title": "Ver obras con certificaciones",
+              "body": "Con Certificaciones agrupa obras que ya sumaron Certify o evidencia al historial. Para saber que demuestra cada uno hay que abrir la obra y leer sus registros visibles.",
+              "next_question": "Queres diferenciarlo de Por Certificar?"
+            },
+            "en": {
+              "title": "View artworks with certifications",
+              "body": "With Certifications groups artworks that already added Certify records or evidence to their history. Open the artwork and read its visible records to understand what each one supports.",
+              "next_question": "Do you want to distinguish it from Awaiting Certification?"
+            },
+            "pt": {
+              "title": "Ver obras com certificacoes",
+              "body": "Com Certificacoes agrupa obras que ja somaram Certify ou evidencias ao historico. Abra a obra e leia os registros visiveis para entender o que cada um respalda.",
+              "next_question": "Quer diferenciar de Por Certificar?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 28,
+              "y_pct": 66,
+              "width_pct": 8,
+              "height_pct": 20,
+              "label": {
+                "es": "Certificadas",
+                "en": "Certified",
+                "pt": "Certificadas"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.own-pending-certify",
@@ -158,12 +498,42 @@
           "source_slide": 44,
           "asset_id": "manual-native-navigation-own-pending-certify",
           "media_path": "ppt/media/image56.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 850},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 850
+          },
           "copy": {
-            "es": {"title": "Revisar obras por certificar", "body": "Por Certificar ayuda a localizar obras con solicitudes o requerimientos Certify pendientes. Es un filtro de estado, no una afirmacion de que la obra carece de toda evidencia.", "next_question": "Seguimos con Obras Gestionadas?"},
-            "en": {"title": "Review artworks awaiting certification", "body": "Awaiting Certification helps locate artworks with pending Certify requests or requirements. It is a status filter, not a claim that the artwork has no evidence at all.", "next_question": "Shall we continue with Managed Artworks?"},
-            "pt": {"title": "Revisar obras por certificar", "body": "Por Certificar ajuda a localizar obras com solicitacoes ou requisitos Certify pendentes. E um filtro de estado, nao uma afirmacao de que a obra nao possui evidencia.", "next_question": "Continuamos com Obras Gerenciadas?"}
-          }
+            "es": {
+              "title": "Revisar obras por certificar",
+              "body": "Por Certificar ayuda a localizar obras con solicitudes o requerimientos Certify pendientes. Es un filtro de estado, no una afirmacion de que la obra carece de toda evidencia.",
+              "next_question": "Seguimos con Obras Gestionadas?"
+            },
+            "en": {
+              "title": "Review artworks awaiting certification",
+              "body": "Awaiting Certification helps locate artworks with pending Certify requests or requirements. It is a status filter, not a claim that the artwork has no evidence at all.",
+              "next_question": "Shall we continue with Managed Artworks?"
+            },
+            "pt": {
+              "title": "Revisar obras por certificar",
+              "body": "Por Certificar ajuda a localizar obras com solicitacoes ou requisitos Certify pendentes. E um filtro de estado, nao uma afirmacao de que a obra nao possui evidencia.",
+              "next_question": "Continuamos com Obras Gerenciadas?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 33,
+              "y_pct": 66,
+              "width_pct": 9,
+              "height_pct": 20,
+              "label": {
+                "es": "Por Certificar",
+                "en": "To Certify",
+                "pt": "Por Certificar"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.managed-minted",
@@ -172,12 +542,42 @@
           "source_slide": 45,
           "asset_id": "manual-native-navigation-managed-minted",
           "media_path": "ppt/media/image57.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 850},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 850
+          },
           "copy": {
-            "es": {"title": "Ver Gestionadas minteadas", "body": "Esta vista muestra obras minteadas sobre las que el usuario posee capacidad de gestion autorizada. El owner puede limitar esa delegacion y Mint sigue reservado al owner.", "next_question": "Queres ver donde trabaja el gestor antes de Mint?"},
-            "en": {"title": "View minted Managed Artworks", "body": "This view shows minted artworks over which the user has authorized management capacity. The owner can limit that delegation, and Mint remains reserved for the owner.", "next_question": "Do you want to see where a manager works before Mint?"},
-            "pt": {"title": "Ver Gerenciadas minteadas", "body": "Esta vista mostra obras minteadas sobre as quais o usuario possui capacidade de gestao autorizada. O owner pode limitar a delegacao, e Mint permanece reservado ao owner.", "next_question": "Quer ver onde o gestor trabalha antes do Mint?"}
-          }
+            "es": {
+              "title": "Ver Gestionadas minteadas",
+              "body": "Esta vista muestra obras minteadas sobre las que el usuario posee capacidad de gestion autorizada. El owner puede limitar esa delegacion y Mint sigue reservado al owner.",
+              "next_question": "Queres ver donde trabaja el gestor antes de Mint?"
+            },
+            "en": {
+              "title": "View minted Managed Artworks",
+              "body": "This view shows minted artworks over which the user has authorized management capacity. The owner can limit that delegation, and Mint remains reserved for the owner.",
+              "next_question": "Do you want to see where a manager works before Mint?"
+            },
+            "pt": {
+              "title": "Ver Gerenciadas minteadas",
+              "body": "Esta vista mostra obras minteadas sobre as quais o usuario possui capacidade de gestao autorizada. O owner pode limitar a delegacao, e Mint permanece reservado ao owner.",
+              "next_question": "Quer ver onde o gestor trabalha antes do Mint?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 19,
+              "y_pct": 66,
+              "width_pct": 7,
+              "height_pct": 20,
+              "label": {
+                "es": "Minteadas gestionadas",
+                "en": "Managed minted",
+                "pt": "Gerenciadas mintadas"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.managed-to-mint",
@@ -186,12 +586,42 @@
           "source_slide": 46,
           "asset_id": "manual-native-navigation-managed-to-mint",
           "media_path": "ppt/media/image58.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 850},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 850
+          },
           "copy": {
-            "es": {"title": "Trabajar Gestionadas por mintear", "body": "Es la vista activa para precargas realizadas por gestores o data entry autorizados. El gestor prepara datos; el propietario revisa y decide el Mint final.", "next_question": "Queres ver como se filtran las gestionadas certificadas?"},
-            "en": {"title": "Work on Managed Artworks awaiting Mint", "body": "This is the active view for preloads prepared by authorized managers or data-entry roles. The manager prepares data; the owner reviews and decides the final Mint.", "next_question": "Do you want to see how certified managed artworks are filtered?"},
-            "pt": {"title": "Trabalhar Gerenciadas por mintear", "body": "Esta e a vista ativa para pre-cargas preparadas por gestores ou data entry autorizados. O gestor prepara dados; o owner revisa e decide o Mint final.", "next_question": "Quer ver como filtrar as gerenciadas certificadas?"}
-          }
+            "es": {
+              "title": "Trabajar Gestionadas por mintear",
+              "body": "Es la vista activa para precargas realizadas por gestores o data entry autorizados. El gestor prepara datos; el propietario revisa y decide el Mint final.",
+              "next_question": "Queres ver como se filtran las gestionadas certificadas?"
+            },
+            "en": {
+              "title": "Work on Managed Artworks awaiting Mint",
+              "body": "This is the active view for preloads prepared by authorized managers or data-entry roles. The manager prepares data; the owner reviews and decides the final Mint.",
+              "next_question": "Do you want to see how certified managed artworks are filtered?"
+            },
+            "pt": {
+              "title": "Trabalhar Gerenciadas por mintear",
+              "body": "Esta e a vista ativa para pre-cargas preparadas por gestores ou data entry autorizados. O gestor prepara dados; o owner revisa e decide o Mint final.",
+              "next_question": "Quer ver como filtrar as gerenciadas certificadas?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 23,
+              "y_pct": 66,
+              "width_pct": 8,
+              "height_pct": 20,
+              "label": {
+                "es": "Gestionadas por mintear",
+                "en": "Managed to mint",
+                "pt": "Gerenciadas por mintar"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.managed-certified",
@@ -200,12 +630,42 @@
           "source_slide": 47,
           "asset_id": "manual-native-navigation-managed-certified",
           "media_path": "ppt/media/image58.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 850},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 850
+          },
           "copy": {
-            "es": {"title": "Filtrar Gestionadas certificadas", "body": "Este filtro ayuda a encontrar obras gestionadas que ya sumaron certificaciones. No convierte al gestor en owner ni le concede permisos fuera de la delegacion vigente.", "next_question": "Seguimos con Gestionadas sin certificaciones?"},
-            "en": {"title": "Filter certified Managed Artworks", "body": "This filter helps find managed artworks that already added certifications. It does not turn the manager into the owner or grant permissions beyond the current delegation.", "next_question": "Shall we continue with managed artworks without certifications?"},
-            "pt": {"title": "Filtrar Gerenciadas certificadas", "body": "Este filtro ajuda a encontrar obras gerenciadas que ja somaram certificacoes. Nao transforma o gestor em owner nem concede permissoes alem da delegacao vigente.", "next_question": "Continuamos com gerenciadas sem certificacoes?"}
-          }
+            "es": {
+              "title": "Filtrar Gestionadas certificadas",
+              "body": "Este filtro ayuda a encontrar obras gestionadas que ya sumaron certificaciones. No convierte al gestor en owner ni le concede permisos fuera de la delegacion vigente.",
+              "next_question": "Seguimos con Gestionadas sin certificaciones?"
+            },
+            "en": {
+              "title": "Filter certified Managed Artworks",
+              "body": "This filter helps find managed artworks that already added certifications. It does not turn the manager into the owner or grant permissions beyond the current delegation.",
+              "next_question": "Shall we continue with managed artworks without certifications?"
+            },
+            "pt": {
+              "title": "Filtrar Gerenciadas certificadas",
+              "body": "Este filtro ajuda a encontrar obras gerenciadas que ja somaram certificacoes. Nao transforma o gestor em owner nem concede permissoes alem da delegacao vigente.",
+              "next_question": "Continuamos com gerenciadas sem certificacoes?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 28,
+              "y_pct": 66,
+              "width_pct": 8,
+              "height_pct": 20,
+              "label": {
+                "es": "Gestionadas certificadas",
+                "en": "Managed certified",
+                "pt": "Gerenciadas certificadas"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.managed-without-certify",
@@ -214,12 +674,42 @@
           "source_slide": 48,
           "asset_id": "manual-native-navigation-managed-without-certify",
           "media_path": "ppt/media/image60.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 850},
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 3000,
+            "height": 850
+          },
           "copy": {
-            "es": {"title": "Filtrar Gestionadas sin certificaciones", "body": "La vista separa obras gestionadas que aun no poseen Certify emitidos. Sirve para ordenar trabajo y estados; no obliga a certificar si no existe un hecho o evidencia relevante.", "next_question": "Pasamos a las colas de Certificaciones?"},
-            "en": {"title": "Filter Managed Artworks without certifications", "body": "This view separates managed artworks with no issued Certify records yet. It helps organize work and status; it does not require certification when no relevant fact or evidence exists.", "next_question": "Shall we move to Certification queues?"},
-            "pt": {"title": "Filtrar Gerenciadas sem certificacoes", "body": "A vista separa obras gerenciadas que ainda nao possuem Certify emitidos. Ajuda a organizar trabalho e estados; nao obriga certificar sem fato ou evidencia relevante.", "next_question": "Passamos para as filas de Certificacoes?"}
-          }
+            "es": {
+              "title": "Filtrar Gestionadas sin certificaciones",
+              "body": "La vista separa obras gestionadas que aun no poseen Certify emitidos. Sirve para ordenar trabajo y estados; no obliga a certificar si no existe un hecho o evidencia relevante.",
+              "next_question": "Pasamos a las colas de Certificaciones?"
+            },
+            "en": {
+              "title": "Filter Managed Artworks without certifications",
+              "body": "This view separates managed artworks with no issued Certify records yet. It helps organize work and status; it does not require certification when no relevant fact or evidence exists.",
+              "next_question": "Shall we move to Certification queues?"
+            },
+            "pt": {
+              "title": "Filtrar Gerenciadas sem certificacoes",
+              "body": "A vista separa obras gerenciadas que ainda nao possuem Certify emitidos. Ajuda a organizar trabalho e estados; nao obriga certificar sem fato ou evidencia relevante.",
+              "next_question": "Passamos para as filas de Certificacoes?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 33,
+              "y_pct": 66,
+              "width_pct": 9,
+              "height_pct": 20,
+              "label": {
+                "es": "Gestionadas por certificar",
+                "en": "Managed to certify",
+                "pt": "Gerenciadas por certificar"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.received-pending",
@@ -228,12 +718,62 @@
           "source_slide": 49,
           "asset_id": "manual-native-navigation-received-pending",
           "media_path": "ppt/media/image61.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 380},
+          "source_crop_px": {
+            "x": 0,
+            "y": 330,
+            "width": 3000,
+            "height": 700
+          },
           "copy": {
-            "es": {"title": "Abrir Certificaciones Recibidas pendientes", "body": "Pendientes lista solicitudes Certify que otros usuarios o vos mismo enviaron para ser atendidas. La vinculacion NFC tiene una cola especifica en Taggeadas.", "next_question": "Queres ver esa cola NFC separada?"},
-            "en": {"title": "Open pending Received Certifications", "body": "Pending lists Certify requests sent by other users or by yourself for attention. NFC linking has a specific queue under Tagged.", "next_question": "Do you want to see that separate NFC queue?"},
-            "pt": {"title": "Abrir Certificacoes Recebidas pendentes", "body": "Pendentes lista solicitacoes Certify enviadas por outros usuarios ou por voce para atendimento. A vinculacao NFC possui fila especifica em Taggeadas.", "next_question": "Quer ver essa fila NFC separada?"}
-          }
+            "es": {
+              "title": "Abrir Certificaciones Recibidas pendientes",
+              "body": "Pendientes lista solicitudes Certify que otros usuarios o vos mismo enviaron para ser atendidas. La vinculacion NFC tiene una cola especifica en Taggeadas.",
+              "next_question": "Queres ver esa cola NFC separada?"
+            },
+            "en": {
+              "title": "Open pending Received Certifications",
+              "body": "Pending lists Certify requests sent by other users or by yourself for attention. NFC linking has a specific queue under Tagged.",
+              "next_question": "Do you want to see that separate NFC queue?"
+            },
+            "pt": {
+              "title": "Abrir Certificacoes Recebidas pendentes",
+              "body": "Pendentes lista solicitacoes Certify enviadas por outros usuarios ou por voce para atendimento. A vinculacao NFC possui fila especifica em Taggeadas.",
+              "next_question": "Quer ver essa fila NFC separada?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 0,
+              "y_pct": 0,
+              "width_pct": 14,
+              "height_pct": 100,
+              "label": {
+                "es": "Certificaciones Recibidas",
+                "en": "Received Certifications",
+                "pt": "Certificacoes Recebidas"
+              }
+            },
+            {
+              "x_pct": 14,
+              "y_pct": 38,
+              "width_pct": 8,
+              "height_pct": 24,
+              "label": {
+                "es": "Pendientes",
+                "en": "Pending",
+                "pt": "Pendentes"
+              }
+            }
+          ],
+          "mask_rects_px": [
+            {
+              "x": 1250,
+              "y": 420,
+              "width": 650,
+              "height": 280,
+              "fill": "#ffffff"
+            }
+          ]
         },
         {
           "step_id": "navigation.received-tagged",
@@ -242,12 +782,51 @@
           "source_slide": 50,
           "asset_id": "manual-native-navigation-received-tagged",
           "media_path": "ppt/media/image62.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 380},
+          "source_crop_px": {
+            "x": 0,
+            "y": 330,
+            "width": 3000,
+            "height": 700
+          },
           "copy": {
-            "es": {"title": "Revisar obras Taggeadas Off Chain", "body": "Taggeadas agrupa vinculaciones NFC ya realizadas en la app pero todavia pendientes de certificacion blockchain. Ese cierre se realiza desde esta seccion especifica.", "next_question": "Seguimos con el historial de recibidas realizadas?"},
-            "en": {"title": "Review Off-Chain Tagged artworks", "body": "Tagged groups NFC links already completed in the app but still awaiting blockchain certification. That closing step belongs to this specific section.", "next_question": "Shall we continue with completed received history?"},
-            "pt": {"title": "Revisar obras Taggeadas Off Chain", "body": "Taggeadas agrupa vinculacoes NFC ja realizadas no app mas ainda pendentes de certificacao blockchain. Esse fechamento pertence a esta secao especifica.", "next_question": "Continuamos com o historico de recebidas realizadas?"}
-          }
+            "es": {
+              "title": "Revisar obras Taggeadas Off Chain",
+              "body": "Taggeadas agrupa vinculaciones NFC ya realizadas en la app pero todavia pendientes de certificacion blockchain. Ese cierre se realiza desde esta seccion especifica.",
+              "next_question": "Seguimos con el historial de recibidas realizadas?"
+            },
+            "en": {
+              "title": "Review Off-Chain Tagged artworks",
+              "body": "Tagged groups NFC links already completed in the app but still awaiting blockchain certification. That closing step belongs to this specific section.",
+              "next_question": "Shall we continue with completed received history?"
+            },
+            "pt": {
+              "title": "Revisar obras Taggeadas Off Chain",
+              "body": "Taggeadas agrupa vinculacoes NFC ja realizadas no app mas ainda pendentes de certificacao blockchain. Esse fechamento pertence a esta secao especifica.",
+              "next_question": "Continuamos com o historico de recebidas realizadas?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 20,
+              "y_pct": 38,
+              "width_pct": 8,
+              "height_pct": 24,
+              "label": {
+                "es": "Taggeadas Off Chain",
+                "en": "Tagged Off Chain",
+                "pt": "Taggeadas Off Chain"
+              }
+            }
+          ],
+          "mask_rects_px": [
+            {
+              "x": 1250,
+              "y": 420,
+              "width": 650,
+              "height": 280,
+              "fill": "#ffffff"
+            }
+          ]
         },
         {
           "step_id": "navigation.received-completed",
@@ -256,12 +835,47 @@
           "source_slide": 51,
           "asset_id": "manual-native-navigation-received-completed",
           "media_path": "ppt/media/image64.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 1214, "height": 250},
           "copy": {
-            "es": {"title": "Consultar recibidas realizadas", "body": "Realizadas conserva el historial de solicitudes recibidas que ya fueron certificadas en blockchain. El detalle permite revisar el registro sin volver a ejecutar la accion.", "next_question": "Queres ver donde quedan las solicitudes rechazadas?"},
-            "en": {"title": "Review completed received certifications", "body": "Completed keeps the history of received requests already certified on blockchain. The detail lets you review the record without executing the action again.", "next_question": "Do you want to see where rejected requests remain?"},
-            "pt": {"title": "Consultar recebidas realizadas", "body": "Realizadas conserva o historico de solicitacoes recebidas ja certificadas na blockchain. O detalhe permite revisar o registro sem executar a acao novamente.", "next_question": "Quer ver onde ficam as solicitacoes rejeitadas?"}
-          }
+            "es": {
+              "title": "Consultar recibidas realizadas",
+              "body": "Realizadas conserva el historial de solicitudes recibidas que ya fueron certificadas en blockchain. El detalle permite revisar el registro sin volver a ejecutar la accion.",
+              "next_question": "Queres ver donde quedan las solicitudes rechazadas?"
+            },
+            "en": {
+              "title": "Review completed received certifications",
+              "body": "Completed keeps the history of received requests already certified on blockchain. The detail lets you review the record without executing the action again.",
+              "next_question": "Do you want to see where rejected requests remain?"
+            },
+            "pt": {
+              "title": "Consultar recebidas realizadas",
+              "body": "Realizadas conserva o historico de solicitacoes recebidas ja certificadas na blockchain. O detalhe permite revisar o registro sem executar a acao novamente.",
+              "next_question": "Quer ver onde ficam as solicitacoes rejeitadas?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 6,
+              "y_pct": 11,
+              "width_pct": 39,
+              "height_pct": 12,
+              "label": {
+                "es": "Pestana Certificaciones",
+                "en": "Certifications tab",
+                "pt": "Aba Certificacoes"
+              }
+            },
+            {
+              "x_pct": 6,
+              "y_pct": 24,
+              "width_pct": 88,
+              "height_pct": 67,
+              "label": {
+                "es": "Detalle verificable",
+                "en": "Verifiable detail",
+                "pt": "Detalhe verificavel"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.received-rejected",
@@ -270,12 +884,51 @@
           "source_slide": 52,
           "asset_id": "manual-native-navigation-received-rejected",
           "media_path": "ppt/media/image65.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 380},
+          "source_crop_px": {
+            "x": 0,
+            "y": 330,
+            "width": 3000,
+            "height": 700
+          },
           "copy": {
-            "es": {"title": "Consultar recibidas rechazadas", "body": "Rechazadas conserva pedidos Certify que no fueron aceptados. El rechazo forma parte del estado de la solicitud y no equivale a borrar otros registros existentes.", "next_question": "Pasamos a las Certificaciones Solicitadas por el owner?"},
-            "en": {"title": "Review rejected received certifications", "body": "Rejected keeps Certify requests that were not accepted. Rejection is part of the request state and does not erase other existing records.", "next_question": "Shall we move to Certifications Requested by the owner?"},
-            "pt": {"title": "Consultar recebidas rejeitadas", "body": "Rejeitadas conserva pedidos Certify que nao foram aceitos. A rejeicao faz parte do estado da solicitacao e nao apaga outros registros existentes.", "next_question": "Passamos para as Certificacoes Solicitadas pelo owner?"}
-          }
+            "es": {
+              "title": "Consultar recibidas rechazadas",
+              "body": "Rechazadas conserva pedidos Certify que no fueron aceptados. El rechazo forma parte del estado de la solicitud y no equivale a borrar otros registros existentes.",
+              "next_question": "Pasamos a las Certificaciones Solicitadas por el owner?"
+            },
+            "en": {
+              "title": "Review rejected received certifications",
+              "body": "Rejected keeps Certify requests that were not accepted. Rejection is part of the request state and does not erase other existing records.",
+              "next_question": "Shall we move to Certifications Requested by the owner?"
+            },
+            "pt": {
+              "title": "Consultar recebidas rejeitadas",
+              "body": "Rejeitadas conserva pedidos Certify que nao foram aceitos. A rejeicao faz parte do estado da solicitacao e nao apaga outros registros existentes.",
+              "next_question": "Passamos para as Certificacoes Solicitadas pelo owner?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 31,
+              "y_pct": 38,
+              "width_pct": 9,
+              "height_pct": 24,
+              "label": {
+                "es": "Rechazadas",
+                "en": "Rejected",
+                "pt": "Rejeitadas"
+              }
+            }
+          ],
+          "mask_rects_px": [
+            {
+              "x": 1250,
+              "y": 420,
+              "width": 650,
+              "height": 280,
+              "fill": "#ffffff"
+            }
+          ]
         },
         {
           "step_id": "navigation.requested-pending",
@@ -284,12 +937,62 @@
           "source_slide": 53,
           "asset_id": "manual-native-navigation-requested-pending",
           "media_path": "ppt/media/image66.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 380},
+          "source_crop_px": {
+            "x": 0,
+            "y": 330,
+            "width": 3000,
+            "height": 700
+          },
           "copy": {
-            "es": {"title": "Revisar Solicitadas pendientes", "body": "Esta cola muestra los Certify que el owner solicito y todavia no fueron completados. Solo el owner puede requerir acciones Certify sobre su obra.", "next_question": "Queres ver donde aparecen cuando ya fueron realizadas?"},
-            "en": {"title": "Review pending Requested Certifications", "body": "This queue shows Certify requests made by the owner that are not completed yet. Only the owner can request Certify actions for their artwork.", "next_question": "Do you want to see where they appear after completion?"},
-            "pt": {"title": "Revisar Solicitadas pendentes", "body": "Esta fila mostra Certify solicitados pelo owner que ainda nao foram concluidos. Somente o owner pode solicitar acoes Certify sobre sua obra.", "next_question": "Quer ver onde aparecem depois de realizadas?"}
-          }
+            "es": {
+              "title": "Revisar Solicitadas pendientes",
+              "body": "Esta cola muestra los Certify que el owner solicito y todavia no fueron completados. Solo el owner puede requerir acciones Certify sobre su obra.",
+              "next_question": "Queres ver donde aparecen cuando ya fueron realizadas?"
+            },
+            "en": {
+              "title": "Review pending Requested Certifications",
+              "body": "This queue shows Certify requests made by the owner that are not completed yet. Only the owner can request Certify actions for their artwork.",
+              "next_question": "Do you want to see where they appear after completion?"
+            },
+            "pt": {
+              "title": "Revisar Solicitadas pendentes",
+              "body": "Esta fila mostra Certify solicitados pelo owner que ainda nao foram concluidos. Somente o owner pode solicitar acoes Certify sobre sua obra.",
+              "next_question": "Quer ver onde aparecem depois de realizadas?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 0,
+              "y_pct": 0,
+              "width_pct": 14,
+              "height_pct": 100,
+              "label": {
+                "es": "Certificaciones Solicitadas",
+                "en": "Requested Certifications",
+                "pt": "Certificacoes Solicitadas"
+              }
+            },
+            {
+              "x_pct": 14,
+              "y_pct": 38,
+              "width_pct": 9,
+              "height_pct": 24,
+              "label": {
+                "es": "Pendientes",
+                "en": "Pending",
+                "pt": "Pendentes"
+              }
+            }
+          ],
+          "mask_rects_px": [
+            {
+              "x": 1250,
+              "y": 420,
+              "width": 650,
+              "height": 280,
+              "fill": "#ffffff"
+            }
+          ]
         },
         {
           "step_id": "navigation.requested-completed",
@@ -298,12 +1001,51 @@
           "source_slide": 54,
           "asset_id": "manual-native-navigation-requested-completed",
           "media_path": "ppt/media/image69.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3000, "height": 380},
+          "source_crop_px": {
+            "x": 0,
+            "y": 330,
+            "width": 3000,
+            "height": 700
+          },
           "copy": {
-            "es": {"title": "Consultar Solicitadas realizadas", "body": "Realizadas muestra solicitudes emitidas por el owner que ya fueron cumplimentadas. Desde esta vista se consulta su estado e historial; no se repite automaticamente el Certify.", "next_question": "Seguimos con Gestores y Contactos?"},
-            "en": {"title": "Review completed Requested Certifications", "body": "Completed shows requests issued by the owner that have already been fulfilled. This view reviews status and history; it does not automatically repeat the Certify.", "next_question": "Shall we continue with Managers and Contacts?"},
-            "pt": {"title": "Consultar Solicitadas realizadas", "body": "Realizadas mostra solicitacoes emitidas pelo owner que ja foram cumpridas. Esta vista consulta estado e historico; nao repete automaticamente o Certify.", "next_question": "Continuamos com Gestores e Contatos?"}
-          }
+            "es": {
+              "title": "Consultar Solicitadas realizadas",
+              "body": "Realizadas muestra solicitudes emitidas por el owner que ya fueron cumplimentadas. Desde esta vista se consulta su estado e historial; no se repite automaticamente el Certify.",
+              "next_question": "Seguimos con Gestores y Contactos?"
+            },
+            "en": {
+              "title": "Review completed Requested Certifications",
+              "body": "Completed shows requests issued by the owner that have already been fulfilled. This view reviews status and history; it does not automatically repeat the Certify.",
+              "next_question": "Shall we continue with Managers and Contacts?"
+            },
+            "pt": {
+              "title": "Consultar Solicitadas realizadas",
+              "body": "Realizadas mostra solicitacoes emitidas pelo owner que ja foram cumpridas. Esta vista consulta estado e historico; nao repete automaticamente o Certify.",
+              "next_question": "Continuamos com Gestores e Contatos?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 22,
+              "y_pct": 38,
+              "width_pct": 10,
+              "height_pct": 24,
+              "label": {
+                "es": "Realizadas",
+                "en": "Completed",
+                "pt": "Realizadas"
+              }
+            }
+          ],
+          "mask_rects_px": [
+            {
+              "x": 1250,
+              "y": 420,
+              "width": 650,
+              "height": 280,
+              "fill": "#ffffff"
+            }
+          ]
         },
         {
           "step_id": "navigation.managers",
@@ -312,13 +1054,62 @@
           "source_slide": 55,
           "asset_id": "manual-native-navigation-managers",
           "media_path": "ppt/media/image72.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3828, "height": 430},
-          "mask_rects_px": [{"x": 3290, "y": 80, "width": 520, "height": 120, "fill": "#ffffff"}, {"x": 270, "y": 320, "width": 3558, "height": 110, "fill": "#ffffff"}],
+          "source_crop_px": {
+            "x": 0,
+            "y": 360,
+            "width": 3828,
+            "height": 650
+          },
+          "mask_rects_px": [
+            {
+              "x": 520,
+              "y": 220,
+              "width": 3250,
+              "height": 430,
+              "fill": "#ffffff"
+            }
+          ],
           "copy": {
-            "es": {"title": "Administrar Gestores agendados", "body": "Gestores lista contactos autorizados para colaborar con fichas tecnicas y precargas. Deben ser contactos previos; la delegacion puede revocarse y Mint solo lo realiza el owner.", "next_question": "Queres cerrar el recorrido con Contactos?"},
-            "en": {"title": "Manage scheduled Managers", "body": "Managers lists contacts authorized to collaborate on technical sheets and preloads. They must already be contacts; delegation can be revoked, and only the owner performs Mint.", "next_question": "Do you want to finish the tour with Contacts?"},
-            "pt": {"title": "Administrar Gestores agendados", "body": "Gestores lista contatos autorizados a colaborar com fichas tecnicas e pre-cargas. Devem ser contatos previos; a delegacao pode ser revogada, e somente o owner realiza Mint.", "next_question": "Quer concluir o recorrido com Contatos?"}
-          }
+            "es": {
+              "title": "Administrar Gestores agendados",
+              "body": "Gestores lista contactos autorizados para colaborar con fichas tecnicas y precargas. Deben ser contactos previos; la delegacion puede revocarse y Mint solo lo realiza el owner.",
+              "next_question": "Queres cerrar el recorrido con Contactos?"
+            },
+            "en": {
+              "title": "Manage scheduled Managers",
+              "body": "Managers lists contacts authorized to collaborate on technical sheets and preloads. They must already be contacts; delegation can be revoked, and only the owner performs Mint.",
+              "next_question": "Do you want to finish the tour with Contacts?"
+            },
+            "pt": {
+              "title": "Administrar Gestores agendados",
+              "body": "Gestores lista contatos autorizados a colaborar com fichas tecnicas e pre-cargas. Devem ser contatos previos; a delegacao pode ser revogada, e somente o owner realiza Mint.",
+              "next_question": "Quer concluir o recorrido com Contatos?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 6,
+              "y_pct": 20,
+              "width_pct": 19,
+              "height_pct": 28,
+              "label": {
+                "es": "Gestores",
+                "en": "Managers",
+                "pt": "Gestores"
+              }
+            },
+            {
+              "x_pct": 87,
+              "y_pct": 18,
+              "width_pct": 11,
+              "height_pct": 30,
+              "label": {
+                "es": "Agregar Gestor",
+                "en": "Add Manager",
+                "pt": "Adicionar Gestor"
+              }
+            }
+          ]
         },
         {
           "step_id": "navigation.contacts",
@@ -327,13 +1118,62 @@
           "source_slide": 56,
           "asset_id": "manual-native-navigation-contacts",
           "media_path": "ppt/media/image73.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 3840, "height": 430},
-          "mask_rects_px": [{"x": 3290, "y": 80, "width": 520, "height": 120, "fill": "#ffffff"}, {"x": 270, "y": 320, "width": 3570, "height": 110, "fill": "#ffffff"}],
+          "source_crop_px": {
+            "x": 0,
+            "y": 360,
+            "width": 3840,
+            "height": 650
+          },
+          "mask_rects_px": [
+            {
+              "x": 520,
+              "y": 220,
+              "width": 3270,
+              "height": 430,
+              "fill": "#ffffff"
+            }
+          ],
           "copy": {
-            "es": {"title": "Administrar Contactos agendados", "body": "Contactos reune personas o instituciones ya registradas en Tokenizart. Se agregan con el email de plataforma, pero el Companion nunca debe mostrar, pedir ni almacenar listas privadas, emails o wallets de terceros.", "next_question": "Que seccion del recorrido queres abrir ahora paso a paso?"},
-            "en": {"title": "Manage scheduled Contacts", "body": "Contacts gathers people or institutions already registered in Tokenizart. They are added with their platform email, but the Companion must never expose, request or store private lists, emails or third-party wallets.", "next_question": "Which section of the tour do you want to open step by step now?"},
-            "pt": {"title": "Administrar Contatos agendados", "body": "Contatos reune pessoas ou instituicoes ja registradas na Tokenizart. Sao adicionadas com o email da plataforma, mas o Companion nunca deve mostrar, pedir ou armazenar listas privadas, emails ou wallets de terceiros.", "next_question": "Qual secao do recorrido voce quer abrir passo a passo agora?"}
-          }
+            "es": {
+              "title": "Administrar Contactos agendados",
+              "body": "Contactos reune personas o instituciones ya registradas en Tokenizart. Se agregan con el email de plataforma, pero el Companion nunca debe mostrar, pedir ni almacenar listas privadas, emails o wallets de terceros.",
+              "next_question": "Que seccion del recorrido queres abrir ahora paso a paso?"
+            },
+            "en": {
+              "title": "Manage scheduled Contacts",
+              "body": "Contacts gathers people or institutions already registered in Tokenizart. They are added with their platform email, but the Companion must never expose, request or store private lists, emails or third-party wallets.",
+              "next_question": "Which section of the tour do you want to open step by step now?"
+            },
+            "pt": {
+              "title": "Administrar Contatos agendados",
+              "body": "Contatos reune pessoas ou instituicoes ja registradas na Tokenizart. Sao adicionadas com o email da plataforma, mas o Companion nunca deve mostrar, pedir ou armazenar listas privadas, emails ou wallets de terceiros.",
+              "next_question": "Qual secao do recorrido voce quer abrir passo a passo agora?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 6,
+              "y_pct": 20,
+              "width_pct": 19,
+              "height_pct": 28,
+              "label": {
+                "es": "Contactos",
+                "en": "Contacts",
+                "pt": "Contatos"
+              }
+            },
+            {
+              "x_pct": 86,
+              "y_pct": 18,
+              "width_pct": 12,
+              "height_pct": 30,
+              "label": {
+                "es": "Agregar Contacto",
+                "en": "Add Contact",
+                "pt": "Adicionar Contato"
+              }
+            }
+          ]
         }
       ]
     },
@@ -560,28 +1400,44 @@
               "y_pct": 20,
               "width_pct": 7,
               "height_pct": 38,
-              "label": { "es": "NFT", "en": "NFT", "pt": "NFT" }
+              "label": {
+                "es": "NFT",
+                "en": "NFT",
+                "pt": "NFT"
+              }
             },
             {
               "x_pct": 76,
               "y_pct": 20,
               "width_pct": 7,
               "height_pct": 38,
-              "label": { "es": "Imagen IPFS", "en": "IPFS image", "pt": "Imagem IPFS" }
+              "label": {
+                "es": "Imagen IPFS",
+                "en": "IPFS image",
+                "pt": "Imagem IPFS"
+              }
             },
             {
               "x_pct": 83,
               "y_pct": 20,
               "width_pct": 7,
               "height_pct": 38,
-              "label": { "es": "Metadata IPFS", "en": "IPFS metadata", "pt": "Metadata IPFS" }
+              "label": {
+                "es": "Metadata IPFS",
+                "en": "IPFS metadata",
+                "pt": "Metadata IPFS"
+              }
             },
             {
               "x_pct": 90,
               "y_pct": 20,
               "width_pct": 7,
               "height_pct": 38,
-              "label": { "es": "Comprobante", "en": "Receipt", "pt": "Comprovante" }
+              "label": {
+                "es": "Comprobante",
+                "en": "Receipt",
+                "pt": "Comprovante"
+              }
             }
           ]
         },
@@ -687,9 +1543,27 @@
             "height": 900
           },
           "mask_rects_px": [
-            { "x": 600, "y": 375, "width": 880, "height": 72, "fill": "#f7f8fa" },
-            { "x": 600, "y": 458, "width": 880, "height": 72, "fill": "#f7f8fa" },
-            { "x": 600, "y": 540, "width": 880, "height": 72, "fill": "#f7f8fa" }
+            {
+              "x": 600,
+              "y": 375,
+              "width": 880,
+              "height": 72,
+              "fill": "#f7f8fa"
+            },
+            {
+              "x": 600,
+              "y": 458,
+              "width": 880,
+              "height": 72,
+              "fill": "#f7f8fa"
+            },
+            {
+              "x": 600,
+              "y": 540,
+              "width": 880,
+              "height": 72,
+              "fill": "#f7f8fa"
+            }
           ],
           "copy": {
             "es": {
@@ -736,8 +1610,20 @@
             "height": 900
           },
           "mask_rects_px": [
-            { "x": 500, "y": 335, "width": 1750, "height": 75, "fill": "#ffffff" },
-            { "x": 500, "y": 700, "width": 2100, "height": 200, "fill": "#ffffff" }
+            {
+              "x": 500,
+              "y": 335,
+              "width": 1750,
+              "height": 75,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 500,
+              "y": 700,
+              "width": 2100,
+              "height": 200,
+              "fill": "#ffffff"
+            }
           ],
           "copy": {
             "es": {
@@ -784,9 +1670,27 @@
             "height": 680
           },
           "mask_rects_px": [
-            { "x": 300, "y": 190, "width": 2200, "height": 75, "fill": "#ffffff" },
-            { "x": 300, "y": 335, "width": 2200, "height": 150, "fill": "#ffffff" },
-            { "x": 300, "y": 555, "width": 2200, "height": 125, "fill": "#f7f8fa" }
+            {
+              "x": 300,
+              "y": 190,
+              "width": 2200,
+              "height": 75,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 300,
+              "y": 335,
+              "width": 2200,
+              "height": 150,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 300,
+              "y": 555,
+              "width": 2200,
+              "height": 125,
+              "fill": "#f7f8fa"
+            }
           ],
           "copy": {
             "es": {
@@ -833,10 +1737,34 @@
             "height": 690
           },
           "mask_rects_px": [
-            { "x": 160, "y": 170, "width": 520, "height": 58, "fill": "#ffffff" },
-            { "x": 160, "y": 300, "width": 520, "height": 58, "fill": "#ffffff" },
-            { "x": 160, "y": 430, "width": 520, "height": 58, "fill": "#ffffff" },
-            { "x": 160, "y": 560, "width": 520, "height": 58, "fill": "#ffffff" }
+            {
+              "x": 160,
+              "y": 170,
+              "width": 520,
+              "height": 58,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 160,
+              "y": 300,
+              "width": 520,
+              "height": 58,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 160,
+              "y": 430,
+              "width": 520,
+              "height": 58,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 160,
+              "y": 560,
+              "width": 520,
+              "height": 58,
+              "fill": "#ffffff"
+            }
           ],
           "copy": {
             "es": {
@@ -876,7 +1804,12 @@
           "source_slide": 22,
           "asset_id": "manual-native-gallery-certify-file-ipfs",
           "media_path": "ppt/media/image22.png",
-          "presentation_canvas_px": { "width": 640, "height": 360, "scale": 3, "background": "#ffffff" },
+          "presentation_canvas_px": {
+            "width": 640,
+            "height": 360,
+            "scale": 3,
+            "background": "#ffffff"
+          },
           "copy": {
             "es": {
               "title": "Abrir archivo o evidencia IPFS",
@@ -915,7 +1848,12 @@
           "source_slide": 22,
           "asset_id": "manual-native-gallery-certify-documentation-ipfs",
           "media_path": "ppt/media/image23.png",
-          "presentation_canvas_px": { "width": 640, "height": 360, "scale": 3, "background": "#ffffff" },
+          "presentation_canvas_px": {
+            "width": 640,
+            "height": 360,
+            "scale": 3,
+            "background": "#ffffff"
+          },
           "copy": {
             "es": {
               "title": "Abrir documentacion Certify en IPFS",
@@ -954,7 +1892,12 @@
           "source_slide": 22,
           "asset_id": "manual-native-gallery-certify-transaction",
           "media_path": "ppt/media/image24.png",
-          "presentation_canvas_px": { "width": 640, "height": 360, "scale": 3, "background": "#ffffff" },
+          "presentation_canvas_px": {
+            "width": 640,
+            "height": 360,
+            "scale": 3,
+            "background": "#ffffff"
+          },
           "copy": {
             "es": {
               "title": "Abrir el comprobante blockchain del Certify",
@@ -4710,7 +5653,7 @@
             "x": 480,
             "y": 145,
             "width": 2450,
-          "height": 585
+            "height": 585
           },
           "mask_rects_px": [
             {
@@ -4767,10 +5710,10 @@
           "asset_id": "manual-native-chip-open-mobile-app",
           "media_path": "ppt/media/image117.jpeg",
           "source_crop_px": {
-          "x": 18,
-          "y": 535,
-          "width": 155,
-          "height": 210
+            "x": 18,
+            "y": 535,
+            "width": 155,
+            "height": 210
           },
           "copy": {
             "es": {
@@ -4856,9 +5799,9 @@
           "media_path": "ppt/media/image120.jpeg",
           "source_crop_px": {
             "x": 45,
-          "y": 800,
+            "y": 800,
             "width": 900,
-          "height": 790
+            "height": 790
           },
           "copy": {
             "es": {
@@ -5060,7 +6003,7 @@
             "x": 450,
             "y": 140,
             "width": 2350,
-          "height": 595
+            "height": 595
           },
           "mask_rects_px": [
             {
@@ -5124,10 +6067,10 @@
           },
           "mask_rects_px": [
             {
-            "x": 520,
+              "x": 520,
               "y": 0,
-            "width": 470,
-            "height": 180,
+              "width": 470,
+              "height": 180,
               "fill": "#ffffff"
             },
             {
@@ -5380,7 +6323,13 @@
       ]
     },
     "transferencia": {
-      "source_slides": [91, 92, 93, 94, 95],
+      "source_slides": [
+        91,
+        92,
+        93,
+        94,
+        95
+      ],
       "description": "Native-image flow for a transfer of ownership, including destination validation, confirmation, success and external-wallet boundary.",
       "steps": [
         {
@@ -5391,11 +6340,35 @@
           "asset_id": "manual-native-transfer-select-minted-artwork",
           "media_path": "ppt/media/image150.png",
           "copy": {
-            "es": {"title": "Seleccionar una obra minteada", "body": "Desde Administracion y Obras Propias, abre la obra cuya titularidad queres transferir. Transfer requiere una obra ya minteada; no es una venta automatica ni fija el precio entre las partes.", "next_question": "Queres ubicar el boton Transferir?"},
-            "en": {"title": "Select a minted artwork", "body": "From Administration and Own Artworks, open the artwork whose ownership you want to transfer. Transfer requires an already minted artwork; it is not an automated sale and does not set the price between the parties.", "next_question": "Do you want to locate the Transfer button?"},
-            "pt": {"title": "Selecionar uma obra mintada", "body": "Em Administracao e Obras Proprias, abra a obra cuja titularidade voce quer transferir. Transfer exige uma obra ja mintada; nao e uma venda automatica nem define o preco entre as partes.", "next_question": "Quer localizar o botao Transferir?"}
+            "es": {
+              "title": "Seleccionar una obra minteada",
+              "body": "Desde Administracion y Obras Propias, abre la obra cuya titularidad queres transferir. Transfer requiere una obra ya minteada; no es una venta automatica ni fija el precio entre las partes.",
+              "next_question": "Queres ubicar el boton Transferir?"
+            },
+            "en": {
+              "title": "Select a minted artwork",
+              "body": "From Administration and Own Artworks, open the artwork whose ownership you want to transfer. Transfer requires an already minted artwork; it is not an automated sale and does not set the price between the parties.",
+              "next_question": "Do you want to locate the Transfer button?"
+            },
+            "pt": {
+              "title": "Selecionar uma obra mintada",
+              "body": "Em Administracao e Obras Proprias, abra a obra cuja titularidade voce quer transferir. Transfer exige uma obra ja mintada; nao e uma venda automatica nem define o preco entre as partes.",
+              "next_question": "Quer localizar o botao Transferir?"
+            }
           },
-          "hotspots": [{"x_pct": 60, "y_pct": 87, "width_pct": 14, "height_pct": 8, "label": {"es": "Transferir", "en": "Transfer", "pt": "Transferir"}}]
+          "hotspots": [
+            {
+              "x_pct": 60,
+              "y_pct": 87,
+              "width_pct": 14,
+              "height_pct": 8,
+              "label": {
+                "es": "Transferir",
+                "en": "Transfer",
+                "pt": "Transferir"
+              }
+            }
+          ]
         },
         {
           "step_id": "transferencia.open-transfer",
@@ -5404,13 +6377,42 @@
           "source_slide": 91,
           "asset_id": "manual-native-transfer-open-action",
           "media_path": "ppt/media/image150.png",
-          "source_crop_px": {"x": 690, "y": 830, "width": 500, "height": 220},
-          "copy": {
-            "es": {"title": "Abrir Transferir", "body": "Usa Transferir solo cuando verificaste la obra y queres preparar el traspaso de titularidad. El Copilot explica este punto, pero no presiona el boton ni ejecuta la operacion.", "next_question": "Seguimos con la revision de la obra y el destinatario?"},
-            "en": {"title": "Open Transfer", "body": "Use Transfer only after reviewing the artwork and deciding to prepare the ownership transfer. The Copilot explains this point but does not press the button or execute the operation.", "next_question": "Shall we review the artwork and recipient?"},
-            "pt": {"title": "Abrir Transferir", "body": "Use Transferir somente depois de revisar a obra e decidir preparar a transferencia de titularidade. O Copilot explica este ponto, mas nao pressiona o botao nem executa a operacao.", "next_question": "Vamos revisar a obra e o destinatario?"}
+          "source_crop_px": {
+            "x": 690,
+            "y": 830,
+            "width": 500,
+            "height": 220
           },
-          "hotspots": [{"x_pct": 25, "y_pct": 28, "width_pct": 55, "height_pct": 55, "label": {"es": "Boton Transferir", "en": "Transfer button", "pt": "Botao Transferir"}}]
+          "copy": {
+            "es": {
+              "title": "Abrir Transferir",
+              "body": "Usa Transferir solo cuando verificaste la obra y queres preparar el traspaso de titularidad. El Copilot explica este punto, pero no presiona el boton ni ejecuta la operacion.",
+              "next_question": "Seguimos con la revision de la obra y el destinatario?"
+            },
+            "en": {
+              "title": "Open Transfer",
+              "body": "Use Transfer only after reviewing the artwork and deciding to prepare the ownership transfer. The Copilot explains this point but does not press the button or execute the operation.",
+              "next_question": "Shall we review the artwork and recipient?"
+            },
+            "pt": {
+              "title": "Abrir Transferir",
+              "body": "Use Transferir somente depois de revisar a obra e decidir preparar a transferencia de titularidade. O Copilot explica este ponto, mas nao pressiona o botao nem executa a operacao.",
+              "next_question": "Vamos revisar a obra e o destinatario?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 25,
+              "y_pct": 28,
+              "width_pct": 55,
+              "height_pct": 55,
+              "label": {
+                "es": "Boton Transferir",
+                "en": "Transfer button",
+                "pt": "Botao Transferir"
+              }
+            }
+          ]
         },
         {
           "step_id": "transferencia.review-artwork",
@@ -5420,11 +6422,35 @@
           "asset_id": "manual-native-transfer-review-artwork",
           "media_path": "ppt/media/image151.png",
           "copy": {
-            "es": {"title": "Revisar la obra a transferir", "body": "La ventana resume la obra antes de completar el destinatario. Confirma que titulo, autor, medidas y Token ID correspondan a la obra correcta antes de continuar.", "next_question": "Queres ver como buscar al destinatario?"},
-            "en": {"title": "Review the artwork to transfer", "body": "The window summarizes the artwork before entering the recipient. Confirm that title, author, dimensions and Token ID match the correct artwork before continuing.", "next_question": "Do you want to see how to find the recipient?"},
-            "pt": {"title": "Revisar a obra a transferir", "body": "A janela resume a obra antes de informar o destinatario. Confirme se titulo, autor, medidas e Token ID correspondem a obra correta antes de continuar.", "next_question": "Quer ver como localizar o destinatario?"}
+            "es": {
+              "title": "Revisar la obra a transferir",
+              "body": "La ventana resume la obra antes de completar el destinatario. Confirma que titulo, autor, medidas y Token ID correspondan a la obra correcta antes de continuar.",
+              "next_question": "Queres ver como buscar al destinatario?"
+            },
+            "en": {
+              "title": "Review the artwork to transfer",
+              "body": "The window summarizes the artwork before entering the recipient. Confirm that title, author, dimensions and Token ID match the correct artwork before continuing.",
+              "next_question": "Do you want to see how to find the recipient?"
+            },
+            "pt": {
+              "title": "Revisar a obra a transferir",
+              "body": "A janela resume a obra antes de informar o destinatario. Confirme se titulo, autor, medidas e Token ID correspondem a obra correta antes de continuar.",
+              "next_question": "Quer ver como localizar o destinatario?"
+            }
           },
-          "hotspots": [{"x_pct": 40, "y_pct": 10, "width_pct": 55, "height_pct": 42, "label": {"es": "Resumen de la obra", "en": "Artwork summary", "pt": "Resumo da obra"}}]
+          "hotspots": [
+            {
+              "x_pct": 40,
+              "y_pct": 10,
+              "width_pct": 55,
+              "height_pct": 42,
+              "label": {
+                "es": "Resumen de la obra",
+                "en": "Artwork summary",
+                "pt": "Resumo da obra"
+              }
+            }
+          ]
         },
         {
           "step_id": "transferencia.enter-recipient-email",
@@ -5433,13 +6459,42 @@
           "source_slide": 92,
           "asset_id": "manual-native-transfer-enter-recipient",
           "media_path": "ppt/media/image151.png",
-          "source_crop_px": {"x": 35, "y": 520, "width": 865, "height": 390},
-          "copy": {
-            "es": {"title": "Ingresar y buscar el destinatario", "body": "Escribe el email del usuario destinatario y usa la lupa. No confirmes nada hasta que Atelier encuentre una wallet compatible y puedas revisar el destino.", "next_question": "Queres ver como Atelier confirma la wallet encontrada?"},
-            "en": {"title": "Enter and find the recipient", "body": "Enter the recipient user's email and use the search icon. Do not confirm anything until Atelier finds a compatible wallet and you can review the destination.", "next_question": "Do you want to see how Atelier confirms the wallet it found?"},
-            "pt": {"title": "Informar e buscar o destinatario", "body": "Digite o email do usuario destinatario e use a lupa. Nao confirme nada ate o Atelier localizar uma wallet compativel e voce revisar o destino.", "next_question": "Quer ver como o Atelier confirma a wallet localizada?"}
+          "source_crop_px": {
+            "x": 35,
+            "y": 520,
+            "width": 865,
+            "height": 390
           },
-          "hotspots": [{"x_pct": 5, "y_pct": 15, "width_pct": 90, "height_pct": 25, "label": {"es": "Email y lupa", "en": "Email and search", "pt": "Email e busca"}}]
+          "copy": {
+            "es": {
+              "title": "Ingresar y buscar el destinatario",
+              "body": "Escribe el email del usuario destinatario y usa la lupa. No confirmes nada hasta que Atelier encuentre una wallet compatible y puedas revisar el destino.",
+              "next_question": "Queres ver como Atelier confirma la wallet encontrada?"
+            },
+            "en": {
+              "title": "Enter and find the recipient",
+              "body": "Enter the recipient user's email and use the search icon. Do not confirm anything until Atelier finds a compatible wallet and you can review the destination.",
+              "next_question": "Do you want to see how Atelier confirms the wallet it found?"
+            },
+            "pt": {
+              "title": "Informar e buscar o destinatario",
+              "body": "Digite o email do usuario destinatario e use a lupa. Nao confirme nada ate o Atelier localizar uma wallet compativel e voce revisar o destino.",
+              "next_question": "Quer ver como o Atelier confirma a wallet localizada?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 5,
+              "y_pct": 15,
+              "width_pct": 90,
+              "height_pct": 25,
+              "label": {
+                "es": "Email y lupa",
+                "en": "Email and search",
+                "pt": "Email e busca"
+              }
+            }
+          ]
         },
         {
           "step_id": "transferencia.verify-destination-wallet",
@@ -5449,15 +6504,51 @@
           "asset_id": "manual-native-transfer-verify-destination",
           "media_path": "ppt/media/image152.png",
           "mask_rects_px": [
-            {"x": 50, "y": 590, "width": 770, "height": 62, "fill": "#edf2fa"},
-            {"x": 50, "y": 680, "width": 840, "height": 140, "fill": "#e8f7cf"}
+            {
+              "x": 50,
+              "y": 590,
+              "width": 770,
+              "height": 62,
+              "fill": "#edf2fa"
+            },
+            {
+              "x": 50,
+              "y": 680,
+              "width": 840,
+              "height": 140,
+              "fill": "#e8f7cf"
+            }
           ],
           "copy": {
-            "es": {"title": "Verificar la wallet de destino", "body": "Si el usuario existe, Atelier muestra una wallet de destino. En esta guia ocultamos email y direccion: compara cuidadosamente el destinatario antes de habilitar la confirmacion.", "next_question": "Queres revisar la credencial y la confirmacion final?"},
-            "en": {"title": "Verify the destination wallet", "body": "If the user exists, Atelier displays a destination wallet. This guide masks the email and address: carefully compare the recipient before enabling confirmation.", "next_question": "Do you want to review the credential and final confirmation?"},
-            "pt": {"title": "Verificar a wallet de destino", "body": "Se o usuario existir, o Atelier mostra uma wallet de destino. Este guia oculta email e endereco: confira cuidadosamente o destinatario antes de habilitar a confirmacao.", "next_question": "Quer revisar a credencial e a confirmacao final?"}
+            "es": {
+              "title": "Verificar la wallet de destino",
+              "body": "Si el usuario existe, Atelier muestra una wallet de destino. En esta guia ocultamos email y direccion: compara cuidadosamente el destinatario antes de habilitar la confirmacion.",
+              "next_question": "Queres revisar la credencial y la confirmacion final?"
+            },
+            "en": {
+              "title": "Verify the destination wallet",
+              "body": "If the user exists, Atelier displays a destination wallet. This guide masks the email and address: carefully compare the recipient before enabling confirmation.",
+              "next_question": "Do you want to review the credential and final confirmation?"
+            },
+            "pt": {
+              "title": "Verificar a wallet de destino",
+              "body": "Se o usuario existir, o Atelier mostra uma wallet de destino. Este guia oculta email e endereco: confira cuidadosamente o destinatario antes de habilitar a confirmacao.",
+              "next_question": "Quer revisar a credencial e a confirmacao final?"
+            }
           },
-          "hotspots": [{"x_pct": 5, "y_pct": 52, "width_pct": 90, "height_pct": 22, "label": {"es": "Destino saneado", "en": "Sanitized destination", "pt": "Destino saneado"}}]
+          "hotspots": [
+            {
+              "x_pct": 5,
+              "y_pct": 52,
+              "width_pct": 90,
+              "height_pct": 22,
+              "label": {
+                "es": "Destino saneado",
+                "en": "Sanitized destination",
+                "pt": "Destino saneado"
+              }
+            }
+          ]
         },
         {
           "step_id": "transferencia.confirm-with-wallet",
@@ -5467,16 +6558,58 @@
           "asset_id": "manual-native-transfer-confirm-wallet",
           "media_path": "ppt/media/image153.png",
           "mask_rects_px": [
-            {"x": 55, "y": 595, "width": 765, "height": 62, "fill": "#edf2fa"},
-            {"x": 55, "y": 680, "width": 840, "height": 142, "fill": "#e8f7cf"},
-            {"x": 55, "y": 875, "width": 840, "height": 76, "fill": "#ffffff"}
+            {
+              "x": 55,
+              "y": 595,
+              "width": 765,
+              "height": 62,
+              "fill": "#edf2fa"
+            },
+            {
+              "x": 55,
+              "y": 680,
+              "width": 840,
+              "height": 142,
+              "fill": "#e8f7cf"
+            },
+            {
+              "x": 55,
+              "y": 875,
+              "width": 840,
+              "height": 76,
+              "fill": "#ffffff"
+            }
           ],
           "copy": {
-            "es": {"title": "Confirmar con la credencial de wallet", "body": "La credencial de transaccion se ingresa solo en Atelier y nunca en el chat. Antes de confirmar, revisa otra vez obra, destinatario y wallet; Transfer no consume vouchers.", "next_question": "Queres ver la alerta de confirmacion?"},
-            "en": {"title": "Confirm with the wallet credential", "body": "The transaction credential is entered only in Atelier and never in chat. Before confirming, review the artwork, recipient and wallet again; Transfer does not consume vouchers.", "next_question": "Do you want to see the confirmation warning?"},
-            "pt": {"title": "Confirmar com a credencial da wallet", "body": "A credencial da transacao e informada somente no Atelier e nunca no chat. Antes de confirmar, revise novamente obra, destinatario e wallet; Transfer nao consome vouchers.", "next_question": "Quer ver o aviso de confirmacao?"}
+            "es": {
+              "title": "Confirmar con la credencial de wallet",
+              "body": "La credencial de transaccion se ingresa solo en Atelier y nunca en el chat. Antes de confirmar, revisa otra vez obra, destinatario y wallet; Transfer no consume vouchers.",
+              "next_question": "Queres ver la alerta de confirmacion?"
+            },
+            "en": {
+              "title": "Confirm with the wallet credential",
+              "body": "The transaction credential is entered only in Atelier and never in chat. Before confirming, review the artwork, recipient and wallet again; Transfer does not consume vouchers.",
+              "next_question": "Do you want to see the confirmation warning?"
+            },
+            "pt": {
+              "title": "Confirmar com a credencial da wallet",
+              "body": "A credencial da transacao e informada somente no Atelier e nunca no chat. Antes de confirmar, revise novamente obra, destinatario e wallet; Transfer nao consome vouchers.",
+              "next_question": "Quer ver o aviso de confirmacao?"
+            }
           },
-          "hotspots": [{"x_pct": 34, "y_pct": 89, "width_pct": 33, "height_pct": 8, "label": {"es": "Confirmar transaccion", "en": "Confirm transaction", "pt": "Confirmar transacao"}}]
+          "hotspots": [
+            {
+              "x_pct": 34,
+              "y_pct": 89,
+              "width_pct": 33,
+              "height_pct": 8,
+              "label": {
+                "es": "Confirmar transaccion",
+                "en": "Confirm transaction",
+                "pt": "Confirmar transacao"
+              }
+            }
+          ]
         },
         {
           "step_id": "transferencia.accept-warning",
@@ -5486,11 +6619,35 @@
           "asset_id": "manual-native-transfer-accept-warning",
           "media_path": "ppt/media/image154.png",
           "copy": {
-            "es": {"title": "Aceptar la advertencia final", "body": "La alerta pide una confirmacion explicita antes de enviar la transferencia a blockchain. Cancela si cualquier dato no coincide; aceptar inicia una operacion que el Companion no ejecuta.", "next_question": "Queres ver como se informa el resultado?"},
-            "en": {"title": "Accept the final warning", "body": "The warning asks for explicit confirmation before sending the transfer to blockchain. Cancel if any detail is wrong; accepting starts an operation that the Companion does not execute.", "next_question": "Do you want to see how the result is reported?"},
-            "pt": {"title": "Aceitar o aviso final", "body": "O aviso pede confirmacao explicita antes de enviar a transferencia para blockchain. Cancele se algum dado estiver incorreto; aceitar inicia uma operacao que o Companion nao executa.", "next_question": "Quer ver como o resultado e informado?"}
+            "es": {
+              "title": "Aceptar la advertencia final",
+              "body": "La alerta pide una confirmacion explicita antes de enviar la transferencia a blockchain. Cancela si cualquier dato no coincide; aceptar inicia una operacion que el Companion no ejecuta.",
+              "next_question": "Queres ver como se informa el resultado?"
+            },
+            "en": {
+              "title": "Accept the final warning",
+              "body": "The warning asks for explicit confirmation before sending the transfer to blockchain. Cancel if any detail is wrong; accepting starts an operation that the Companion does not execute.",
+              "next_question": "Do you want to see how the result is reported?"
+            },
+            "pt": {
+              "title": "Aceitar o aviso final",
+              "body": "O aviso pede confirmacao explicita antes de enviar a transferencia para blockchain. Cancele se algum dado estiver incorreto; aceitar inicia uma operacao que o Companion nao executa.",
+              "next_question": "Quer ver como o resultado e informado?"
+            }
           },
-          "hotspots": [{"x_pct": 74, "y_pct": 69, "width_pct": 18, "height_pct": 10, "label": {"es": "Aceptar", "en": "Accept", "pt": "Aceitar"}}]
+          "hotspots": [
+            {
+              "x_pct": 74,
+              "y_pct": 69,
+              "width_pct": 18,
+              "height_pct": 10,
+              "label": {
+                "es": "Aceptar",
+                "en": "Accept",
+                "pt": "Aceitar"
+              }
+            }
+          ]
         },
         {
           "step_id": "transferencia.success",
@@ -5500,11 +6657,35 @@
           "asset_id": "manual-native-transfer-success",
           "media_path": "ppt/media/image155.png",
           "copy": {
-            "es": {"title": "Confirmar transferencia exitosa", "body": "Espera la confirmacion de Atelier. El mensaje de exito indica que la transferencia fue registrada; evita repetir la accion mientras la red esta procesando.", "next_question": "Queres comprobar el nuevo registro?"},
-            "en": {"title": "Confirm a successful transfer", "body": "Wait for Atelier's confirmation. The success message indicates that the transfer was recorded; avoid repeating the action while the network is processing.", "next_question": "Do you want to inspect the new record?"},
-            "pt": {"title": "Confirmar transferencia concluida", "body": "Aguarde a confirmacao do Atelier. A mensagem de sucesso indica que a transferencia foi registrada; evite repetir a acao enquanto a rede processa.", "next_question": "Quer conferir o novo registro?"}
+            "es": {
+              "title": "Confirmar transferencia exitosa",
+              "body": "Espera la confirmacion de Atelier. El mensaje de exito indica que la transferencia fue registrada; evita repetir la accion mientras la red esta procesando.",
+              "next_question": "Queres comprobar el nuevo registro?"
+            },
+            "en": {
+              "title": "Confirm a successful transfer",
+              "body": "Wait for Atelier's confirmation. The success message indicates that the transfer was recorded; avoid repeating the action while the network is processing.",
+              "next_question": "Do you want to inspect the new record?"
+            },
+            "pt": {
+              "title": "Confirmar transferencia concluida",
+              "body": "Aguarde a confirmacao do Atelier. A mensagem de sucesso indica que a transferencia foi registrada; evite repetir a acao enquanto a rede processa.",
+              "next_question": "Quer conferir o novo registro?"
+            }
           },
-          "hotspots": [{"x_pct": 2, "y_pct": 5, "width_pct": 96, "height_pct": 90, "label": {"es": "Exito", "en": "Success", "pt": "Sucesso"}}]
+          "hotspots": [
+            {
+              "x_pct": 2,
+              "y_pct": 5,
+              "width_pct": 96,
+              "height_pct": 90,
+              "label": {
+                "es": "Exito",
+                "en": "Success",
+                "pt": "Sucesso"
+              }
+            }
+          ]
         },
         {
           "step_id": "transferencia.inspect-nft",
@@ -5514,11 +6695,35 @@
           "asset_id": "manual-native-transfer-inspect-nft",
           "media_path": "ppt/media/image156.png",
           "copy": {
-            "es": {"title": "Abrir Ver NFT", "body": "Despues del exito, Ver NFT permite revisar la referencia blockchain disponible. Esta lectura ayuda a verificar la operacion; no sustituye acuerdos, entrega fisica ni documentacion legal entre las partes.", "next_question": "Queres entender que ocurre si el destinatario no es usuario?"},
-            "en": {"title": "Open View NFT", "body": "After success, View NFT lets you inspect the available blockchain reference. This reading helps verify the operation; it does not replace agreements, physical delivery or legal documents between the parties.", "next_question": "Do you want to understand what happens if the recipient is not a user?"},
-            "pt": {"title": "Abrir Ver NFT", "body": "Depois do sucesso, Ver NFT permite revisar a referencia blockchain disponivel. Essa leitura ajuda a verificar a operacao; nao substitui acordos, entrega fisica nem documentos juridicos entre as partes.", "next_question": "Quer entender o que ocorre se o destinatario nao for usuario?"}
+            "es": {
+              "title": "Abrir Ver NFT",
+              "body": "Despues del exito, Ver NFT permite revisar la referencia blockchain disponible. Esta lectura ayuda a verificar la operacion; no sustituye acuerdos, entrega fisica ni documentacion legal entre las partes.",
+              "next_question": "Queres entender que ocurre si el destinatario no es usuario?"
+            },
+            "en": {
+              "title": "Open View NFT",
+              "body": "After success, View NFT lets you inspect the available blockchain reference. This reading helps verify the operation; it does not replace agreements, physical delivery or legal documents between the parties.",
+              "next_question": "Do you want to understand what happens if the recipient is not a user?"
+            },
+            "pt": {
+              "title": "Abrir Ver NFT",
+              "body": "Depois do sucesso, Ver NFT permite revisar a referencia blockchain disponivel. Essa leitura ajuda a verificar a operacao; nao substitui acordos, entrega fisica nem documentos juridicos entre as partes.",
+              "next_question": "Quer entender o que ocorre se o destinatario nao for usuario?"
+            }
           },
-          "hotspots": [{"x_pct": 88, "y_pct": 39, "width_pct": 10, "height_pct": 12, "label": {"es": "Ver NFT", "en": "View NFT", "pt": "Ver NFT"}}]
+          "hotspots": [
+            {
+              "x_pct": 88,
+              "y_pct": 39,
+              "width_pct": 10,
+              "height_pct": 12,
+              "label": {
+                "es": "Ver NFT",
+                "en": "View NFT",
+                "pt": "Ver NFT"
+              }
+            }
+          ]
         },
         {
           "step_id": "transferencia.external-wallet-boundary",
@@ -5528,20 +6733,59 @@
           "asset_id": "manual-native-transfer-external-wallet",
           "media_path": "ppt/media/image158.png",
           "mask_rects_px": [
-            {"x": 55, "y": 595, "width": 760, "height": 62, "fill": "#ffffff"},
-            {"x": 55, "y": 1060, "width": 840, "height": 76, "fill": "#ffffff"}
+            {
+              "x": 55,
+              "y": 595,
+              "width": 760,
+              "height": 62,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 55,
+              "y": 1060,
+              "width": 840,
+              "height": 76,
+              "fill": "#ffffff"
+            }
           ],
           "copy": {
-            "es": {"title": "Distinguir una wallet externa", "body": "Si el email no corresponde a un usuario Tokenizart, Atelier puede ofrecer una transferencia a wallet externa. Verifica la direccion con extremo cuidado: fuera de Atelier, el seguimiento deja de estar integrado en la experiencia del usuario.", "next_question": "Queres repasar la diferencia entre usuario Tokenizart y wallet externa?"},
-            "en": {"title": "Distinguish an external wallet", "body": "If the email does not match a Tokenizart user, Atelier may offer a transfer to an external wallet. Verify the address with extreme care: outside Atelier, tracking is no longer integrated into the user experience.", "next_question": "Do you want to review the difference between a Tokenizart user and an external wallet?"},
-            "pt": {"title": "Distinguir uma wallet externa", "body": "Se o email nao corresponder a um usuario Tokenizart, o Atelier pode oferecer transferencia para uma wallet externa. Verifique o endereco com extremo cuidado: fora do Atelier, o acompanhamento deixa de estar integrado a experiencia.", "next_question": "Quer revisar a diferenca entre usuario Tokenizart e wallet externa?"}
+            "es": {
+              "title": "Distinguir una wallet externa",
+              "body": "Si el email no corresponde a un usuario Tokenizart, Atelier puede ofrecer una transferencia a wallet externa. Verifica la direccion con extremo cuidado: fuera de Atelier, el seguimiento deja de estar integrado en la experiencia del usuario.",
+              "next_question": "Queres repasar la diferencia entre usuario Tokenizart y wallet externa?"
+            },
+            "en": {
+              "title": "Distinguish an external wallet",
+              "body": "If the email does not match a Tokenizart user, Atelier may offer a transfer to an external wallet. Verify the address with extreme care: outside Atelier, tracking is no longer integrated into the user experience.",
+              "next_question": "Do you want to review the difference between a Tokenizart user and an external wallet?"
+            },
+            "pt": {
+              "title": "Distinguir uma wallet externa",
+              "body": "Se o email nao corresponder a um usuario Tokenizart, o Atelier pode oferecer transferencia para uma wallet externa. Verifique o endereco com extremo cuidado: fora do Atelier, o acompanhamento deixa de estar integrado a experiencia.",
+              "next_question": "Quer revisar a diferenca entre usuario Tokenizart e wallet externa?"
+            }
           },
-          "hotspots": [{"x_pct": 5, "y_pct": 70, "width_pct": 90, "height_pct": 20, "label": {"es": "Wallet externa", "en": "External wallet", "pt": "Wallet externa"}}]
+          "hotspots": [
+            {
+              "x_pct": 5,
+              "y_pct": 70,
+              "width_pct": 90,
+              "height_pct": 20,
+              "label": {
+                "es": "Wallet externa",
+                "en": "External wallet",
+                "pt": "Wallet externa"
+              }
+            }
+          ]
         }
       ]
     },
     "privacy": {
-      "source_slides": [97, 98],
+      "source_slides": [
+        97,
+        98
+      ],
       "description": "Native-image flow for owner-controlled Gallery and Certify visibility.",
       "steps": [
         {
@@ -5551,13 +6795,42 @@
           "source_slide": 97,
           "asset_id": "manual-native-privacy-open-edit",
           "media_path": "ppt/media/image85.png",
-          "source_crop_px": {"x": 900, "y": 90, "width": 850, "height": 460},
-          "copy": {
-            "es": {"title": "Abrir Editar como owner", "body": "La privacidad se administra desde Administracion y Obras Propias mediante Editar. Solo el owner controla la visibilidad de su obra; un visitante no puede cambiarla.", "next_question": "Queres revisar la visibilidad general de la obra?"},
-            "en": {"title": "Open Edit as owner", "body": "Privacy is managed from Administration and Own Artworks through Edit. Only the owner controls artwork visibility; a visitor cannot change it.", "next_question": "Do you want to review overall artwork visibility?"},
-            "pt": {"title": "Abrir Editar como owner", "body": "A privacidade e administrada em Administracao e Obras Proprias por meio de Editar. Somente o owner controla a visibilidade da obra; um visitante nao pode altera-la.", "next_question": "Quer revisar a visibilidade geral da obra?"}
+          "source_crop_px": {
+            "x": 900,
+            "y": 90,
+            "width": 850,
+            "height": 460
           },
-          "hotspots": [{"x_pct": 78, "y_pct": 16, "width_pct": 10, "height_pct": 18, "label": {"es": "Editar", "en": "Edit", "pt": "Editar"}}]
+          "copy": {
+            "es": {
+              "title": "Abrir Editar como owner",
+              "body": "La privacidad se administra desde Administracion y Obras Propias mediante Editar. Solo el owner controla la visibilidad de su obra; un visitante no puede cambiarla.",
+              "next_question": "Queres revisar la visibilidad general de la obra?"
+            },
+            "en": {
+              "title": "Open Edit as owner",
+              "body": "Privacy is managed from Administration and Own Artworks through Edit. Only the owner controls artwork visibility; a visitor cannot change it.",
+              "next_question": "Do you want to review overall artwork visibility?"
+            },
+            "pt": {
+              "title": "Abrir Editar como owner",
+              "body": "A privacidade e administrada em Administracao e Obras Proprias por meio de Editar. Somente o owner controla a visibilidade da obra; um visitante nao pode altera-la.",
+              "next_question": "Quer revisar a visibilidade geral da obra?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 78,
+              "y_pct": 16,
+              "width_pct": 10,
+              "height_pct": 18,
+              "label": {
+                "es": "Editar",
+                "en": "Edit",
+                "pt": "Editar"
+              }
+            }
+          ]
         },
         {
           "step_id": "privacy.toggle-gallery",
@@ -5566,15 +6839,52 @@
           "source_slide": 97,
           "asset_id": "manual-native-privacy-toggle-gallery",
           "media_path": "ppt/media/image159.png",
-          "source_crop_px": {"x": 30, "y": 255, "width": 1160, "height": 380},
+          "source_crop_px": {
+            "x": 30,
+            "y": 255,
+            "width": 1160,
+            "height": 380
+          },
           "copy": {
-            "es": {"title": "Decidir si la obra aparece en Gallery", "body": "Mostrar en la galeria controla la visibilidad general de la obra para terceros. Si se desactiva, la obra deja de ser publica aunque el owner conserve acceso en su Administracion.", "next_question": "Queres controlar tambien Certify individuales?"},
-            "en": {"title": "Decide whether the artwork appears in Gallery", "body": "Show in Gallery controls the artwork's overall visibility to third parties. If disabled, the artwork stops being public while the owner keeps access in Administration.", "next_question": "Do you also want to control individual Certify records?"},
-            "pt": {"title": "Decidir se a obra aparece na Gallery", "body": "Mostrar na galeria controla a visibilidade geral da obra para terceiros. Se desativado, a obra deixa de ser publica enquanto o owner mantem acesso em Administracao.", "next_question": "Quer controlar tambem Certify individuais?"}
+            "es": {
+              "title": "Decidir si la obra aparece en Gallery",
+              "body": "Mostrar en la galeria controla la visibilidad general de la obra para terceros. Si se desactiva, la obra deja de ser publica aunque el owner conserve acceso en su Administracion.",
+              "next_question": "Queres controlar tambien Certify individuales?"
+            },
+            "en": {
+              "title": "Decide whether the artwork appears in Gallery",
+              "body": "Show in Gallery controls the artwork's overall visibility to third parties. If disabled, the artwork stops being public while the owner keeps access in Administration.",
+              "next_question": "Do you also want to control individual Certify records?"
+            },
+            "pt": {
+              "title": "Decidir se a obra aparece na Gallery",
+              "body": "Mostrar na galeria controla a visibilidade geral da obra para terceiros. Se desativado, a obra deixa de ser publica enquanto o owner mantem acesso em Administracao.",
+              "next_question": "Quer controlar tambem Certify individuais?"
+            }
           },
           "hotspots": [
-            {"x_pct": 1, "y_pct": 50, "width_pct": 45, "height_pct": 20, "label": {"es": "Mostrar en Gallery", "en": "Show in Gallery", "pt": "Mostrar na Gallery"}},
-            {"x_pct": 50, "y_pct": 50, "width_pct": 45, "height_pct": 20, "label": {"es": "Estado de exposicion", "en": "Exhibition status", "pt": "Estado de exposicao"}}
+            {
+              "x_pct": 1,
+              "y_pct": 50,
+              "width_pct": 45,
+              "height_pct": 20,
+              "label": {
+                "es": "Mostrar en Gallery",
+                "en": "Show in Gallery",
+                "pt": "Mostrar na Gallery"
+              }
+            },
+            {
+              "x_pct": 50,
+              "y_pct": 50,
+              "width_pct": 45,
+              "height_pct": 20,
+              "label": {
+                "es": "Estado de exposicion",
+                "en": "Exhibition status",
+                "pt": "Estado de exposicao"
+              }
+            }
           ]
         },
         {
@@ -5584,14 +6894,51 @@
           "source_slide": 98,
           "asset_id": "manual-native-privacy-review-certify",
           "media_path": "ppt/media/image160.png",
-          "source_crop_px": {"x": 30, "y": 245, "width": 1170, "height": 540},
-          "mask_rects_px": [{"x": 310, "y": 55, "width": 460, "height": 485, "fill": "#ffffff"}],
-          "copy": {
-            "es": {"title": "Revisar visibilidad de cada Certify", "body": "En Certificaciones, cada fila puede tener su propio control Mostrar en la galeria. Asi el owner decide que evidencia publica y que conserva solo en su entorno Nivel 4.", "next_question": "Queres ver el estado con todos los Certify visibles?"},
-            "en": {"title": "Review each Certify visibility", "body": "In Certifications, each row can have its own Show in Gallery control. This lets the owner decide which evidence is public and which remains only in the Level 4 environment.", "next_question": "Do you want to see the state with all Certify records visible?"},
-            "pt": {"title": "Revisar a visibilidade de cada Certify", "body": "Em Certificacoes, cada linha pode ter seu proprio controle Mostrar na galeria. Assim o owner decide qual evidencia e publica e qual fica somente no ambiente Nivel 4.", "next_question": "Quer ver o estado com todos os Certify visiveis?"}
+          "source_crop_px": {
+            "x": 30,
+            "y": 245,
+            "width": 1170,
+            "height": 540
           },
-          "hotspots": [{"x_pct": 72, "y_pct": 8, "width_pct": 22, "height_pct": 86, "label": {"es": "Controles visibles", "en": "Visibility controls", "pt": "Controles de visibilidade"}}]
+          "mask_rects_px": [
+            {
+              "x": 310,
+              "y": 55,
+              "width": 460,
+              "height": 485,
+              "fill": "#ffffff"
+            }
+          ],
+          "copy": {
+            "es": {
+              "title": "Revisar visibilidad de cada Certify",
+              "body": "En Certificaciones, cada fila puede tener su propio control Mostrar en la galeria. Asi el owner decide que evidencia publica y que conserva solo en su entorno Nivel 4.",
+              "next_question": "Queres ver el estado con todos los Certify visibles?"
+            },
+            "en": {
+              "title": "Review each Certify visibility",
+              "body": "In Certifications, each row can have its own Show in Gallery control. This lets the owner decide which evidence is public and which remains only in the Level 4 environment.",
+              "next_question": "Do you want to see the state with all Certify records visible?"
+            },
+            "pt": {
+              "title": "Revisar a visibilidade de cada Certify",
+              "body": "Em Certificacoes, cada linha pode ter seu proprio controle Mostrar na galeria. Assim o owner decide qual evidencia e publica e qual fica somente no ambiente Nivel 4.",
+              "next_question": "Quer ver o estado com todos os Certify visiveis?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 72,
+              "y_pct": 8,
+              "width_pct": 22,
+              "height_pct": 86,
+              "label": {
+                "es": "Controles visibles",
+                "en": "Visibility controls",
+                "pt": "Controles de visibilidade"
+              }
+            }
+          ]
         },
         {
           "step_id": "privacy.all-certify-visible",
@@ -5600,13 +6947,42 @@
           "source_slide": 98,
           "asset_id": "manual-native-privacy-all-visible",
           "media_path": "ppt/media/image160.png",
-          "source_crop_px": {"x": 815, "y": 120, "width": 390, "height": 680},
-          "copy": {
-            "es": {"title": "Reconocer un estado visible", "body": "Los controles marcados indican que esos registros se muestran en Gallery. Publicar evidencia favorece la trazabilidad, pero debe ser una decision consciente del owner.", "next_question": "Queres comparar con una restriccion parcial?"},
-            "en": {"title": "Recognize a visible state", "body": "Checked controls indicate that those records are shown in Gallery. Publishing evidence supports traceability, but it must be a conscious owner decision.", "next_question": "Do you want to compare it with a partial restriction?"},
-            "pt": {"title": "Reconhecer um estado visivel", "body": "Controles marcados indicam que esses registros aparecem na Gallery. Publicar evidencia favorece a rastreabilidade, mas deve ser uma decisao consciente do owner.", "next_question": "Quer comparar com uma restricao parcial?"}
+          "source_crop_px": {
+            "x": 815,
+            "y": 120,
+            "width": 390,
+            "height": 680
           },
-          "hotspots": [{"x_pct": 10, "y_pct": 10, "width_pct": 35, "height_pct": 85, "label": {"es": "Checks activos", "en": "Active checks", "pt": "Checks ativos"}}]
+          "copy": {
+            "es": {
+              "title": "Reconocer un estado visible",
+              "body": "Los controles marcados indican que esos registros se muestran en Gallery. Publicar evidencia favorece la trazabilidad, pero debe ser una decision consciente del owner.",
+              "next_question": "Queres comparar con una restriccion parcial?"
+            },
+            "en": {
+              "title": "Recognize a visible state",
+              "body": "Checked controls indicate that those records are shown in Gallery. Publishing evidence supports traceability, but it must be a conscious owner decision.",
+              "next_question": "Do you want to compare it with a partial restriction?"
+            },
+            "pt": {
+              "title": "Reconhecer um estado visivel",
+              "body": "Controles marcados indicam que esses registros aparecem na Gallery. Publicar evidencia favorece a rastreabilidade, mas deve ser uma decisao consciente do owner.",
+              "next_question": "Quer comparar com uma restricao parcial?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 10,
+              "y_pct": 10,
+              "width_pct": 35,
+              "height_pct": 85,
+              "label": {
+                "es": "Checks activos",
+                "en": "Active checks",
+                "pt": "Checks ativos"
+              }
+            }
+          ]
         },
         {
           "step_id": "privacy.partial-restriction",
@@ -5615,18 +6991,49 @@
           "source_slide": 98,
           "asset_id": "manual-native-privacy-partial-restriction",
           "media_path": "ppt/media/image161.png",
-          "source_crop_px": {"x": 815, "y": 120, "width": 390, "height": 670},
-          "copy": {
-            "es": {"title": "Aplicar una restriccion parcial", "body": "Un control sin marcar oculta ese Certify a terceros sin borrar la informacion del owner. Si la obra se transfiere, el nuevo owner pasa a administrar la visibilidad disponible.", "next_question": "Queres repasar que ve un visitante y que conserva el owner?"},
-            "en": {"title": "Apply a partial restriction", "body": "An unchecked control hides that Certify record from third parties without deleting the owner's information. If the artwork is transferred, the new owner manages the available visibility.", "next_question": "Do you want to review what a visitor sees and what the owner keeps?"},
-            "pt": {"title": "Aplicar uma restricao parcial", "body": "Um controle desmarcado oculta esse Certify de terceiros sem apagar a informacao do owner. Se a obra for transferida, o novo owner passa a administrar a visibilidade disponivel.", "next_question": "Quer revisar o que um visitante ve e o que o owner conserva?"}
+          "source_crop_px": {
+            "x": 815,
+            "y": 120,
+            "width": 390,
+            "height": 670
           },
-          "hotspots": [{"x_pct": 10, "y_pct": 10, "width_pct": 35, "height_pct": 85, "label": {"es": "Checks mixtos", "en": "Mixed checks", "pt": "Checks mistos"}}]
+          "copy": {
+            "es": {
+              "title": "Aplicar una restriccion parcial",
+              "body": "Un control sin marcar oculta ese Certify a terceros sin borrar la informacion del owner. Si la obra se transfiere, el nuevo owner pasa a administrar la visibilidad disponible.",
+              "next_question": "Queres repasar que ve un visitante y que conserva el owner?"
+            },
+            "en": {
+              "title": "Apply a partial restriction",
+              "body": "An unchecked control hides that Certify record from third parties without deleting the owner's information. If the artwork is transferred, the new owner manages the available visibility.",
+              "next_question": "Do you want to review what a visitor sees and what the owner keeps?"
+            },
+            "pt": {
+              "title": "Aplicar uma restricao parcial",
+              "body": "Um controle desmarcado oculta esse Certify de terceiros sem apagar a informacao do owner. Se a obra for transferida, o novo owner passa a administrar a visibilidade disponivel.",
+              "next_question": "Quer revisar o que um visitante ve e o que o owner conserva?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 10,
+              "y_pct": 10,
+              "width_pct": 35,
+              "height_pct": 85,
+              "label": {
+                "es": "Checks mixtos",
+                "en": "Mixed checks",
+                "pt": "Checks mistos"
+              }
+            }
+          ]
         }
       ]
     },
     "vouchers": {
-      "source_slides": [99],
+      "source_slides": [
+        99
+      ],
       "description": "Native-image flow for voucher types, balances and consumption boundaries.",
       "steps": [
         {
@@ -5637,14 +7044,56 @@
           "asset_id": "manual-native-vouchers-understand-types",
           "media_path": "ppt/media/image164.png",
           "copy": {
-            "es": {"title": "Distinguir los tres vouchers", "body": "Mint usa Voucher Mint, Certify usa Voucher Certify y la vinculacion NFC usa Voucher NFC. Son creditos operativos de Atelier, no gas ni una moneda; transferencia no consume vouchers.", "next_question": "Queres reconocer los iconos de cada tipo?"},
-            "en": {"title": "Distinguish the three voucher types", "body": "Mint uses a Mint Voucher, Certify uses a Certify Voucher and NFC linking uses an NFC Voucher. They are Atelier operational credits, not gas or currency; transfer does not consume vouchers.", "next_question": "Do you want to recognize each type's icon?"},
-            "pt": {"title": "Distinguir os tres vouchers", "body": "Mint usa Voucher Mint, Certify usa Voucher Certify e a vinculacao NFC usa Voucher NFC. Sao creditos operacionais do Atelier, nao gas nem moeda; transferencia nao consome vouchers.", "next_question": "Quer reconhecer o icone de cada tipo?"}
+            "es": {
+              "title": "Distinguir los tres vouchers",
+              "body": "Mint usa Voucher Mint, Certify usa Voucher Certify y la vinculacion NFC usa Voucher NFC. Son creditos operativos de Atelier, no gas ni una moneda; transferencia no consume vouchers.",
+              "next_question": "Queres reconocer los iconos de cada tipo?"
+            },
+            "en": {
+              "title": "Distinguish the three voucher types",
+              "body": "Mint uses a Mint Voucher, Certify uses a Certify Voucher and NFC linking uses an NFC Voucher. They are Atelier operational credits, not gas or currency; transfer does not consume vouchers.",
+              "next_question": "Do you want to recognize each type's icon?"
+            },
+            "pt": {
+              "title": "Distinguir os tres vouchers",
+              "body": "Mint usa Voucher Mint, Certify usa Voucher Certify e a vinculacao NFC usa Voucher NFC. Sao creditos operacionais do Atelier, nao gas nem moeda; transferencia nao consome vouchers.",
+              "next_question": "Quer reconhecer o icone de cada tipo?"
+            }
           },
           "hotspots": [
-            {"x_pct": 1, "y_pct": 1, "width_pct": 98, "height_pct": 31, "label": {"es": "Voucher Mint", "en": "Mint Voucher", "pt": "Voucher Mint"}},
-            {"x_pct": 1, "y_pct": 34, "width_pct": 98, "height_pct": 31, "label": {"es": "Voucher NFC", "en": "NFC Voucher", "pt": "Voucher NFC"}},
-            {"x_pct": 1, "y_pct": 67, "width_pct": 98, "height_pct": 31, "label": {"es": "Voucher Certify", "en": "Certify Voucher", "pt": "Voucher Certify"}}
+            {
+              "x_pct": 1,
+              "y_pct": 1,
+              "width_pct": 98,
+              "height_pct": 31,
+              "label": {
+                "es": "Voucher Mint",
+                "en": "Mint Voucher",
+                "pt": "Voucher Mint"
+              }
+            },
+            {
+              "x_pct": 1,
+              "y_pct": 34,
+              "width_pct": 98,
+              "height_pct": 31,
+              "label": {
+                "es": "Voucher NFC",
+                "en": "NFC Voucher",
+                "pt": "Voucher NFC"
+              }
+            },
+            {
+              "x_pct": 1,
+              "y_pct": 67,
+              "width_pct": 98,
+              "height_pct": 31,
+              "label": {
+                "es": "Voucher Certify",
+                "en": "Certify Voucher",
+                "pt": "Voucher Certify"
+              }
+            }
           ]
         },
         {
@@ -5655,14 +7104,56 @@
           "asset_id": "manual-native-vouchers-recognize-icons",
           "media_path": "ppt/media/image162.png",
           "copy": {
-            "es": {"title": "Reconocer los iconos", "body": "El icono azul corresponde a Mint, el verde a NFC y el magenta a Certify. Los mismos colores ayudan a identificar saldos y acciones en el perfil.", "next_question": "Queres ver donde aparecen los saldos?"},
-            "en": {"title": "Recognize the icons", "body": "The blue icon is Mint, the green icon is NFC and the magenta icon is Certify. The same colors help identify balances and actions in the profile.", "next_question": "Do you want to see where balances appear?"},
-            "pt": {"title": "Reconhecer os icones", "body": "O icone azul corresponde a Mint, o verde a NFC e o magenta a Certify. As mesmas cores ajudam a identificar saldos e acoes no perfil.", "next_question": "Quer ver onde aparecem os saldos?"}
+            "es": {
+              "title": "Reconocer los iconos",
+              "body": "El icono azul corresponde a Mint, el verde a NFC y el magenta a Certify. Los mismos colores ayudan a identificar saldos y acciones en el perfil.",
+              "next_question": "Queres ver donde aparecen los saldos?"
+            },
+            "en": {
+              "title": "Recognize the icons",
+              "body": "The blue icon is Mint, the green icon is NFC and the magenta icon is Certify. The same colors help identify balances and actions in the profile.",
+              "next_question": "Do you want to see where balances appear?"
+            },
+            "pt": {
+              "title": "Reconhecer os icones",
+              "body": "O icone azul corresponde a Mint, o verde a NFC e o magenta a Certify. As mesmas cores ajudam a identificar saldos e acoes no perfil.",
+              "next_question": "Quer ver onde aparecem os saldos?"
+            }
           },
           "hotspots": [
-            {"x_pct": 1, "y_pct": 1, "width_pct": 31, "height_pct": 98, "label": {"es": "Mint", "en": "Mint", "pt": "Mint"}},
-            {"x_pct": 34, "y_pct": 1, "width_pct": 31, "height_pct": 98, "label": {"es": "NFC", "en": "NFC", "pt": "NFC"}},
-            {"x_pct": 67, "y_pct": 1, "width_pct": 31, "height_pct": 98, "label": {"es": "Certify", "en": "Certify", "pt": "Certify"}}
+            {
+              "x_pct": 1,
+              "y_pct": 1,
+              "width_pct": 31,
+              "height_pct": 98,
+              "label": {
+                "es": "Mint",
+                "en": "Mint",
+                "pt": "Mint"
+              }
+            },
+            {
+              "x_pct": 34,
+              "y_pct": 1,
+              "width_pct": 31,
+              "height_pct": 98,
+              "label": {
+                "es": "NFC",
+                "en": "NFC",
+                "pt": "NFC"
+              }
+            },
+            {
+              "x_pct": 67,
+              "y_pct": 1,
+              "width_pct": 31,
+              "height_pct": 98,
+              "label": {
+                "es": "Certify",
+                "en": "Certify",
+                "pt": "Certify"
+              }
+            }
           ]
         },
         {
@@ -5672,18 +7163,65 @@
           "source_slide": 99,
           "asset_id": "manual-native-vouchers-header-balances",
           "media_path": "ppt/media/image163.png",
-          "source_crop_px": {"x": 170, "y": 130, "width": 500, "height": 105},
+          "source_crop_px": {
+            "x": 170,
+            "y": 130,
+            "width": 500,
+            "height": 105
+          },
           "mask_rects_px": [
-            {"x": 98, "y": 28, "width": 54, "height": 42, "fill": "#ffffff"},
-            {"x": 245, "y": 28, "width": 55, "height": 42, "fill": "#ffffff"},
-            {"x": 397, "y": 28, "width": 50, "height": 42, "fill": "#ffffff"}
+            {
+              "x": 98,
+              "y": 28,
+              "width": 54,
+              "height": 42,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 245,
+              "y": 28,
+              "width": 55,
+              "height": 42,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 397,
+              "y": 28,
+              "width": 50,
+              "height": 42,
+              "fill": "#ffffff"
+            }
           ],
           "copy": {
-            "es": {"title": "Ver saldos en la cabecera", "body": "La cabecera de usuario puede mostrar los contadores por tipo. Los valores del manual estan ocultos porque son ejemplos; en Nivel 4, el saldo real solo debe venir del contexto owner autorizado.", "next_question": "Queres abrir el perfil para ver la misma informacion?"},
-            "en": {"title": "See balances in the header", "body": "The user header may show counters by type. Manual values are masked because they are examples; at Level 4, real balances must come only from authorized owner context.", "next_question": "Do you want to open the profile to see the same information?"},
-            "pt": {"title": "Ver saldos no cabecalho", "body": "O cabecalho do usuario pode mostrar contadores por tipo. Os valores do manual estao ocultos por serem exemplos; no Nivel 4, saldos reais devem vir apenas do contexto owner autorizado.", "next_question": "Quer abrir o perfil para ver a mesma informacao?"}
+            "es": {
+              "title": "Ver saldos en la cabecera",
+              "body": "La cabecera de usuario puede mostrar los contadores por tipo. Los valores del manual estan ocultos porque son ejemplos; en Nivel 4, el saldo real solo debe venir del contexto owner autorizado.",
+              "next_question": "Queres abrir el perfil para ver la misma informacion?"
+            },
+            "en": {
+              "title": "See balances in the header",
+              "body": "The user header may show counters by type. Manual values are masked because they are examples; at Level 4, real balances must come only from authorized owner context.",
+              "next_question": "Do you want to open the profile to see the same information?"
+            },
+            "pt": {
+              "title": "Ver saldos no cabecalho",
+              "body": "O cabecalho do usuario pode mostrar contadores por tipo. Os valores do manual estao ocultos por serem exemplos; no Nivel 4, saldos reais devem vir apenas do contexto owner autorizado.",
+              "next_question": "Quer abrir o perfil para ver a mesma informacao?"
+            }
           },
-          "hotspots": [{"x_pct": 1, "y_pct": 1, "width_pct": 98, "height_pct": 98, "label": {"es": "Contadores saneados", "en": "Sanitized counters", "pt": "Contadores saneados"}}]
+          "hotspots": [
+            {
+              "x_pct": 1,
+              "y_pct": 1,
+              "width_pct": 98,
+              "height_pct": 98,
+              "label": {
+                "es": "Contadores saneados",
+                "en": "Sanitized counters",
+                "pt": "Contadores saneados"
+              }
+            }
+          ]
         },
         {
           "step_id": "vouchers.see-profile-balances",
@@ -5692,18 +7230,65 @@
           "source_slide": 99,
           "asset_id": "manual-native-vouchers-profile-balances",
           "media_path": "ppt/media/image165.png",
-          "source_crop_px": {"x": 35, "y": 360, "width": 390, "height": 175},
+          "source_crop_px": {
+            "x": 35,
+            "y": 360,
+            "width": 390,
+            "height": 175
+          },
           "mask_rects_px": [
-            {"x": 70, "y": 96, "width": 45, "height": 45, "fill": "#ffffff"},
-            {"x": 190, "y": 96, "width": 45, "height": 45, "fill": "#ffffff"},
-            {"x": 307, "y": 96, "width": 47, "height": 45, "fill": "#ffffff"}
+            {
+              "x": 70,
+              "y": 96,
+              "width": 45,
+              "height": 45,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 190,
+              "y": 96,
+              "width": 45,
+              "height": 45,
+              "fill": "#ffffff"
+            },
+            {
+              "x": 307,
+              "y": 96,
+              "width": 47,
+              "height": 45,
+              "fill": "#ffffff"
+            }
           ],
           "copy": {
-            "es": {"title": "Ver vouchers en el perfil", "body": "El perfil agrupa los tres contadores de vouchers. Companion puede explicar su significado, pero no asigna, compra, consume ni reembolsa vouchers; los saldos reales requieren integracion owner read-only.", "next_question": "Queres entender quien consume cada voucher?"},
-            "en": {"title": "See vouchers in the profile", "body": "The profile groups the three voucher counters. Companion can explain them but does not assign, buy, consume or refund vouchers; real balances require read-only owner integration.", "next_question": "Do you want to understand who consumes each voucher?"},
-            "pt": {"title": "Ver vouchers no perfil", "body": "O perfil agrupa os tres contadores de vouchers. O Companion pode explica-los, mas nao atribui, compra, consome nem reembolsa vouchers; saldos reais exigem integracao owner read-only.", "next_question": "Quer entender quem consome cada voucher?"}
+            "es": {
+              "title": "Ver vouchers en el perfil",
+              "body": "El perfil agrupa los tres contadores de vouchers. Companion puede explicar su significado, pero no asigna, compra, consume ni reembolsa vouchers; los saldos reales requieren integracion owner read-only.",
+              "next_question": "Queres entender quien consume cada voucher?"
+            },
+            "en": {
+              "title": "See vouchers in the profile",
+              "body": "The profile groups the three voucher counters. Companion can explain them but does not assign, buy, consume or refund vouchers; real balances require read-only owner integration.",
+              "next_question": "Do you want to understand who consumes each voucher?"
+            },
+            "pt": {
+              "title": "Ver vouchers no perfil",
+              "body": "O perfil agrupa os tres contadores de vouchers. O Companion pode explica-los, mas nao atribui, compra, consome nem reembolsa vouchers; saldos reais exigem integracao owner read-only.",
+              "next_question": "Quer entender quem consome cada voucher?"
+            }
           },
-          "hotspots": [{"x_pct": 1, "y_pct": 45, "width_pct": 98, "height_pct": 50, "label": {"es": "Saldos por tipo", "en": "Balances by type", "pt": "Saldos por tipo"}}]
+          "hotspots": [
+            {
+              "x_pct": 1,
+              "y_pct": 45,
+              "width_pct": 98,
+              "height_pct": 50,
+              "label": {
+                "es": "Saldos por tipo",
+                "en": "Balances by type",
+                "pt": "Saldos por tipo"
+              }
+            }
+          ]
         },
         {
           "step_id": "vouchers.understand-consumption",
@@ -5712,13 +7297,42 @@
           "source_slide": 99,
           "asset_id": "manual-native-vouchers-consumption",
           "media_path": "ppt/media/image164.png",
-          "source_crop_px": {"x": 0, "y": 0, "width": 1396, "height": 326},
-          "copy": {
-            "es": {"title": "Entender consumo y compra", "body": "Consume el voucher quien ejecuta la accion: Mint, Certify o NFC segun corresponda. Transferencia no consume vouchers. La compra se realiza en el Shop publico y la acreditacion actual debe verificarse en el perfil.", "next_question": "Queres revisar una accion concreta o abrir el Shop?"},
-            "en": {"title": "Understand consumption and purchase", "body": "The actor executing the action consumes the corresponding Mint, Certify or NFC voucher. Transfer does not consume vouchers. Purchase happens in the public Shop and current crediting must be checked in the profile.", "next_question": "Do you want to review a specific action or open the Shop?"},
-            "pt": {"title": "Entender consumo e compra", "body": "Quem executa a acao consome o voucher correspondente de Mint, Certify ou NFC. Transferencia nao consome vouchers. A compra ocorre no Shop publico e a acreditacao atual deve ser conferida no perfil.", "next_question": "Quer revisar uma acao especifica ou abrir o Shop?"}
+          "source_crop_px": {
+            "x": 0,
+            "y": 0,
+            "width": 1396,
+            "height": 326
           },
-          "hotspots": [{"x_pct": 1, "y_pct": 1, "width_pct": 98, "height_pct": 98, "label": {"es": "Acciones con voucher", "en": "Voucher actions", "pt": "Acoes com voucher"}}]
+          "copy": {
+            "es": {
+              "title": "Entender consumo y compra",
+              "body": "Consume el voucher quien ejecuta la accion: Mint, Certify o NFC segun corresponda. Transferencia no consume vouchers. La compra se realiza en el Shop publico y la acreditacion actual debe verificarse en el perfil.",
+              "next_question": "Queres revisar una accion concreta o abrir el Shop?"
+            },
+            "en": {
+              "title": "Understand consumption and purchase",
+              "body": "The actor executing the action consumes the corresponding Mint, Certify or NFC voucher. Transfer does not consume vouchers. Purchase happens in the public Shop and current crediting must be checked in the profile.",
+              "next_question": "Do you want to review a specific action or open the Shop?"
+            },
+            "pt": {
+              "title": "Entender consumo e compra",
+              "body": "Quem executa a acao consome o voucher correspondente de Mint, Certify ou NFC. Transferencia nao consome vouchers. A compra ocorre no Shop publico e a acreditacao atual deve ser conferida no perfil.",
+              "next_question": "Quer revisar uma acao especifica ou abrir o Shop?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 1,
+              "y_pct": 1,
+              "width_pct": 98,
+              "height_pct": 98,
+              "label": {
+                "es": "Acciones con voucher",
+                "en": "Voucher actions",
+                "pt": "Acoes com voucher"
+              }
+            }
+          ]
         }
       ]
     }

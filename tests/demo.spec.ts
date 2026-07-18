@@ -46,6 +46,26 @@ test("adds a focused readable detail to a panoramic manual asset", async ({ page
   await page.screenshot({ path: testInfo.outputPath("panoramic-focus-detail.png"), fullPage: true });
 });
 
+test("adds focused navigation to a standard manual asset with multiple fields", async ({ page }, testInfo) => {
+  if (!process.env.DEMO_BASE_URL) {
+    await page.route("**/api/manual-asset/**", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "image/svg+xml",
+        body: '<svg xmlns="http://www.w3.org/2000/svg" width="660" height="330"><rect width="660" height="330" fill="#fff"/><rect x="20" y="14" width="614" height="126" fill="#dff5f7"/><rect x="20" y="185" width="614" height="126" fill="#f4f7f9"/></svg>',
+      });
+    });
+  }
+  await page.goto("/?flow=carga_obra&step=carga-obra.choose-country-type&lang=es&scenario=first-artwork");
+  const manualVisual = page.locator(".manual-visual");
+  await expect(manualVisual).toHaveAttribute("data-visual-layout", "standard");
+  const detail = page.getByRole("region", { name: "Detalle ampliado" });
+  await expect(detail.getByText("Pais de creacion", { exact: true })).toBeVisible();
+  await detail.getByRole("button", { name: "Siguiente detalle" }).click();
+  await expect(detail.getByText("Tipo de obra", { exact: true })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("standard-focus-detail.png"), fullPage: true });
+});
+
 test("configures a synthetic Certify actor and renders the completed provenance", async ({ page }, testInfo) => {
   await page.addInitScript(() => {
     sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({

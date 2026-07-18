@@ -111,6 +111,7 @@ async function main() {
       needs_review: flowAssets.filter((asset) => asset.priority >= 3).length,
       panoramic: flowAssets.filter((asset) => asset.flags.includes("panoramic")).length,
       small_source: flowAssets.filter((asset) => asset.flags.includes("small_source")).length,
+      without_focus_hotspot: flowAssets.filter((asset) => asset.flags.includes("no_focus_hotspot")).length,
     }];
   }));
   const report = {
@@ -124,6 +125,7 @@ async function main() {
       panoramic: assets.filter((asset) => asset.flags.includes("panoramic")).length,
       portrait: assets.filter((asset) => asset.flags.includes("portrait")).length,
       small_source: assets.filter((asset) => asset.flags.includes("small_source")).length,
+      without_focus_hotspot: assets.filter((asset) => asset.flags.includes("no_focus_hotspot")).length,
       duplicate_payload_groups: duplicateGroups.length,
       by_flow: byFlow,
     },

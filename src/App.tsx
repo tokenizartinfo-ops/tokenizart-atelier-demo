@@ -801,8 +801,8 @@ function ManualVisual({ step, language, onZoom }: { step: ManualStep; language: 
   const [focusIndex, setFocusIndex] = useState(0);
   const assetUrl = `/api/manual-asset/${encodeURIComponent(step.asset_id)}`;
   const layout = classifyVisualLayout(dimensions.width, dimensions.height);
-  const showDetail = needsVisualDetail(dimensions.width, dimensions.height);
   const hotspots = step.hotspots ?? [];
+  const showDetail = hotspots.length > 0 || needsVisualDetail(dimensions.width, dimensions.height);
   const activeHotspot = hotspots[focusIndex] ?? null;
   const labels = {
     es: { detail: "Detalle ampliado", full: "Recorre la captura completa", previous: "Detalle anterior", next: "Siguiente detalle" },
