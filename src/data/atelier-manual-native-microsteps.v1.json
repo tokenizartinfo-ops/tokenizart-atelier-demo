@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.atelier_manual_native_microsteps.v1",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "source": {
     "filename": "Manual_Atelier 2026.pptx",
     "sha256": "402a524390648e66966c514b357de1c468f1bb3c782a488a4012b81ddf475151",
@@ -3842,12 +3842,342 @@
         69,
         70
       ],
-      "description": "Native-image Mint flow covering review, voucher, wallet confirmation, success, error handling, minted status and batch Mint.",
+      "description": "Native-image Mint flow covering selection, review, voucher, wallet confirmation, processing, success, error recovery, minted status and batch Mint verification.",
+      "phase_map": [
+        {
+          "from_order": 1,
+          "to_order": 3,
+          "label": {
+            "es": "Seleccion y revision",
+            "en": "Selection and review",
+            "pt": "Selecao e revisao"
+          }
+        },
+        {
+          "from_order": 4,
+          "to_order": 5,
+          "label": {
+            "es": "Voucher y autorizacion",
+            "en": "Voucher and authorization",
+            "pt": "Voucher e autorizacao"
+          }
+        },
+        {
+          "from_order": 6,
+          "to_order": 7,
+          "label": {
+            "es": "Confirmacion y procesamiento",
+            "en": "Confirmation and processing",
+            "pt": "Confirmacao e processamento"
+          }
+        },
+        {
+          "from_order": 8,
+          "to_order": 10,
+          "label": {
+            "es": "Resultado y verificacion",
+            "en": "Result and verification",
+            "pt": "Resultado e verificacao"
+          }
+        },
+        {
+          "from_order": 11,
+          "to_order": 11,
+          "label": {
+            "es": "Recuperacion de errores",
+            "en": "Error recovery",
+            "pt": "Recuperacao de erros"
+          }
+        },
+        {
+          "from_order": 12,
+          "to_order": 13,
+          "label": {
+            "es": "Mint por lote",
+            "en": "Batch Mint",
+            "pt": "Mint em lote"
+          }
+        },
+        {
+          "from_order": 14,
+          "to_order": 15,
+          "label": {
+            "es": "Resultado del lote",
+            "en": "Batch result",
+            "pt": "Resultado do lote"
+          }
+        }
+      ],
+      "step_enrichment": {
+        "mint.read-minted-icon": {
+          "state_legend_title": {
+            "es": "Estados posibles de Mint",
+            "en": "Possible Mint states",
+            "pt": "Estados possiveis do Mint"
+          },
+          "state_legend": [
+            {
+              "state": "ready_to_mint",
+              "tone": "neutral",
+              "label": {
+                "es": "Por mintear",
+                "en": "Ready to Mint",
+                "pt": "Por mintear"
+              },
+              "message": {
+                "es": "La obra esta cargada, pero aun no tiene identidad digital registrada.",
+                "en": "The artwork is loaded but does not yet have a registered digital identity.",
+                "pt": "A obra esta carregada, mas ainda nao possui identidade digital registrada."
+              },
+              "meaning": {
+                "es": "Revisa ficha, imagenes, visibilidad y Voucher Mint antes de avanzar.",
+                "en": "Review the record, images, visibility and Mint Voucher before proceeding.",
+                "pt": "Revise ficha, imagens, visibilidade e Voucher Mint antes de avancar."
+              }
+            },
+            {
+              "state": "processing",
+              "tone": "progress",
+              "label": {
+                "es": "Procesando",
+                "en": "Processing",
+                "pt": "Processando"
+              },
+              "message": {
+                "es": "La confirmacion fue aceptada y Atelier espera el resultado blockchain.",
+                "en": "Confirmation was accepted and Atelier is waiting for the blockchain result.",
+                "pt": "A confirmacao foi aceita e o Atelier aguarda o resultado da blockchain."
+              },
+              "meaning": {
+                "es": "No cierres, vuelvas atras ni repitas la accion.",
+                "en": "Do not close, go back or repeat the action.",
+                "pt": "Nao feche, volte nem repita a acao."
+              }
+            },
+            {
+              "state": "minted",
+              "tone": "success",
+              "label": {
+                "es": "Minteada",
+                "en": "Minted",
+                "pt": "Mintada"
+              },
+              "message": {
+                "es": "Atelier mostro exito y la obra exhibe el estado Mint.",
+                "en": "Atelier showed success and the artwork displays Mint status.",
+                "pt": "O Atelier mostrou sucesso e a obra exibe o estado Mint."
+              },
+              "meaning": {
+                "es": "El comprobante y los endpoints blockchain permiten verificar el registro.",
+                "en": "The receipt and blockchain endpoints let you verify the record.",
+                "pt": "O comprovante e os endpoints blockchain permitem verificar o registro."
+              }
+            },
+            {
+              "state": "error_needs_review",
+              "tone": "danger",
+              "label": {
+                "es": "Error de Mint",
+                "en": "Mint error",
+                "pt": "Erro de Mint"
+              },
+              "message": {
+                "es": "Atelier informo que no pudo completar el Mint.",
+                "en": "Atelier reported that it could not complete Mint.",
+                "pt": "O Atelier informou que nao conseguiu concluir o Mint."
+              },
+              "meaning": {
+                "es": "Revisa credencial, voucher y estado de la obra antes de intentar nuevamente.",
+                "en": "Review the credential, voucher and artwork status before trying again.",
+                "pt": "Revise credencial, voucher e estado da obra antes de tentar novamente."
+              }
+            },
+            {
+              "state": "confirmation_uncertain",
+              "tone": "warning",
+              "label": {
+                "es": "Sin confirmacion visible",
+                "en": "No visible confirmation",
+                "pt": "Sem confirmacao visivel"
+              },
+              "message": {
+                "es": "No aparecio exito ni un estado final claro.",
+                "en": "No success notice or clear final state appeared.",
+                "pt": "Nao apareceu aviso de sucesso nem estado final claro."
+              },
+              "meaning": {
+                "es": "Comprueba primero la obra y el comprobante; no repitas Mint a ciegas.",
+                "en": "Check the artwork and receipt first; do not retry Mint blindly.",
+                "pt": "Verifique primeiro a obra e o comprovante; nao repita o Mint as cegas."
+              }
+            }
+          ]
+        },
+        "mint.batch-verify-statuses": {
+          "state_legend_title": {
+            "es": "Estados posibles de Mint",
+            "en": "Possible Mint states",
+            "pt": "Estados possiveis do Mint"
+          },
+          "state_legend": [
+            {
+              "state": "ready_to_mint",
+              "tone": "neutral",
+              "label": {
+                "es": "Por mintear",
+                "en": "Ready to Mint",
+                "pt": "Por mintear"
+              },
+              "message": {
+                "es": "La obra sigue sin estado Mint confirmado.",
+                "en": "The artwork still has no confirmed Mint status.",
+                "pt": "A obra continua sem estado Mint confirmado."
+              },
+              "meaning": {
+                "es": "Revisa su estado individual antes de repetir el lote.",
+                "en": "Review its individual status before repeating the batch.",
+                "pt": "Revise o estado individual antes de repetir o lote."
+              }
+            },
+            {
+              "state": "processing",
+              "tone": "progress",
+              "label": {
+                "es": "Procesando",
+                "en": "Processing",
+                "pt": "Processando"
+              },
+              "message": {
+                "es": "El resultado del lote todavia esta pendiente.",
+                "en": "The batch result is still pending.",
+                "pt": "O resultado do lote ainda esta pendente."
+              },
+              "meaning": {
+                "es": "Espera y no confirmes un segundo lote con las mismas obras.",
+                "en": "Wait and do not confirm a second batch with the same artworks.",
+                "pt": "Aguarde e nao confirme outro lote com as mesmas obras."
+              }
+            },
+            {
+              "state": "minted",
+              "tone": "success",
+              "label": {
+                "es": "Minteada",
+                "en": "Minted",
+                "pt": "Mintada"
+              },
+              "message": {
+                "es": "La obra muestra el icono Mint y dispone de comprobante verificable.",
+                "en": "The artwork shows the Mint icon and has a verifiable receipt.",
+                "pt": "A obra mostra o icone Mint e possui comprovante verificavel."
+              },
+              "meaning": {
+                "es": "Verifica cada obra seleccionada, no solo el aviso general del lote.",
+                "en": "Verify every selected artwork, not only the general batch notice.",
+                "pt": "Verifique cada obra selecionada, nao apenas o aviso geral do lote."
+              }
+            },
+            {
+              "state": "error_needs_review",
+              "tone": "danger",
+              "label": {
+                "es": "Error de Mint",
+                "en": "Mint error",
+                "pt": "Erro de Mint"
+              },
+              "message": {
+                "es": "El lote o una obra requiere revision antes de reintentar.",
+                "en": "The batch or an artwork requires review before retrying.",
+                "pt": "O lote ou uma obra requer revisao antes de tentar novamente."
+              },
+              "meaning": {
+                "es": "Comprueba voucher, credencial y estado individual de cada obra.",
+                "en": "Check voucher, credential and the individual status of each artwork.",
+                "pt": "Verifique voucher, credencial e estado individual de cada obra."
+              }
+            },
+            {
+              "state": "confirmation_uncertain",
+              "tone": "warning",
+              "label": {
+                "es": "Resultado parcial o incierto",
+                "en": "Partial or uncertain result",
+                "pt": "Resultado parcial ou incerto"
+              },
+              "message": {
+                "es": "No todas las obras muestran un estado final verificable.",
+                "en": "Not every artwork shows a verifiable final state.",
+                "pt": "Nem todas as obras mostram um estado final verificavel."
+              },
+              "meaning": {
+                "es": "Revisa una por una antes de preparar cualquier nuevo intento.",
+                "en": "Review them one by one before preparing any new attempt.",
+                "pt": "Revise uma por uma antes de preparar nova tentativa."
+              }
+            }
+          ]
+        }
+      },
       "steps": [
         {
-          "step_id": "mint.review-loaded-artwork",
+          "step_id": "mint.select-loaded-artwork",
           "order": 1,
-          "manual_step": "1",
+          "manual_step": "1A",
+          "source_slide": 68,
+          "asset_id": "manual-native-mint-select-loaded-artwork",
+          "media_path": "ppt/media/image89.png",
+          "source_crop_px": {
+            "x": 270,
+            "y": 95,
+            "width": 1100,
+            "height": 650
+          },
+          "copy": {
+            "es": {
+              "title": "Elegir una obra propia por mintear",
+              "body": "En Administracion > Obras Propias, usa Por Mintear o abre una obra ya cargada. Mint parte de una precarga existente: no se inicia desde Gallery ni reemplaza la revision de la ficha.",
+              "next_question": "Ya elegiste la obra que queres revisar antes de Mint?"
+            },
+            "en": {
+              "title": "Choose an own artwork awaiting Mint",
+              "body": "Under Administration > Own Artworks, use To Mint or open an already loaded artwork. Mint starts from an existing preload: it is not launched from Gallery and does not replace record review.",
+              "next_question": "Have you chosen the artwork you want to review before Mint?"
+            },
+            "pt": {
+              "title": "Escolher uma obra propria por mintear",
+              "body": "Em Administracao > Obras Proprias, use Por Mintear ou abra uma obra ja carregada. O Mint parte de uma pre-carga existente: nao e iniciado na Gallery nem substitui a revisao da ficha.",
+              "next_question": "Voce ja escolheu a obra que quer revisar antes do Mint?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 8,
+              "y_pct": 12,
+              "width_pct": 42,
+              "height_pct": 14,
+              "label": {
+                "es": "Filtro Por Mintear",
+                "en": "To Mint filter",
+                "pt": "Filtro Por Mintear"
+              }
+            },
+            {
+              "x_pct": 2,
+              "y_pct": 30,
+              "width_pct": 92,
+              "height_pct": 67,
+              "label": {
+                "es": "Obras cargadas disponibles",
+                "en": "Available loaded artworks",
+                "pt": "Obras carregadas disponiveis"
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "mint.review-loaded-artwork",
+          "order": 2,
+          "manual_step": "1B",
           "source_slide": 68,
           "asset_id": "manual-native-mint-review-artwork",
           "media_path": "ppt/media/image93.png",
@@ -3910,7 +4240,7 @@
         },
         {
           "step_id": "mint.open-action",
-          "order": 2,
+          "order": 3,
           "manual_step": "2",
           "source_slide": 68,
           "asset_id": "manual-native-mint-open-action",
@@ -3954,7 +4284,7 @@
         },
         {
           "step_id": "mint.review-voucher",
-          "order": 3,
+          "order": 4,
           "manual_step": "3A",
           "source_slide": 69,
           "asset_id": "manual-native-mint-review-voucher",
@@ -4007,7 +4337,7 @@
         },
         {
           "step_id": "mint.enter-wallet-credential",
-          "order": 4,
+          "order": 5,
           "manual_step": "3B",
           "source_slide": 69,
           "asset_id": "manual-native-mint-wallet-credential",
@@ -4071,7 +4401,7 @@
         },
         {
           "step_id": "mint.confirm-dialog",
-          "order": 5,
+          "order": 6,
           "manual_step": "4A",
           "source_slide": 69,
           "asset_id": "manual-native-mint-confirm-dialog",
@@ -4120,7 +4450,7 @@
         },
         {
           "step_id": "mint.wait-for-blockchain",
-          "order": 6,
+          "order": 7,
           "manual_step": "4B",
           "source_slide": 69,
           "asset_id": "manual-native-mint-wait-blockchain",
@@ -4158,7 +4488,7 @@
         },
         {
           "step_id": "mint.success-toast",
-          "order": 7,
+          "order": 8,
           "manual_step": "resultado",
           "source_slide": 69,
           "asset_id": "manual-native-mint-success-toast",
@@ -4196,7 +4526,7 @@
         },
         {
           "step_id": "mint.open-receipt",
-          "order": 8,
+          "order": 9,
           "manual_step": "comprobante",
           "source_slide": 69,
           "asset_id": "manual-native-mint-open-receipt",
@@ -4234,7 +4564,7 @@
         },
         {
           "step_id": "mint.read-minted-icon",
-          "order": 9,
+          "order": 10,
           "manual_step": "estado",
           "source_slide": 69,
           "asset_id": "manual-native-mint-read-status-icon",
@@ -4272,7 +4602,7 @@
         },
         {
           "step_id": "mint.handle-error",
-          "order": 10,
+          "order": 11,
           "manual_step": "error",
           "source_slide": 69,
           "asset_id": "manual-native-mint-handle-error",
@@ -4310,7 +4640,7 @@
         },
         {
           "step_id": "mint.batch-select-artworks",
-          "order": 11,
+          "order": 12,
           "manual_step": "lote 1",
           "source_slide": 70,
           "asset_id": "manual-native-mint-batch-select",
@@ -4385,7 +4715,7 @@
         },
         {
           "step_id": "mint.batch-review-and-confirm",
-          "order": 12,
+          "order": 13,
           "manual_step": "lote 2",
           "source_slide": 70,
           "asset_id": "manual-native-mint-batch-confirm",
@@ -4448,6 +4778,82 @@
                 "es": "Mintear Obras",
                 "en": "Mint Artworks",
                 "pt": "Mintear Obras"
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "mint.batch-confirm-result",
+          "order": 14,
+          "manual_step": "lote 3",
+          "source_slide": 70,
+          "asset_id": "manual-native-mint-batch-success",
+          "media_path": "ppt/media/image97.png",
+          "copy": {
+            "es": {
+              "title": "Confirmar el resultado del lote",
+              "body": "El aviso de exito confirma que la operacion de Mint termino. Como el manual aplica el mismo cierre del Mint individual al lote, el paso siguiente es revisar las obras seleccionadas y no quedarse solo con el aviso general.",
+              "next_question": "Queres comprobar el estado Mint de cada obra del lote?"
+            },
+            "en": {
+              "title": "Confirm the batch result",
+              "body": "The success notice confirms that the Mint operation finished. Because the manual applies the individual Mint closing sequence to the batch, the next step is to review the selected artworks rather than relying only on the general notice.",
+              "next_question": "Do you want to check the Mint status of every artwork in the batch?"
+            },
+            "pt": {
+              "title": "Confirmar o resultado do lote",
+              "body": "O aviso de sucesso confirma que a operacao de Mint terminou. Como o manual aplica ao lote o mesmo fechamento do Mint individual, o passo seguinte e revisar as obras selecionadas e nao depender apenas do aviso geral.",
+              "next_question": "Quer verificar o estado Mint de cada obra do lote?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 0,
+              "y_pct": 0,
+              "width_pct": 100,
+              "height_pct": 100,
+              "label": {
+                "es": "Resultado exitoso del lote",
+                "en": "Successful batch result",
+                "pt": "Resultado bem-sucedido do lote"
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "mint.batch-verify-statuses",
+          "order": 15,
+          "manual_step": "lote 4",
+          "source_slide": 70,
+          "asset_id": "manual-native-mint-batch-verify-statuses",
+          "media_path": "ppt/media/image99.png",
+          "copy": {
+            "es": {
+              "title": "Verificar cada obra del lote",
+              "body": "Vuelve a Obras Propias y revisa cada obra seleccionada. El icono Mint, el comprobante y los endpoints blockchain permiten confirmar el resultado individual; si una obra sigue Por Mintear o queda incierta, no repitas el lote sin revisar.",
+              "next_question": "Queres que revisemos uno de los estados posibles de Mint?"
+            },
+            "en": {
+              "title": "Verify every artwork in the batch",
+              "body": "Return to Own Artworks and review every selected artwork. The Mint icon, receipt and blockchain endpoints confirm each individual result; if an artwork remains To Mint or uncertain, do not repeat the batch without checking it.",
+              "next_question": "Do you want to review one of the possible Mint states?"
+            },
+            "pt": {
+              "title": "Verificar cada obra do lote",
+              "body": "Volte a Obras Proprias e revise cada obra selecionada. O icone Mint, o comprovante e os endpoints blockchain confirmam cada resultado individual; se uma obra continuar Por Mintear ou incerta, nao repita o lote sem revisar.",
+              "next_question": "Quer revisar um dos estados possiveis do Mint?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 73,
+              "y_pct": 5,
+              "width_pct": 22,
+              "height_pct": 45,
+              "label": {
+                "es": "Estado Mint por obra",
+                "en": "Mint status per artwork",
+                "pt": "Estado Mint por obra"
               }
             }
           ]
@@ -5236,6 +5642,11 @@
       ],
       "step_enrichment": {
         "chip.interpret-reading-states": {
+          "state_legend_title": {
+            "es": "Lecturas posibles del chip NFC",
+            "en": "Possible NFC tag readings",
+            "pt": "Leituras possiveis do chip NFC"
+          },
           "state_legend": [
             {
               "state": "ready_to_link",

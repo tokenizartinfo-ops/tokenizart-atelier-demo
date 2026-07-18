@@ -61,6 +61,9 @@ Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `
 
 - Synthetic owner/artist and authorized-manager actors.
 - Single artwork and two-artwork batch modes.
+- Fifteen verified visual microsteps from selection and review through result verification.
+- Localized phases for selection, authorization, processing, recovery and batch result.
+- Five explicit Mint states: ready, processing, minted, error and uncertain confirmation.
 - Explicit review, voucher, and simulated-signature gates.
 - Deterministic Gnosis, token, transaction, and IPFS references that are clearly marked as simulations.
 - Idempotent voucher consumption and a final digital-identity timeline in Spanish, English and Portuguese.
@@ -121,6 +124,9 @@ npm run deploy:staging
 
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
+Validated staging Worker for the phased Mint walkthrough:
+`c8577b55-2f23-4eea-8b9e-37179b3761af`. Production was not changed.
+
 ## Source synchronization
 
 The contract snapshot comes from:
@@ -129,9 +135,9 @@ The contract snapshot comes from:
 
 Update the snapshot only after the source contract passes its native asset audit and human visual QA.
 
-Current snapshot: contract `1.8.0`, with 15 Certify steps and 26 NFC steps
+Current snapshot: contract `1.9.0`, with 15 Mint steps, 15 Certify steps and 26 NFC steps
 grouped into localized ES/EN/PT phases. States described by the verified manual
 without a literal screenshot are rendered as explanatory UI, not fabricated
 Atelier captures.
 
-`audit:visual:staging` checks all 151 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. The runtime presents exceptional aspect ratios as full context plus an enlarged hotspot detail or a horizontally scrollable capture.
+`audit:visual:staging` checks all 154 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. The runtime presents exceptional aspect ratios as full context plus an enlarged hotspot detail or a horizontally scrollable capture.

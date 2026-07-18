@@ -136,7 +136,7 @@ test("completes a synthetic batch Mint with deterministic references", async ({ 
     }));
   });
 
-  await page.goto("/?flow=mint&step=mint.batch-review-and-confirm&lang=es&scenario=first-artwork");
+  await page.goto("/?flow=mint&step=mint.batch-verify-statuses&lang=es&scenario=first-artwork");
   await page.getByRole("button", { name: /Gestor Demo autorizado/ }).click();
   await page.getByRole("button", { name: /Lote de 2 obras/ }).click();
   await page.getByLabel("Confirmo que revisé la información de práctica").check();
