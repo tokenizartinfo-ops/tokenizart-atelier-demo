@@ -106,6 +106,7 @@ npm install
 npm run dev
 npm test
 npm run test:ui
+npm run audit:visual:staging
 npm run smoke:assets:staging
 ```
 
@@ -127,3 +128,5 @@ The contract snapshot comes from:
 `tokenizart-cloudflare-ai/tokenizart-companion-agent/contracts/atelier-manual-native-microsteps.v1.json`
 
 Update the snapshot only after the source contract passes its native asset audit and human visual QA.
+
+`audit:visual:staging` checks all 151 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. The runtime presents exceptional aspect ratios as full context plus an enlarged hotspot detail or a horizontally scrollable capture.

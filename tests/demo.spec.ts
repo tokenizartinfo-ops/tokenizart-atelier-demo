@@ -28,6 +28,24 @@ test("opens an allowlisted deep link from Companion", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Atelier Demo" })).toBeVisible();
 });
 
+test("adds a focused readable detail to a panoramic manual asset", async ({ page }, testInfo) => {
+  if (!process.env.DEMO_BASE_URL) {
+    await page.route("**/api/manual-asset/**", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "image/svg+xml",
+        body: '<svg xmlns="http://www.w3.org/2000/svg" width="1268" height="76"><rect width="1268" height="76" fill="#fff"/><rect x="1100" y="8" width="145" height="60" fill="#9ee8ef"/><text x="1108" y="48" font-size="25">Registrarse</text></svg>',
+      });
+    });
+  }
+  await page.goto("/?flow=onboarding&step=onboarding.choose-registration&lang=es&scenario=first-artwork");
+  const manualVisual = page.locator(".manual-visual");
+  await expect(manualVisual).toHaveAttribute("data-visual-layout", "panoramic");
+  await expect(page.getByRole("region", { name: "Detalle ampliado" })).toBeVisible();
+  await expect(page.getByRole("img", { name: /Detalle ampliado/ })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("panoramic-focus-detail.png"), fullPage: true });
+});
+
 test("configures a synthetic Certify actor and renders the completed provenance", async ({ page }, testInfo) => {
   await page.addInitScript(() => {
     sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({

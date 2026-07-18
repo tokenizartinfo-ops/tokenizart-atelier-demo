@@ -35,6 +35,7 @@ import {
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 import { isCompanionBridgeMessage, postDemoBridgeMessage, resolveDemoBridgeOrigin } from "./demoBridge";
 import { flowLabels, ui } from "./i18n";
+import { classifyVisualLayout, focusImageStyle, needsVisualDetail } from "./visualPresentation";
 import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType, VoucherBalances as VoucherBalanceValues, VoucherProductId } from "./types";
 
 const SESSION_KEY = "tokenizart.demo-atelier.session.v1";
@@ -796,18 +797,51 @@ function VoucherBalances({ context, compact = false }: { context: DemoContext; c
 }
 
 function ManualVisual({ step, language, onZoom }: { step: ManualStep; language: Language; onZoom: () => void }) {
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [focusIndex, setFocusIndex] = useState(0);
+  const assetUrl = `/api/manual-asset/${encodeURIComponent(step.asset_id)}`;
+  const layout = classifyVisualLayout(dimensions.width, dimensions.height);
+  const showDetail = needsVisualDetail(dimensions.width, dimensions.height);
+  const hotspots = step.hotspots ?? [];
+  const activeHotspot = hotspots[focusIndex] ?? null;
+  const labels = {
+    es: { detail: "Detalle ampliado", full: "Recorre la captura completa", previous: "Detalle anterior", next: "Siguiente detalle" },
+    en: { detail: "Enlarged detail", full: "Explore the full capture", previous: "Previous detail", next: "Next detail" },
+    pt: { detail: "Detalhe ampliado", full: "Percorra a captura completa", previous: "Detalhe anterior", next: "Proximo detalhe" },
+  }[language];
+
+  useEffect(() => {
+    setDimensions({ width: 0, height: 0 });
+    setFocusIndex(0);
+  }, [step.step_id]);
+
   return (
-    <div className="visual-stage">
-      <img src={`/api/manual-asset/${encodeURIComponent(step.asset_id)}`} alt={step.copy[language].title} />
-      {(step.hotspots ?? []).map((hotspot, index) => (
-        <span
-          className="hotspot"
-          key={`${step.step_id}-${index}`}
-          title={hotspot.label[language]}
-          style={{ left: `${hotspot.x_pct}%`, top: `${hotspot.y_pct}%`, width: `${hotspot.width_pct}%`, height: `${hotspot.height_pct}%` }}
-        />
-      ))}
-      <button className="icon-button zoom" onClick={onZoom} title="Ampliar imagen" aria-label="Ampliar imagen"><ZoomIn size={20} /></button>
+    <div className="manual-visual" data-visual-layout={layout}>
+      <div className="visual-stage">
+        <img src={assetUrl} alt={step.copy[language].title} onLoad={(event) => setDimensions({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })} />
+        {hotspots.map((hotspot, index) => (
+          <button
+            className={index === focusIndex ? "hotspot active" : "hotspot"}
+            key={`${step.step_id}-${index}`}
+            title={hotspot.label[language]}
+            aria-label={`${labels.detail} ${index + 1}`}
+            onClick={() => setFocusIndex(index)}
+            style={{ left: `${hotspot.x_pct}%`, top: `${hotspot.y_pct}%`, width: `${hotspot.width_pct}%`, height: `${hotspot.height_pct}%` }}
+          />
+        ))}
+        <button className="icon-button zoom" onClick={onZoom} title="Ampliar imagen" aria-label="Ampliar imagen"><ZoomIn size={20} /></button>
+      </div>
+      {showDetail && (
+        <section className="visual-detail" aria-label={labels.detail}>
+          <header>
+            <span><ZoomIn size={17} /><strong>{activeHotspot?.label[language] || labels.full}</strong><small>{labels.detail}</small></span>
+            {hotspots.length > 1 && <div><button type="button" disabled={focusIndex === 0} onClick={() => setFocusIndex((current) => Math.max(0, current - 1))} title={labels.previous} aria-label={labels.previous}><ArrowLeft size={16} /></button><b>{focusIndex + 1}/{hotspots.length}</b><button type="button" disabled={focusIndex === hotspots.length - 1} onClick={() => setFocusIndex((current) => Math.min(hotspots.length - 1, current + 1))} title={labels.next} aria-label={labels.next}><ArrowRight size={16} /></button></div>}
+          </header>
+          {activeHotspot
+            ? <div className="visual-focus-viewport" role="img" aria-label={`${labels.detail}: ${activeHotspot.label[language]}`}><img src={assetUrl} alt="" style={focusImageStyle(activeHotspot)} /></div>
+            : <div className="visual-pan-scroll" tabIndex={0} aria-label={labels.full}><img src={assetUrl} alt="" /></div>}
+        </section>
+      )}
     </div>
   );
 }
