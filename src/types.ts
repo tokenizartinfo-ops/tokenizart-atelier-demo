@@ -36,6 +36,7 @@ export interface ManualStep {
   order: number;
   source_slide: number;
   asset_id: string;
+  display_asset_id?: string;
   copy: Record<Language, LocalizedCopy>;
   hotspots?: Hotspot[];
 }

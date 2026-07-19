@@ -5,6 +5,9 @@ import atlas from "./data/atelier-manual-native-icon-atlas.v1.json";
 
 const runtimeAssetIds = new Set([
   ...Object.values(manual.flows).flatMap((flow) => flow.steps.map((step) => step.asset_id)),
+  ...Object.values(manual.flows).flatMap((flow) => flow.steps
+    .map((rawStep) => (rawStep as { display_asset_id?: string }).display_asset_id)
+    .filter(Boolean)),
   ...atlas.icons.map((icon) => icon.asset_id),
 ]);
 

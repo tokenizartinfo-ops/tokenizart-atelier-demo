@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.atelier_manual_native_microsteps.v1",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "source": {
     "filename": "Manual_Atelier 2026.pptx",
     "sha256": "402a524390648e66966c514b357de1c468f1bb3c782a488a4012b81ddf475151",
@@ -2315,6 +2315,7 @@
           "manual_step": "7",
           "source_slide": 28,
           "asset_id": "manual-native-onboarding-open-activation-link",
+          "display_asset_id": "onboarding-activation-email-sanitized",
           "media_path": "ppt/media/image31.png",
           "source_crop_px": {
             "x": 1040,
@@ -8535,6 +8536,7 @@
           "manual_step": "shop",
           "source_slide": 99,
           "asset_id": "manual-native-vouchers-shop-prices",
+          "display_asset_id": "voucher-shop-public-products",
           "media_path": "ppt/media/image164.png",
           "copy": {
             "es": {
@@ -8751,6 +8753,7 @@
           "manual_step": "consumo",
           "source_slide": 99,
           "asset_id": "manual-native-vouchers-consumption",
+          "display_asset_id": "voucher-consumption-rules",
           "media_path": "ppt/media/image164.png",
           "source_crop_px": {
             "x": 0,

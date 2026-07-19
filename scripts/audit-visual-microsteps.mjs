@@ -85,7 +85,7 @@ async function main() {
   const qaDecisions = JSON.parse(await fs.readFile(path.join(repoRoot, "src", "data", "atelier-visual-qa-decisions.v1.json"), "utf8"));
   const decisionsByAsset = new Map(qaDecisions.decisions.map((decision) => [decision.asset_id, decision]));
   const manualAssets = Object.entries(manual.flows).flatMap(([flow, definition]) => definition.steps.map((step) => ({
-    flow, step_id: step.step_id, asset_id: step.asset_id, title: step.copy?.es?.title || step.step_id,
+    flow, step_id: step.step_id, asset_id: step.display_asset_id || step.asset_id, source_asset_id: step.asset_id, title: step.copy?.es?.title || step.step_id,
     source_slide: step.source_slide, hotspot_count: (step.hotspots || []).length,
   })));
   const actionAssets = atlas.icons.filter((icon) => icon.context === "atelier_action").map((icon) => ({

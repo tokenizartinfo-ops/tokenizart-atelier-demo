@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.demo_atelier_visual_qa_decisions.v1",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "reviewed_at": "2026-07-18",
   "policy": {
     "accepted": "La alerta geometrica fue revisada. El asset es atomico, legible con el foco ampliado y no necesita recomposicion.",
@@ -66,6 +66,21 @@
       "asset_id": "manual-native-action-privacy",
       "status": "accepted",
       "reason": "Icono cuadrado nativo de Data Privacy, nitido a 320 px y acompanado por etiqueta localizada en la interfaz."
+    },
+    {
+      "asset_id": "manual-native-wallet-avoid-browser-storage",
+      "status": "accepted",
+      "reason": "Captura completa y legible del aviso del navegador; el hotspot enfoca Nunca y la explicacion distingue este aviso de las claves que nunca deben compartirse en el chat."
+    },
+    {
+      "asset_id": "manual-native-vouchers-profile-balances",
+      "status": "accepted",
+      "reason": "Recorte atomico y saneado de la seccion Vouchers del perfil; muestra ubicacion e iconos sin revelar saldos de ejemplo."
+    },
+    {
+      "asset_id": "manual-native-vouchers-understand-types",
+      "status": "accepted",
+      "reason": "Tabla completa y legible de Mint, Chip NFC y Certify; el formato panoramico es intencional y cada fila conserva su hotspot localizado."
     }
   ]
 }

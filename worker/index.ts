@@ -5,6 +5,12 @@ interface Env {
 
 const ASSET_ID = /^[a-z0-9][a-z0-9-]{2,120}$/;
 
+const DISPLAY_ASSET_KEYS: Record<string, string> = {
+  "onboarding-activation-email-sanitized": "companion/public-discovery/onboarding/onboarding-activation-email-sanitized.png",
+  "voucher-shop-public-products": "companion/public-discovery/vouchers/voucher-shop-public-products.png",
+  "voucher-consumption-rules": "companion/public-discovery/vouchers/voucher-consumption-rules.png",
+};
+
 function securityHeaders(headers = new Headers()): Headers {
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -35,9 +41,10 @@ export default {
       const assetId = decodeURIComponent(url.pathname.slice("/api/manual-asset/".length));
       if (!ASSET_ID.test(assetId)) return json({ error: "invalid_asset_id" }, 400);
 
-      const object =
-        await env.DEMO_ASSETS.get(`companion/manual-atelier/native-microsteps/${assetId}.png`) ??
-        await env.DEMO_ASSETS.get(`companion/manual-atelier/native-icons/${assetId}.png`);
+      const object = DISPLAY_ASSET_KEYS[assetId]
+        ? await env.DEMO_ASSETS.get(DISPLAY_ASSET_KEYS[assetId])
+        : await env.DEMO_ASSETS.get(`companion/manual-atelier/native-microsteps/${assetId}.png`) ??
+          await env.DEMO_ASSETS.get(`companion/manual-atelier/native-icons/${assetId}.png`);
       if (!object) return json({ error: "asset_not_found" }, 404);
 
       const headers = securityHeaders(new Headers());

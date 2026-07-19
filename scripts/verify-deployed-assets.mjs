@@ -6,7 +6,7 @@ const atlas = JSON.parse(await readFile(new URL("../src/data/atelier-manual-nati
 
 const assetIds = new Set();
 for (const flow of Object.values(manual.flows)) {
-  for (const step of flow.steps) assetIds.add(step.asset_id);
+  for (const step of flow.steps) assetIds.add(step.display_asset_id || step.asset_id);
 }
 for (const icon of atlas.icons) assetIds.add(icon.asset_id);
 

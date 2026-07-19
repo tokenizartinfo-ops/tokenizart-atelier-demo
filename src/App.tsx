@@ -799,7 +799,8 @@ function VoucherBalances({ context, compact = false }: { context: DemoContext; c
 function ManualVisual({ step, language, onZoom }: { step: ManualStep; language: Language; onZoom: () => void }) {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [focusIndex, setFocusIndex] = useState(0);
-  const assetUrl = `/api/manual-asset/${encodeURIComponent(step.asset_id)}`;
+  const displayAssetId = step.display_asset_id || step.asset_id;
+  const assetUrl = `/api/manual-asset/${encodeURIComponent(displayAssetId)}`;
   const layout = classifyVisualLayout(dimensions.width, dimensions.height);
   const hotspots = step.hotspots ?? [];
   const showDetail = hotspots.length > 0 || needsVisualDetail(dimensions.width, dimensions.height);
@@ -859,6 +860,7 @@ function App() {
   const t = ui[lang];
   const flow = manualContract.flows[context.flow];
   const step = flow.steps[context.stepIndex] ?? flow.steps[0];
+  const displayAssetId = step.display_asset_id || step.asset_id;
   const phase = flow.phase_map?.find((item) => step.order >= item.from_order && step.order <= item.to_order);
   const enrichment = flow.step_enrichment?.[step.step_id];
   const progress = Math.round(((context.stepIndex + 1) / flow.steps.length) * 100);
@@ -1002,7 +1004,7 @@ function App() {
         </aside>
       </div>
 
-      {zoomed && <div className="lightbox" role="dialog" aria-modal="true" aria-label={step.copy[lang].title}><button className="icon-button" onClick={() => setZoomed(false)} title="Cerrar" aria-label="Cerrar"><X size={22} /></button><img src={`/api/manual-asset/${encodeURIComponent(step.asset_id)}`} alt={step.copy[lang].title} /><div><strong>{step.copy[lang].title}</strong><span>{t.imageHint}</span></div></div>}
+      {zoomed && <div className="lightbox" role="dialog" aria-modal="true" aria-label={step.copy[lang].title}><button className="icon-button" onClick={() => setZoomed(false)} title="Cerrar" aria-label="Cerrar"><X size={22} /></button><img src={`/api/manual-asset/${encodeURIComponent(displayAssetId)}`} alt={step.copy[lang].title} /><div><strong>{step.copy[lang].title}</strong><span>{t.imageHint}</span></div></div>}
     </div>
   );
 }
