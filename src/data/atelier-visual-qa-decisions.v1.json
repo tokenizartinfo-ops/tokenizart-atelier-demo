@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.demo_atelier_visual_qa_decisions.v1",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "reviewed_at": "2026-07-19",
   "policy": {
     "accepted": "La alerta geometrica fue revisada. El asset es atomico, legible con el foco ampliado y no necesita recomposicion.",
@@ -311,6 +311,31 @@
       "asset_id": "manual-native-transfer-success",
       "status": "accepted",
       "reason": "Toast completo y legible de transferencia exitosa; su formato panoramico pertenece a la interfaz real y no contiene datos personales."
+    },
+    {
+      "asset_id": "manual-native-mint-batch-success",
+      "status": "accepted",
+      "reason": "Toast completo de Mint por lote exitoso; el formato panoramico es atomico, legible y no contiene datos de una obra ni del owner."
+    },
+    {
+      "asset_id": "manual-native-mint-handle-error",
+      "status": "accepted",
+      "reason": "Toast de error completo y legible; comunica el estado sin exponer credenciales y la StepCard conserva la orientacion de recuperacion segura."
+    },
+    {
+      "asset_id": "manual-native-mint-success-toast",
+      "status": "accepted",
+      "reason": "Toast completo de Mint individual exitoso; su relacion panoramica pertenece a la interfaz original y no requiere recomposicion."
+    },
+    {
+      "asset_id": "manual-native-mint-batch-select",
+      "status": "accepted",
+      "reason": "Vista completa de Obras Propias por mintear con seleccion multiple y comando Mintear; los ejemplos visuales no muestran identidad ni datos owner necesarios de sanear."
+    },
+    {
+      "asset_id": "manual-native-mint-review-voucher",
+      "status": "accepted",
+      "reason": "Resumen atomico del voucher Mint a consumir y etiqueta de contrasena sin valor visible; explica la precondicion sin exponer credenciales."
     }
   ]
 }

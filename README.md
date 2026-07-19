@@ -129,7 +129,7 @@ npm run deploy:staging
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
 Validated staging Worker for the current shared visual contract:
-`c4b1b049-520d-402c-b2a5-e0b8c1fa330d`. Production was not changed.
+`61559576-e99f-4442-9517-605418232722`. Production was not changed.
 
 ## Source synchronization
 
@@ -146,6 +146,6 @@ Atelier captures.
 
 The optional `display_asset_id` keeps the native PPTX-derived `asset_id` as the auditable source while allowing a reviewed, sanitized didactic visual to be rendered when the source crop is truncated or does not explain the intended concept. It never replaces source traceability. Gallery metadata now uses a dedicated `ipfs-metadata-anatomy` display asset with synthetic values; the native source remains linked for audit.
 
-`audit:visual:staging` checks all 163 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. Editorial decisions are versioned in `src/data/atelier-visual-qa-decisions.v1.json`: automatic geometry flags remain visible, but inspected atomic crops can be accepted without pretending that their original dimensions changed. QA decisions `1.3.0` leave 23 pending and 61 accepted assets, with zero unavailable resources and zero steps without a focus hotspot. Navigation, artwork loading, Gallery, Transfer and Privacy have completed human visual QA; the remaining queue is Mint 5, Certify 8 and NFC 10.
+`audit:visual:staging` checks all 163 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. Editorial decisions are versioned in `src/data/atelier-visual-qa-decisions.v1.json`: automatic geometry flags remain visible, but inspected atomic crops can be accepted without pretending that their original dimensions changed. QA decisions `1.4.0` leave 18 pending and 66 accepted assets, with zero unavailable resources and zero steps without a focus hotspot. Navigation, artwork loading, Gallery, Mint, Transfer and Privacy have completed human visual QA; the remaining queue is Certify 8 and NFC 10.
 
 The production build separates React, XState and Lucide into stable vendor chunks. The main JavaScript chunk is 363 kB instead of the previous 605 kB monolith. A staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.
