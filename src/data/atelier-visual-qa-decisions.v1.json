@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.demo_atelier_visual_qa_decisions.v1",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "reviewed_at": "2026-07-19",
   "policy": {
     "accepted": "La alerta geometrica fue revisada. El asset es atomico, legible con el foco ampliado y no necesita recomposicion.",
@@ -276,6 +276,41 @@
       "asset_id": "manual-native-carga-select-delegating-owner",
       "status": "accepted",
       "reason": "Selector de Propietario completo en el flujo gestionado; el recorte mantiene el campo y el inicio de la ficha sin mostrar una identidad real."
+    },
+    {
+      "asset_id": "manual-native-gallery-traceability-endpoints",
+      "status": "accepted",
+      "reason": "Fila publica completa con los cuatro endpoints read-only y hotspots separados; no muestra datos owner ni habilita acciones sobre la obra."
+    },
+    {
+      "asset_id": "manual-native-gallery-transaction-logs",
+      "status": "accepted",
+      "reason": "Vista publica del esquema de evento Mint y su pestana Logs; conserva contexto tecnico sin exponer wallets, hashes ni valores privados."
+    },
+    {
+      "asset_id": "manual-native-gallery-transaction-receipt",
+      "status": "accepted",
+      "reason": "Comprobante publico saneado con estado, bloque y timestamp legibles; hashes y direcciones quedan fuera del recorte didactico."
+    },
+    {
+      "asset_id": "manual-native-privacy-toggle-gallery",
+      "status": "accepted",
+      "reason": "Recorte limitado a los controles Mostrar en Gallery y Expuesta; elimina identidad y ficha innecesarias y conserva ambos hotspots."
+    },
+    {
+      "asset_id": "manual-native-privacy-all-visible",
+      "status": "accepted",
+      "reason": "Columna saneada de controles visibles y documentos; omite emails y actores reales mientras muestra con claridad el estado publico completo."
+    },
+    {
+      "asset_id": "manual-native-privacy-partial-restriction",
+      "status": "accepted",
+      "reason": "Columna saneada con checks mixtos que explica restriccion parcial; no incluye emails y diferencia registros visibles y ocultos."
+    },
+    {
+      "asset_id": "manual-native-transfer-success",
+      "status": "accepted",
+      "reason": "Toast completo y legible de transferencia exitosa; su formato panoramico pertenece a la interfaz real y no contiene datos personales."
     }
   ]
 }

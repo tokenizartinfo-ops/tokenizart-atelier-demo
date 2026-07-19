@@ -9,6 +9,7 @@ const DISPLAY_ASSET_KEYS: Record<string, string> = {
   "onboarding-activation-email-sanitized": "companion/public-discovery/onboarding/onboarding-activation-email-sanitized.png",
   "voucher-shop-public-products": "companion/public-discovery/vouchers/voucher-shop-public-products.png",
   "voucher-consumption-rules": "companion/public-discovery/vouchers/voucher-consumption-rules.png",
+  "ipfs-metadata-anatomy": "companion/public-discovery/artwork/ipfs-metadata-anatomy.png",
 };
 
 function securityHeaders(headers = new Headers()): Headers {
