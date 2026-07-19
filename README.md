@@ -144,4 +144,4 @@ grouped into localized ES/EN/PT phases. States described by the verified manual
 without a literal screenshot are rendered as explanatory UI, not fabricated
 Atelier captures.
 
-`audit:visual:staging` checks all 157 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. The runtime presents exceptional aspect ratios as full context plus an enlarged hotspot detail or a horizontally scrollable capture.
+`audit:visual:staging` checks all 163 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. The runtime presents exceptional aspect ratios as full context plus an enlarged hotspot detail or a horizontally scrollable capture.

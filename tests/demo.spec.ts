@@ -21,6 +21,40 @@ test("changes language without changing the selected flow", async ({ page }) => 
   await expect(page.getByText("Smart Wallet de práctica")).toBeVisible();
 });
 
+test("renders onboarding, Smart Wallet and voucher phases with decision states", async ({ page }) => {
+  const scenarios = [
+    {
+      url: "/?flow=onboarding&step=onboarding.complete-profile&lang=es&scenario=first-artwork",
+      counter: "10 / 10",
+      phase: "Activacion y perfil",
+      legend: "Estados del alta de usuario",
+      state: "Usuario listo",
+    },
+    {
+      url: "/?flow=account_wallet&step=account-wallet-enter-user-space&lang=es&scenario=first-artwork",
+      counter: "9 / 9",
+      phase: "Ingreso a Atelier",
+      legend: "Estados de Smart Wallet",
+      state: "Lista para usar Atelier",
+    },
+    {
+      url: "/?flow=vouchers&step=vouchers.understand-consumption&lang=es&scenario=first-artwork",
+      counter: "7 / 7",
+      phase: "Acreditacion y consumo",
+      legend: "Estados de vouchers",
+      state: "Transferencia sin voucher",
+    },
+  ];
+
+  for (const scenario of scenarios) {
+    await page.goto(scenario.url);
+    await expect(page.getByText(scenario.counter, { exact: true })).toBeVisible();
+    await expect(page.getByText(scenario.phase, { exact: true })).toBeVisible();
+    await expect(page.getByText(scenario.legend, { exact: true })).toBeVisible();
+    await expect(page.getByText(scenario.state, { exact: true })).toBeVisible();
+  }
+});
+
 test("opens an allowlisted deep link from Companion", async ({ page }) => {
   await page.goto("/?flow=certify&step=certify.attach-evidence&lang=en&scenario=first-artwork&fixture=sculpture-signal-001");
   await expect(page.getByRole("heading", { name: "Attach relevant evidence" })).toBeVisible();

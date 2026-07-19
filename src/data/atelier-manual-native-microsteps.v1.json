@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.atelier_manual_native_microsteps.v1",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "source": {
     "filename": "Manual_Atelier 2026.pptx",
     "sha256": "402a524390648e66966c514b357de1c468f1bb3c782a488a4012b81ddf475151",
@@ -1941,14 +1941,126 @@
         29
       ],
       "description": "Native-image flow from the Atelier entry point through account activation and profile setup.",
+      "phase_map": [
+        {
+          "from_order": 1,
+          "to_order": 2,
+          "label": {
+            "es": "Entrada y eleccion de acceso",
+            "en": "Entry and access choice",
+            "pt": "Entrada e escolha de acesso"
+          }
+        },
+        {
+          "from_order": 3,
+          "to_order": 5,
+          "label": {
+            "es": "Datos y envio del registro",
+            "en": "Registration details and submission",
+            "pt": "Dados e envio do registro"
+          }
+        },
+        {
+          "from_order": 6,
+          "to_order": 8,
+          "label": {
+            "es": "Verificacion por email",
+            "en": "Email verification",
+            "pt": "Verificacao por email"
+          }
+        },
+        {
+          "from_order": 9,
+          "to_order": 10,
+          "label": {
+            "es": "Activacion y perfil",
+            "en": "Activation and profile",
+            "pt": "Ativacao e perfil"
+          }
+        }
+      ],
       "steps": [
         {
-          "step_id": "onboarding.choose-registration",
+          "step_id": "onboarding.open-atelier-access",
           "order": 1,
+          "manual_step": "entrada",
+          "source_slide": 24,
+          "asset_id": "manual-native-onboarding-open-atelier-access",
+          "media_path": "ppt/media/image26.png",
+          "mask_rects_px": [
+            {
+              "x": 62,
+              "y": 269,
+              "width": 444,
+              "height": 51,
+              "fill": "#e9f0fa"
+            },
+            {
+              "x": 62,
+              "y": 368,
+              "width": 444,
+              "height": 50,
+              "fill": "#e9f0fa"
+            }
+          ],
+          "copy": {
+            "es": {
+              "title": "Entrar a Atelier",
+              "body": "Abre https://atelier.tokenizart.com. Si ya tienes cuenta, usa Ingresar; si llegas por primera vez, el enlace Registrarme abre el alta de usuario. Crear la cuenta es gratuito y ocurre antes de Smart Wallet, carga de obra o Mint.",
+              "next_question": "Es tu primera vez o ya tienes una cuenta activada?"
+            },
+            "en": {
+              "title": "Enter Atelier",
+              "body": "Open https://atelier.tokenizart.com. If you already have an account, use Sign in; if this is your first visit, Register opens account creation. Creating the account is free and happens before Smart Wallet, artwork loading or Mint.",
+              "next_question": "Is this your first visit, or do you already have an activated account?"
+            },
+            "pt": {
+              "title": "Entrar no Atelier",
+              "body": "Abra https://atelier.tokenizart.com. Se voce ja possui conta, use Entrar; se e sua primeira visita, Registrar abre a criacao do usuario. Criar a conta e gratuito e ocorre antes da Smart Wallet, carga de obra ou Mint.",
+              "next_question": "E sua primeira vez ou voce ja possui uma conta ativada?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 10,
+              "y_pct": 67,
+              "width_pct": 80,
+              "height_pct": 10,
+              "label": {
+                "es": "Ingresar",
+                "en": "Sign in",
+                "pt": "Entrar"
+              }
+            },
+            {
+              "x_pct": 55,
+              "y_pct": 86,
+              "width_pct": 32,
+              "height_pct": 8,
+              "label": {
+                "es": "Registrarme",
+                "en": "Register",
+                "pt": "Registrar"
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "onboarding.choose-registration",
+          "order": 2,
           "manual_step": "1",
           "source_slide": 25,
           "asset_id": "manual-native-onboarding-choose-registration",
-          "media_path": "ppt/media/image25.png",
+          "media_path": "ppt/media/image27.png",
+          "mask_rects_px": [
+            {
+              "x": 145,
+              "y": 500,
+              "width": 748,
+              "height": 86,
+              "fill": "#ffffff"
+            }
+          ],
           "copy": {
             "es": {
               "title": "Elegir Registrarse",
@@ -1968,10 +2080,10 @@
           },
           "hotspots": [
             {
-              "x_pct": 88,
-              "y_pct": 4,
-              "width_pct": 10,
-              "height_pct": 78,
+              "x_pct": 14,
+              "y_pct": 75,
+              "width_pct": 72,
+              "height_pct": 8,
               "label": {
                 "es": "Registrarse",
                 "en": "Register",
@@ -1982,7 +2094,7 @@
         },
         {
           "step_id": "onboarding.open-registration-form",
-          "order": 2,
+          "order": 3,
           "manual_step": "2",
           "source_slide": 26,
           "asset_id": "manual-native-onboarding-open-registration-form",
@@ -2029,7 +2141,7 @@
         },
         {
           "step_id": "onboarding.accept-terms",
-          "order": 3,
+          "order": 4,
           "manual_step": "3",
           "source_slide": 26,
           "asset_id": "manual-native-onboarding-accept-terms",
@@ -2073,7 +2185,7 @@
         },
         {
           "step_id": "onboarding.submit-registration",
-          "order": 4,
+          "order": 5,
           "manual_step": "4",
           "source_slide": 26,
           "asset_id": "manual-native-onboarding-submit-registration",
@@ -2117,7 +2229,7 @@
         },
         {
           "step_id": "onboarding.wait-for-email",
-          "order": 5,
+          "order": 6,
           "manual_step": "5",
           "source_slide": 27,
           "asset_id": "manual-native-onboarding-wait-for-email",
@@ -2161,7 +2273,7 @@
         },
         {
           "step_id": "onboarding.resend-code",
-          "order": 6,
+          "order": 7,
           "manual_step": "6",
           "source_slide": 28,
           "asset_id": "manual-native-onboarding-resend-code",
@@ -2199,7 +2311,7 @@
         },
         {
           "step_id": "onboarding.open-activation-link",
-          "order": 7,
+          "order": 8,
           "manual_step": "7",
           "source_slide": 28,
           "asset_id": "manual-native-onboarding-open-activation-link",
@@ -2259,7 +2371,7 @@
         },
         {
           "step_id": "onboarding.account-activated",
-          "order": 8,
+          "order": 9,
           "manual_step": "8",
           "source_slide": 29,
           "asset_id": "manual-native-onboarding-account-activated",
@@ -2297,7 +2409,7 @@
         },
         {
           "step_id": "onboarding.complete-profile",
-          "order": 9,
+          "order": 10,
           "manual_step": "9",
           "source_slide": 29,
           "asset_id": "manual-native-onboarding-complete-profile",
@@ -2333,7 +2445,53 @@
             }
           ]
         }
-      ]
+      ],
+      "step_enrichment": {
+        "onboarding.complete-profile": {
+          "state_legend_title": {
+            "es": "Estados del alta de usuario",
+            "en": "Account onboarding states",
+            "pt": "Estados do cadastro do usuario"
+          },
+          "state_legend": [
+            {
+              "state": "visitor_without_account",
+              "tone": "neutral",
+              "label": { "es": "Visitante", "en": "Visitor", "pt": "Visitante" },
+              "message": { "es": "Todavia no existe una cuenta activada.", "en": "There is no activated account yet.", "pt": "Ainda nao existe uma conta ativada." },
+              "meaning": { "es": "Abrir Atelier y elegir Registrarme.", "en": "Open Atelier and choose Register.", "pt": "Abrir o Atelier e escolher Registrar." }
+            },
+            {
+              "state": "registration_ready",
+              "tone": "progress",
+              "label": { "es": "Registro preparado", "en": "Registration ready", "pt": "Cadastro preparado" },
+              "message": { "es": "Email, clave de acceso repetida y terminos estan completos.", "en": "Email, repeated access password and terms are complete.", "pt": "Email, senha de acesso repetida e termos estao completos." },
+              "meaning": { "es": "Enviar una sola vez y esperar la confirmacion.", "en": "Submit once and wait for confirmation.", "pt": "Enviar uma vez e aguardar a confirmacao." }
+            },
+            {
+              "state": "activation_pending",
+              "tone": "warning",
+              "label": { "es": "Activacion pendiente", "en": "Activation pending", "pt": "Ativacao pendente" },
+              "message": { "es": "Atelier envio el email, pero el enlace aun no fue abierto.", "en": "Atelier sent the email, but the link has not been opened yet.", "pt": "O Atelier enviou o email, mas o link ainda nao foi aberto." },
+              "meaning": { "es": "Revisar entrada y spam; reenviar solo si no llega.", "en": "Check inbox and spam; resend only if it does not arrive.", "pt": "Revisar entrada e spam; reenviar somente se nao chegar." }
+            },
+            {
+              "state": "profile_pending",
+              "tone": "progress",
+              "label": { "es": "Cuenta activada", "en": "Account activated", "pt": "Conta ativada" },
+              "message": { "es": "El email ya fue validado y falta completar el perfil.", "en": "The email is validated and profile setup remains.", "pt": "O email foi validado e falta completar o perfil." },
+              "meaning": { "es": "Completar nombre o alias, rol, pais e imagen si corresponde.", "en": "Complete name or alias, role, country and image when applicable.", "pt": "Completar nome ou alias, papel, pais e imagem quando corresponder." }
+            },
+            {
+              "state": "ready_for_wallet",
+              "tone": "success",
+              "label": { "es": "Usuario listo", "en": "User ready", "pt": "Usuario pronto" },
+              "message": { "es": "La cuenta y el perfil estan listos para crear la Smart Wallet.", "en": "The account and profile are ready for Smart Wallet creation.", "pt": "A conta e o perfil estao prontos para criar a Smart Wallet." },
+              "meaning": { "es": "Smart Wallet es el siguiente flujo; todavia no hace falta cargar o mintear una obra.", "en": "Smart Wallet is the next flow; loading or minting an artwork is not required yet.", "pt": "Smart Wallet e o proximo fluxo; ainda nao e preciso carregar ou mintear uma obra." }
+            }
+          ]
+        }
+      }
     },
     "account_wallet": {
       "source_slides": [
@@ -2343,6 +2501,44 @@
         33
       ],
       "description": "Native-image Smart Wallet creation, credential-safety and entry flow with all sample secrets masked.",
+      "phase_map": [
+        {
+          "from_order": 1,
+          "to_order": 2,
+          "label": {
+            "es": "Creacion de Smart Wallet",
+            "en": "Smart Wallet creation",
+            "pt": "Criacao da Smart Wallet"
+          }
+        },
+        {
+          "from_order": 3,
+          "to_order": 5,
+          "label": {
+            "es": "Diferencias y seguridad de credenciales",
+            "en": "Credential differences and safety",
+            "pt": "Diferencas e seguranca das credenciais"
+          }
+        },
+        {
+          "from_order": 6,
+          "to_order": 8,
+          "label": {
+            "es": "Respaldo de wallet",
+            "en": "Wallet backup",
+            "pt": "Backup da wallet"
+          }
+        },
+        {
+          "from_order": 9,
+          "to_order": 9,
+          "label": {
+            "es": "Ingreso a Atelier",
+            "en": "Enter Atelier",
+            "pt": "Entrada no Atelier"
+          }
+        }
+      ],
       "steps": [
         {
           "step_id": "account-wallet.open-creation",
@@ -2438,8 +2634,160 @@
           ]
         },
         {
-          "step_id": "account-wallet-created",
+          "step_id": "account-wallet.avoid-browser-storage",
           "order": 3,
+          "manual_step": "3",
+          "source_slide": 30,
+          "asset_id": "manual-native-wallet-avoid-browser-storage",
+          "media_path": "ppt/media/image29.png",
+          "source_crop_px": {
+            "x": 990,
+            "y": 25,
+            "width": 445,
+            "height": 720
+          },
+        "mask_rects_px": [
+          {
+            "x": 190,
+            "y": 260,
+            "width": 235,
+            "height": 155,
+            "fill": "#ffffff"
+          },
+          {
+            "x": 24,
+            "y": 595,
+            "width": 397,
+            "height": 58,
+            "fill": "#e9eef1"
+          }
+        ],
+          "copy": {
+            "es": {
+              "title": "No guardar la clave de wallet en el navegador",
+              "body": "Si el navegador ofrece guardar la credencial de Smart Wallet, el manual indica elegir Nunca. No pegues esta clave en el chat ni la dejes en una captura; guardala bajo tu propio control.",
+              "next_question": "Queres distinguir la clave de acceso de la clave de Smart Wallet?"
+            },
+            "en": {
+              "title": "Do not store the wallet credential in the browser",
+              "body": "If the browser offers to store the Smart Wallet credential, the manual says to choose Never. Do not paste it into chat or leave it in a screenshot; keep it under your control.",
+              "next_question": "Do you want to distinguish the sign-in password from the Smart Wallet credential?"
+            },
+            "pt": {
+              "title": "Nao guardar a credencial da wallet no navegador",
+              "body": "Se o navegador oferecer guardar a credencial da Smart Wallet, o manual indica escolher Nunca. Nao cole essa chave no chat nem a deixe em uma captura; mantenha-a sob seu controle.",
+              "next_question": "Quer distinguir a senha de acesso da credencial da Smart Wallet?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 39,
+              "y_pct": 55,
+              "width_pct": 30,
+              "height_pct": 11,
+              "label": {
+                "es": "Nunca",
+                "en": "Never",
+                "pt": "Nunca"
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "account-wallet.distinguish-access-wallet",
+          "order": 4,
+          "manual_step": "4",
+          "source_slide": 31,
+          "asset_id": "manual-native-wallet-distinguish-access-wallet",
+        "media_path": "ppt/media/image35.png",
+          "copy": {
+            "es": {
+              "title": "Distinguir acceso y autorizacion",
+              "body": "La clave de acceso permite entrar a Atelier y puede recuperarse o modificarse. La clave de Smart Wallet autoriza acciones blockchain y Tokenizart no puede recuperarla. Son funciones distintas, aunque ambas aparezcan como contrasena en diferentes pantallas.",
+              "next_question": "Queres distinguir ahora la direccion publica de la clave privada?"
+            },
+            "en": {
+              "title": "Distinguish access and authorization",
+              "body": "The sign-in password opens Atelier and can be recovered or changed. The Smart Wallet credential authorizes blockchain actions and Tokenizart cannot recover it. They serve different purposes even though both appear as passwords on different screens.",
+              "next_question": "Do you want to distinguish the public address from the private key?"
+            },
+            "pt": {
+              "title": "Distinguir acesso e autorizacao",
+              "body": "A senha de acesso permite entrar no Atelier e pode ser recuperada ou modificada. A credencial da Smart Wallet autoriza acoes blockchain e a Tokenizart nao pode recupera-la. Elas cumprem funcoes diferentes, embora aparecam como senhas em telas distintas.",
+              "next_question": "Quer distinguir o endereco publico da chave privada?"
+            }
+          },
+          "hotspots": [
+            {
+            "x_pct": 8,
+            "y_pct": 47,
+            "width_pct": 84,
+            "height_pct": 35,
+              "label": {
+                "es": "Clave de acceso",
+                "en": "Sign-in password",
+                "pt": "Senha de acesso"
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "account-wallet.distinguish-public-private",
+          "order": 5,
+          "manual_step": "5",
+          "source_slide": 31,
+          "asset_id": "manual-native-wallet-distinguish-public-private",
+          "media_path": "ppt/media/image36.png",
+          "mask_rects_px": [
+            {
+              "x": 88,
+              "y": 315,
+              "width": 505,
+              "height": 66,
+              "fill": "#edf2fa"
+            },
+            {
+              "x": 88,
+              "y": 425,
+              "width": 505,
+              "height": 68,
+              "fill": "#edf2fa"
+            }
+          ],
+          "copy": {
+            "es": {
+              "title": "Distinguir direccion publica y clave privada",
+              "body": "La direccion publica identifica la wallet y puede compartirse cuando una operacion la requiere. La clave privada controla la wallet: nunca debe compartirse, enviarse al Companion ni quedar visible en una captura.",
+              "next_question": "Seguimos con la pantalla que confirma que la wallet fue creada?"
+            },
+            "en": {
+              "title": "Distinguish public address and private key",
+              "body": "The public address identifies the wallet and may be shared when an operation requires it. The private key controls the wallet: never share it, send it to the Companion or leave it visible in a screenshot.",
+              "next_question": "Shall we continue with the screen that confirms wallet creation?"
+            },
+            "pt": {
+              "title": "Distinguir endereco publico e chave privada",
+              "body": "O endereco publico identifica a wallet e pode ser compartilhado quando uma operacao o exige. A chave privada controla a wallet: nunca a compartilhe, envie ao Companion ou deixe visivel em uma captura.",
+              "next_question": "Continuamos com a tela que confirma a criacao da wallet?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 9,
+              "y_pct": 39,
+              "width_pct": 82,
+              "height_pct": 37,
+              "label": {
+                "es": "Valores saneados",
+                "en": "Sanitized values",
+                "pt": "Valores saneados"
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "account-wallet-created",
+          "order": 6,
           "manual_step": "3",
           "source_slide": 32,
           "asset_id": "manual-native-wallet-created-sanitized",
@@ -2493,7 +2841,7 @@
         },
         {
           "step_id": "account-wallet-copy-data",
-          "order": 4,
+          "order": 7,
           "manual_step": "4",
           "source_slide": 32,
           "asset_id": "manual-native-wallet-copy-data",
@@ -2537,7 +2885,7 @@
         },
         {
           "step_id": "account-wallet-copy-confirmed",
-          "order": 5,
+          "order": 8,
           "manual_step": "5",
           "source_slide": 32,
           "asset_id": "manual-native-wallet-copy-confirmed",
@@ -2581,7 +2929,7 @@
         },
         {
           "step_id": "account-wallet-enter-user-space",
-          "order": 6,
+          "order": 9,
           "manual_step": "6",
           "source_slide": 33,
           "asset_id": "manual-native-wallet-enter-user-space",
@@ -2633,7 +2981,53 @@
             }
           ]
         }
-      ]
+      ],
+      "step_enrichment": {
+        "account-wallet-enter-user-space": {
+          "state_legend_title": {
+            "es": "Estados de Smart Wallet",
+            "en": "Smart Wallet states",
+            "pt": "Estados da Smart Wallet"
+          },
+          "state_legend": [
+            {
+              "state": "wallet_creation_ready",
+              "tone": "neutral",
+              "label": { "es": "Lista para crear", "en": "Ready to create", "pt": "Pronta para criar" },
+              "message": { "es": "El perfil esta completo y Atelier solicita definir la credencial de wallet.", "en": "The profile is complete and Atelier asks for the wallet credential.", "pt": "O perfil esta completo e o Atelier solicita definir a credencial da wallet." },
+              "meaning": { "es": "Crear y confirmar la credencial solo dentro de Atelier.", "en": "Create and confirm the credential only inside Atelier.", "pt": "Criar e confirmar a credencial somente dentro do Atelier." }
+            },
+            {
+              "state": "credential_defined",
+              "tone": "progress",
+              "label": { "es": "Credencial definida", "en": "Credential defined", "pt": "Credencial definida" },
+              "message": { "es": "La clave de Smart Wallet fue ingresada y confirmada.", "en": "The Smart Wallet credential was entered and confirmed.", "pt": "A credencial da Smart Wallet foi informada e confirmada." },
+              "meaning": { "es": "No guardarla en el navegador ni compartirla en el chat.", "en": "Do not store it in the browser or share it in chat.", "pt": "Nao guardar no navegador nem compartilhar no chat." }
+            },
+            {
+              "state": "wallet_created",
+              "tone": "success",
+              "label": { "es": "Wallet creada", "en": "Wallet created", "pt": "Wallet criada" },
+              "message": { "es": "Atelier muestra direccion publica y clave privada una vez creada.", "en": "Atelier shows the public address and private key after creation.", "pt": "O Atelier mostra endereco publico e chave privada apos a criacao." },
+              "meaning": { "es": "La clave privada nunca se comparte; esta guia oculta todos los ejemplos.", "en": "The private key is never shared; this guide masks every example.", "pt": "A chave privada nunca e compartilhada; este guia oculta todos os exemplos." }
+            },
+            {
+              "state": "backup_pending",
+              "tone": "warning",
+              "label": { "es": "Respaldo pendiente", "en": "Backup pending", "pt": "Backup pendente" },
+              "message": { "es": "Copiar al portapapeles no significa que el respaldo ya este seguro.", "en": "Copying to the clipboard does not mean the backup is secure.", "pt": "Copiar para a area de transferencia nao significa que o backup esteja seguro." },
+              "meaning": { "es": "Guardar bajo control propio y limpiar el portapapeles al terminar.", "en": "Store it under your control and clear the clipboard when finished.", "pt": "Guardar sob seu controle e limpar a area de transferencia ao terminar." }
+            },
+            {
+              "state": "ready_for_atelier",
+              "tone": "success",
+              "label": { "es": "Lista para usar Atelier", "en": "Ready for Atelier", "pt": "Pronta para usar o Atelier" },
+              "message": { "es": "La wallet fue creada y las credenciales quedaron resguardadas.", "en": "The wallet was created and credentials were stored safely.", "pt": "A wallet foi criada e as credenciais foram guardadas com seguranca." },
+              "meaning": { "es": "Entrar al panel; la primera accion recomendada es conocerlo o precargar una obra, no mintear de inmediato.", "en": "Enter the dashboard; the recommended first action is to explore it or preload an artwork, not Mint immediately.", "pt": "Entrar no painel; a primeira acao recomendada e conhece-lo ou pre-carregar uma obra, nao mintear imediatamente." }
+            }
+          ]
+        }
+      }
     },
     "carga_obra": {
       "source_slides": [
@@ -7976,6 +8370,44 @@
         99
       ],
       "description": "Native-image flow for voucher types, balances and consumption boundaries.",
+      "phase_map": [
+        {
+          "from_order": 1,
+          "to_order": 2,
+          "label": {
+            "es": "Tipos e iconos",
+            "en": "Types and icons",
+            "pt": "Tipos e icones"
+          }
+        },
+        {
+          "from_order": 3,
+          "to_order": 4,
+          "label": {
+            "es": "Shop, precios y Starter Kit",
+            "en": "Shop, prices and Starter Kit",
+            "pt": "Shop, precos e Starter Kit"
+          }
+        },
+        {
+          "from_order": 5,
+          "to_order": 6,
+          "label": {
+            "es": "Saldos autenticados",
+            "en": "Authenticated balances",
+            "pt": "Saldos autenticados"
+          }
+        },
+        {
+          "from_order": 7,
+          "to_order": 7,
+          "label": {
+            "es": "Acreditacion y consumo",
+            "en": "Crediting and consumption",
+            "pt": "Acreditacao e consumo"
+          }
+        }
+      ],
       "steps": [
         {
           "step_id": "vouchers.understand-types",
@@ -8098,8 +8530,90 @@
           ]
         },
         {
-          "step_id": "vouchers.see-header-balances",
+          "step_id": "vouchers.check-shop-prices",
           "order": 3,
+          "manual_step": "shop",
+          "source_slide": 99,
+          "asset_id": "manual-native-vouchers-shop-prices",
+          "media_path": "ppt/media/image164.png",
+          "copy": {
+            "es": {
+              "title": "Consultar precios en el Shop",
+              "body": "El snapshot publico verificado el 2026-07-14 muestra Starter Kit USD 20.00, Voucher Certify USD 8.00, Voucher Mint USD 8.00 y Voucher Chip USD 10.00. Son valores fechados: confirma siempre el precio vigente en https://tokenizart.com/es/shop/.",
+              "next_question": "Queres comparar el Starter Kit con comprar acciones por separado?"
+            },
+            "en": {
+              "title": "Check prices in the Shop",
+              "body": "The public snapshot verified on 2026-07-14 shows Starter Kit USD 20.00, Certify Voucher USD 8.00, Mint Voucher USD 8.00 and Chip Voucher USD 10.00. These are dated values: always confirm the current price at https://tokenizart.com/es/shop/.",
+              "next_question": "Do you want to compare the Starter Kit with buying individual actions?"
+            },
+            "pt": {
+              "title": "Consultar precos no Shop",
+              "body": "O snapshot publico verificado em 2026-07-14 mostra Starter Kit USD 20.00, Voucher Certify USD 8.00, Voucher Mint USD 8.00 e Voucher Chip USD 10.00. Sao valores datados: confirme sempre o preco vigente em https://tokenizart.com/es/shop/.",
+              "next_question": "Quer comparar o Starter Kit com a compra de acoes separadas?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 1,
+              "y_pct": 1,
+              "width_pct": 98,
+              "height_pct": 98,
+              "label": {
+                "es": "Productos del Shop",
+                "en": "Shop products",
+                "pt": "Produtos do Shop"
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "vouchers.compare-starter-kit",
+          "order": 4,
+          "manual_step": "starter kit",
+          "source_slide": 99,
+          "asset_id": "manual-native-vouchers-compare-starter-kit",
+          "media_path": "ppt/media/image162.png",
+          "presentation_canvas_px": {
+            "width": 1280,
+            "height": 720,
+            "scale": 2,
+            "background": "#f6f8fb"
+          },
+          "copy": {
+            "es": {
+              "title": "Comparar Starter Kit y vouchers individuales",
+              "body": "El Starter Kit incluye 1 Voucher Mint, 2 Vouchers Certify y 1 Toolbox con chip NFC, etiqueta VOID con holograma e instrucciones. Mint, Certify y Chip tambien pueden adquirirse como productos individuales en el Shop.",
+              "next_question": "Queres ver donde aparecen los vouchers despues de la acreditacion?"
+            },
+            "en": {
+              "title": "Compare Starter Kit and individual vouchers",
+              "body": "The Starter Kit includes 1 Mint Voucher, 2 Certify Vouchers and 1 Toolbox with an NFC chip, VOID hologram label and placement instructions. Mint, Certify and Chip are also available as individual Shop products.",
+              "next_question": "Do you want to see where vouchers appear after crediting?"
+            },
+            "pt": {
+              "title": "Comparar Starter Kit e vouchers individuais",
+              "body": "O Starter Kit inclui 1 Voucher Mint, 2 Vouchers Certify e 1 Toolbox com chip NFC, etiqueta VOID com holograma e instrucoes de colocacao. Mint, Certify e Chip tambem estao disponiveis como produtos individuais no Shop.",
+              "next_question": "Quer ver onde os vouchers aparecem depois da acreditacao?"
+            }
+          },
+          "hotspots": [
+            {
+              "x_pct": 20,
+              "y_pct": 20,
+              "width_pct": 60,
+              "height_pct": 60,
+              "label": {
+                "es": "Contenido del Starter Kit",
+                "en": "Starter Kit contents",
+                "pt": "Conteudo do Starter Kit"
+              }
+            }
+          ]
+        },
+        {
+          "step_id": "vouchers.see-header-balances",
+          "order": 5,
           "manual_step": "cabecera",
           "source_slide": 99,
           "asset_id": "manual-native-vouchers-header-balances",
@@ -8166,7 +8680,7 @@
         },
         {
           "step_id": "vouchers.see-profile-balances",
-          "order": 4,
+          "order": 6,
           "manual_step": "perfil",
           "source_slide": 99,
           "asset_id": "manual-native-vouchers-profile-balances",
@@ -8233,7 +8747,7 @@
         },
         {
           "step_id": "vouchers.understand-consumption",
-          "order": 5,
+          "order": 7,
           "manual_step": "consumo",
           "source_slide": 99,
           "asset_id": "manual-native-vouchers-consumption",
@@ -8246,19 +8760,19 @@
           },
           "copy": {
             "es": {
-              "title": "Entender consumo y compra",
-              "body": "Consume el voucher quien ejecuta la accion: Mint, Certify o NFC segun corresponda. Transferencia no consume vouchers. La compra se realiza en el Shop publico y la acreditacion actual debe verificarse en el perfil.",
-              "next_question": "Queres revisar una accion concreta o abrir el Shop?"
+              "title": "Entender acreditacion y consumo",
+              "body": "Comprar en el Shop no equivale a confirmar un saldo personal: la acreditacion debe verificarse dentro del perfil autenticado. Consume el voucher quien ejecuta la accion: Mint, Certify o NFC segun corresponda. Transferencia no consume vouchers.",
+              "next_question": "Queres revisar una accion concreta, un posible bloqueo o volver al Shop?"
             },
             "en": {
-              "title": "Understand consumption and purchase",
-              "body": "The actor executing the action consumes the corresponding Mint, Certify or NFC voucher. Transfer does not consume vouchers. Purchase happens in the public Shop and current crediting must be checked in the profile.",
-              "next_question": "Do you want to review a specific action or open the Shop?"
+              "title": "Understand crediting and consumption",
+              "body": "Buying in the Shop does not confirm a personal balance: crediting must be checked inside the authenticated profile. The actor executing the action consumes the corresponding Mint, Certify or NFC voucher. Transfer does not consume vouchers.",
+              "next_question": "Do you want to review a specific action, a possible blocker or return to the Shop?"
             },
             "pt": {
-              "title": "Entender consumo e compra",
-              "body": "Quem executa a acao consome o voucher correspondente de Mint, Certify ou NFC. Transferencia nao consome vouchers. A compra ocorre no Shop publico e a acreditacao atual deve ser conferida no perfil.",
-              "next_question": "Quer revisar uma acao especifica ou abrir o Shop?"
+              "title": "Entender acreditacao e consumo",
+              "body": "Comprar no Shop nao confirma um saldo pessoal: a acreditacao deve ser conferida dentro do perfil autenticado. Quem executa a acao consome o voucher correspondente de Mint, Certify ou NFC. Transferencia nao consome vouchers.",
+              "next_question": "Quer revisar uma acao especifica, um possivel bloqueio ou voltar ao Shop?"
             }
           },
           "hotspots": [
@@ -8275,7 +8789,60 @@
             }
           ]
         }
-      ]
+      ],
+      "step_enrichment": {
+        "vouchers.understand-consumption": {
+          "state_legend_title": {
+            "es": "Estados de vouchers",
+            "en": "Voucher states",
+            "pt": "Estados dos vouchers"
+          },
+          "state_legend": [
+            {
+              "state": "public_price_snapshot",
+              "tone": "neutral",
+              "label": { "es": "Precio publico", "en": "Public price", "pt": "Preco publico" },
+              "message": { "es": "El Shop publica productos y precios vigentes para visitantes.", "en": "The Shop publishes current products and prices for visitors.", "pt": "O Shop publica produtos e precos vigentes para visitantes." },
+              "meaning": { "es": "Citar siempre la fecha del snapshot y enlazar al Shop actual.", "en": "Always cite the snapshot date and link to the current Shop.", "pt": "Sempre citar a data do snapshot e vincular ao Shop atual." }
+            },
+            {
+              "state": "purchase_pending",
+              "tone": "progress",
+              "label": { "es": "Compra iniciada", "en": "Purchase started", "pt": "Compra iniciada" },
+              "message": { "es": "El producto fue elegido en el Shop, pero el Companion no confirma pago ni entrega.", "en": "A product was selected in the Shop, but the Companion does not confirm payment or delivery.", "pt": "Um produto foi escolhido no Shop, mas o Companion nao confirma pagamento nem entrega." },
+              "meaning": { "es": "Continuar solo en el Shop y sus canales oficiales.", "en": "Continue only through the Shop and its official channels.", "pt": "Continuar somente pelo Shop e seus canais oficiais." }
+            },
+            {
+              "state": "crediting_unverified",
+              "tone": "warning",
+              "label": { "es": "Acreditacion no verificada", "en": "Crediting unverified", "pt": "Acreditacao nao verificada" },
+              "message": { "es": "La compra no demuestra por si sola que el saldo ya aparezca en Atelier.", "en": "The purchase alone does not prove that the balance already appears in Atelier.", "pt": "A compra por si so nao prova que o saldo ja apareca no Atelier." },
+              "meaning": { "es": "Revisar el perfil autenticado o soporte vigente.", "en": "Check the authenticated profile or current support channel.", "pt": "Revisar o perfil autenticado ou o suporte vigente." }
+            },
+            {
+              "state": "owner_balance_available",
+              "tone": "success",
+              "label": { "es": "Saldo disponible", "en": "Balance available", "pt": "Saldo disponivel" },
+              "message": { "es": "El perfil autenticado muestra contadores por tipo.", "en": "The authenticated profile shows counters by type.", "pt": "O perfil autenticado mostra contadores por tipo." },
+              "meaning": { "es": "El saldo real requiere contexto owner read-only autorizado; Nivel 5 nunca lo ve.", "en": "A real balance requires authorized read-only owner context; Level 5 never sees it.", "pt": "O saldo real exige contexto owner read-only autorizado; Nivel 5 nunca o ve." }
+            },
+            {
+              "state": "consumed_by_actor",
+              "tone": "progress",
+              "label": { "es": "Consumido por el actor", "en": "Consumed by the actor", "pt": "Consumido pelo ator" },
+              "message": { "es": "Mint, Certify o NFC descuenta el voucher correspondiente de quien ejecuta y firma.", "en": "Mint, Certify or NFC deducts the corresponding voucher from the actor who executes and signs.", "pt": "Mint, Certify ou NFC desconta o voucher correspondente de quem executa e assina." },
+              "meaning": { "es": "Quien solicita una accion a un tercero no necesariamente consume el voucher.", "en": "The person requesting an action from a third party does not necessarily consume the voucher.", "pt": "Quem solicita uma acao a um terceiro nao necessariamente consome o voucher." }
+            },
+            {
+              "state": "transfer_no_voucher",
+              "tone": "neutral",
+              "label": { "es": "Transferencia sin voucher", "en": "Transfer without voucher", "pt": "Transferencia sem voucher" },
+              "message": { "es": "Transferencia es traspaso de titularidad y no consume voucher.", "en": "Transfer is a change of title and does not consume a voucher.", "pt": "Transferencia e mudanca de titularidade e nao consome voucher." },
+              "meaning": { "es": "No presentarla como venta automatica ni mezclarla con los costos de Mint, Certify o NFC.", "en": "Do not present it as an automatic sale or mix it with Mint, Certify or NFC costs.", "pt": "Nao apresenta-la como venda automatica nem mistura-la com custos de Mint, Certify ou NFC." }
+            }
+          ]
+        }
+      }
     }
   }
 }
