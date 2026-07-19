@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.demo_atelier_visual_qa_decisions.v1",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "reviewed_at": "2026-07-19",
   "policy": {
     "accepted": "La alerta geometrica fue revisada. El asset es atomico, legible con el foco ampliado y no necesita recomposicion.",
@@ -376,6 +376,56 @@
       "asset_id": "manual-native-certify-select-minted-artwork",
       "status": "accepted",
       "reason": "Recorte saneado a filtros y tarjeta visual de la obra; excluye avatar y nombre real del owner sin perder la seleccion de obra minteada."
+    },
+    {
+      "asset_id": "manual-native-chip-request-sent",
+      "status": "accepted",
+      "reason": "Toast completo que confirma el envio de la solicitud NFC; no expone identidad y no se confunde con el resultado final."
+    },
+    {
+      "asset_id": "manual-native-chip-success",
+      "status": "accepted",
+      "reason": "Toast real de Atelier que confirma Obra certificada con exito al cerrar la certificacion NFC; la StepCard explica la relacion sin alterar la interfaz fuente."
+    },
+    {
+      "asset_id": "manual-native-chip-understand-link",
+      "status": "accepted",
+      "reason": "Composicion completa y legible de telefono, tag y lectura NFC; es didactica, no contiene datos owner y conserva el concepto fisico-digital."
+    },
+    {
+      "asset_id": "manual-native-chip-open-mobile-app",
+      "status": "accepted",
+      "reason": "Icono atomico de la app Tokenizart en el telefono; el tamano de origen es suficiente con foco ampliado y no expone notificaciones ni identidad."
+    },
+    {
+      "asset_id": "manual-native-chip-certifier-received",
+      "status": "accepted",
+      "reason": "Vista completa de Certificaciones Recibidas con Vinculacion NFC pendiente; la columna Propietario esta saneada y no muestra emails."
+    },
+    {
+      "asset_id": "manual-native-chip-choose-certifier",
+      "status": "accepted",
+      "reason": "Controles completos para elegir certificador y tipo de certificacion; no contiene una identidad seleccionada ni credenciales."
+    },
+    {
+      "asset_id": "manual-native-chip-confirm-request",
+      "status": "accepted",
+      "reason": "Dialogo completo de confirmacion con Cancelar y Aceptar; conserva la decision sin exponer datos del actor."
+    },
+    {
+      "asset_id": "manual-native-chip-open-tagged-web",
+      "status": "accepted",
+      "reason": "Vista Taggeadas completa con tipo Vinculacion NFC y estado; la columna Propietario esta saneada y el flujo sigue siendo read-only."
+    },
+    {
+      "asset_id": "manual-native-chip-requester-pending",
+      "status": "accepted",
+      "reason": "Vista completa de Certificaciones Solicitadas pendientes; la columna Certificador esta saneada y conserva tipo y acciones."
+    },
+    {
+      "asset_id": "manual-native-chip-review-request",
+      "status": "accepted",
+      "reason": "Recorte atomico del tipo Vinculacion NFC y Enviar Solicitud; no muestra identidad ni campos ajenos al paso."
     }
   ]
 }

@@ -129,7 +129,7 @@ npm run deploy:staging
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
 Validated staging Worker for the current shared visual contract:
-`b2aa60d1-2ef7-4533-886e-c23d1685361e`. Production was not changed.
+`492175f3-aa57-4142-b21d-b3b295b1becf`. Production was not changed.
 
 ## Source synchronization
 
@@ -146,6 +146,6 @@ Atelier captures.
 
 The optional `display_asset_id` keeps the native PPTX-derived `asset_id` as the auditable source while allowing a reviewed, sanitized didactic visual to be rendered when the source crop is truncated or does not explain the intended concept. It never replaces source traceability. Gallery metadata now uses a dedicated `ipfs-metadata-anatomy` display asset with synthetic values; the native source remains linked for audit.
 
-`audit:visual:staging` checks all 163 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. Editorial decisions are versioned in `src/data/atelier-visual-qa-decisions.v1.json`: automatic geometry flags remain visible, but inspected atomic crops can be accepted without pretending that their original dimensions changed. QA decisions `1.5.0` leave 10 pending and 74 accepted assets, with zero unavailable resources and zero steps without a focus hotspot. Navigation, artwork loading, Gallery, Mint, Certify, Transfer and Privacy have completed human visual QA; the remaining queue is NFC 10.
+`audit:visual:staging` checks all 163 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. Editorial decisions are versioned in `src/data/atelier-visual-qa-decisions.v1.json`: automatic geometry flags remain visible, but inspected atomic crops can be accepted without pretending that their original dimensions changed. QA decisions `1.6.0` leave zero pending and 84 accepted assets, with zero unavailable resources and zero steps without a focus hotspot. All active visual flows have completed human visual QA; geometry flags remain observable but no longer represent unresolved editorial work.
 
 The production build separates React, XState and Lucide into stable vendor chunks. The main JavaScript chunk is 363 kB instead of the previous 605 kB monolith. A staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.
