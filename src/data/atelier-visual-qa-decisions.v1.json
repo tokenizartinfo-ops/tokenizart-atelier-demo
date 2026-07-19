@@ -1,7 +1,7 @@
 {
   "schema": "tokenizart.demo_atelier_visual_qa_decisions.v1",
-  "version": "1.1.0",
-  "reviewed_at": "2026-07-18",
+  "version": "1.2.0",
+  "reviewed_at": "2026-07-19",
   "policy": {
     "accepted": "La alerta geometrica fue revisada. El asset es atomico, legible con el foco ampliado y no necesita recomposicion.",
     "needs_review": "La alerta automatica sigue abierta hasta una decision editorial explicita."
@@ -81,6 +81,201 @@
       "asset_id": "manual-native-vouchers-understand-types",
       "status": "accepted",
       "reason": "Tabla completa y legible de Mint, Chip NFC y Certify; el formato panoramico es intencional y cada fila conserva su hotspot localizado."
+    },
+    {
+      "asset_id": "manual-native-navigation-contacts",
+      "status": "accepted",
+      "reason": "Pantalla completa de Contactos con menu y accion Agregar contacto visibles; el espacio vacio es parte del estado real y no un recorte fallido."
+    },
+    {
+      "asset_id": "manual-native-navigation-enter-administration",
+      "status": "accepted",
+      "reason": "Recorte panoramico completo que conecta el menu lateral con Obras Propias y sus acciones; los dos hotspots permiten recorrer origen y destino."
+    },
+    {
+      "asset_id": "manual-native-navigation-main-menu",
+      "status": "accepted",
+      "reason": "Vista de alta resolucion del menu principal y los filtros de Obras Propias; conserva contexto suficiente y detalle ampliable sin datos sensibles."
+    },
+    {
+      "asset_id": "manual-native-navigation-managed-certified",
+      "status": "accepted",
+      "reason": "Pantalla completa de Obras Gestionadas con el filtro Certificadas seleccionado; el panorama es necesario para relacionar menu, filtro y resultados."
+    },
+    {
+      "asset_id": "manual-native-navigation-managed-minted",
+      "status": "accepted",
+      "reason": "Pantalla completa de Obras Gestionadas con el filtro Minteadas visible; mantiene navegacion y resultado en una unica evidencia verificable."
+    },
+    {
+      "asset_id": "manual-native-navigation-managed-to-mint",
+      "status": "accepted",
+      "reason": "Pantalla completa de Obras Gestionadas con Por Mintear seleccionado; el hotspot enfoca el filtro sin perder la ubicacion dentro de Administracion."
+    },
+    {
+      "asset_id": "manual-native-navigation-managed-without-certify",
+      "status": "accepted",
+      "reason": "Pantalla completa de Obras Gestionadas con Por Certificar seleccionado; el formato ancho corresponde a la tabla real y sigue siendo legible en lightbox."
+    },
+    {
+      "asset_id": "manual-native-navigation-managers",
+      "status": "accepted",
+      "reason": "Pantalla de Gestores completa con busqueda y accion Agregar gestor; el estado mayormente vacio explica la ubicacion funcional sin inventar registros."
+    },
+    {
+      "asset_id": "manual-native-navigation-own-all",
+      "status": "accepted",
+      "reason": "Vista completa de Obras Propias con Todas seleccionado y tarjetas visibles; conserva el contexto necesario para entender el filtro general."
+    },
+    {
+      "asset_id": "manual-native-navigation-own-certified",
+      "status": "accepted",
+      "reason": "Vista completa de Obras Propias con Certificadas seleccionado; el recorte muestra con claridad filtro, tarjetas e iconos de estado."
+    },
+    {
+      "asset_id": "manual-native-navigation-own-minted",
+      "status": "accepted",
+      "reason": "Vista completa de Obras Propias con Minteadas seleccionado; su anchura preserva menu, filtros y resultados para una guia contextual fiable."
+    },
+    {
+      "asset_id": "manual-native-navigation-own-pending-certify",
+      "status": "accepted",
+      "reason": "Vista completa de Obras Propias con Por Certificar seleccionado; el hotspot enfoca el estado pendiente y la captura conserva su contexto real."
+    },
+    {
+      "asset_id": "manual-native-navigation-own-to-mint",
+      "status": "accepted",
+      "reason": "Vista completa de Obras Propias con Por Mintear seleccionado; el panorama evita confundir este filtro con Mint ejecutado o con Gallery."
+    },
+    {
+      "asset_id": "manual-native-navigation-received-pending",
+      "status": "accepted",
+      "reason": "Tabla completa de Certificaciones Recibidas con Pendientes seleccionado; los hotspots separan pestaña y filas sin exponer credenciales."
+    },
+    {
+      "asset_id": "manual-native-navigation-received-rejected",
+      "status": "accepted",
+      "reason": "Tabla completa de Certificaciones Recibidas con Rechazadas seleccionado; el formato ancho es propio de la tabla y permite leer el estado."
+    },
+    {
+      "asset_id": "manual-native-navigation-received-tagged",
+      "status": "accepted",
+      "reason": "Tabla completa de Certificaciones Recibidas con Tagueadas seleccionado; la captura mantiene menu y resultado para evitar ambiguedad de flujo."
+    },
+    {
+      "asset_id": "manual-native-navigation-requested-completed",
+      "status": "accepted",
+      "reason": "Tabla completa de Certificaciones Solicitadas con Realizadas seleccionado; se distingue claramente de recibidas y de solicitudes pendientes."
+    },
+    {
+      "asset_id": "manual-native-navigation-requested-pending",
+      "status": "accepted",
+      "reason": "Tabla completa de Certificaciones Solicitadas con Pendientes seleccionado; dos hotspots guian pestaña y contenido manteniendo la pantalla real."
+    },
+    {
+      "asset_id": "manual-native-navigation-user-mode",
+      "status": "accepted",
+      "reason": "Vista autenticada de Gallery con filtros y tarjetas; el recorte panoramico permite comparar visualmente el modo usuario con el modo visitante."
+    },
+    {
+      "asset_id": "manual-native-navigation-visitor-mode",
+      "status": "accepted",
+      "reason": "Vista publica de Gallery con acceso y registro visibles; los hotspots conservan filtros y acciones para contrastarla con el modo usuario."
+    },
+    {
+      "asset_id": "manual-native-carga-visibility-exhibition",
+      "status": "accepted",
+      "reason": "Fila atomica y legible de Mostrar en la galeria y Expuesta; los dos hotspots explican decisiones distintas sin necesidad de redibujar la interfaz."
+    },
+    {
+      "asset_id": "manual-native-carga-confirm-preload",
+      "status": "accepted",
+      "reason": "Boton Confirmar completo y nitido; su pequeno tamano es intencional y el texto localizado de la StepCard aporta el contexto de precarga."
+    },
+    {
+      "asset_id": "manual-native-carga-continue-technical-sheet",
+      "status": "accepted",
+      "reason": "Boton Siguiente completo y nitido; representa una accion atomica y la StepCard explica que avanza desde Datos Principales a Ficha Tecnica."
+    },
+    {
+      "asset_id": "manual-native-carga-manager-owner-continuity",
+      "status": "accepted",
+      "reason": "Pantalla completa de Obras Gestionadas con owner y tarjetas en contexto; los hotspots separan continuidad de gestion y seleccion de obra."
+    },
+    {
+      "asset_id": "manual-native-carga-owner-title-author",
+      "status": "accepted",
+      "reason": "Recorte atomico de Propietario, Nombre Obra y Autor junto con pais y tipo; los campos son legibles y mantienen su relacion real."
+    },
+    {
+      "asset_id": "manual-native-carga-open-managed-artworks",
+      "status": "accepted",
+      "reason": "Pantalla completa de Obras Gestionadas con menu y accion Cargar Obra; el panorama muestra con claridad el punto de entrada del gestor."
+    },
+    {
+      "asset_id": "manual-native-carga-notes-existing-sheet",
+      "status": "accepted",
+      "reason": "Campo Notas completo con recomendacion sobre ficha tecnica preexistente; ambos elementos son legibles y semanticamente inseparables."
+    },
+    {
+      "asset_id": "manual-native-carga-choose-owner-mode",
+      "status": "accepted",
+      "reason": "Cabecera completa de Obras Propias con Cargar Obra y Mintear Obras; los hotspots distinguen precarga de Mint sin perder contexto."
+    },
+    {
+      "asset_id": "manual-native-carga-description",
+      "status": "accepted",
+      "reason": "Campo Descripcion completo con contador de caracteres; el formato ancho corresponde al control real y el hotspot concentra la edicion."
+    },
+    {
+      "asset_id": "manual-native-carga-find-preloaded-status",
+      "status": "accepted",
+      "reason": "Vista completa de Obras Propias con filtros y tarjetas; permite localizar una precarga y diferenciarla de estados Mint o Certify."
+    },
+    {
+      "asset_id": "manual-native-carga-dimensions-year-place",
+      "status": "accepted",
+      "reason": "Grupo atomico de dimensiones, epoca, ano y lugar de creacion; cuatro hotspots permiten explicar cada campo dentro de su bloque real."
+    },
+    {
+      "asset_id": "manual-native-carga-understand-two-stages",
+      "status": "accepted",
+      "reason": "Cabecera del formulario con Datos Principales y Ficha Tecnica; el panorama es intencional para mostrar las dos etapas en una sola vista."
+    },
+    {
+      "asset_id": "manual-native-carga-technique-theme-style",
+      "status": "accepted",
+      "reason": "Grupo atomico de denominacion, estilo, tematica y tecnica; los cuatro hotspots permiten recorrer los campos sin una imagen inventada."
+    },
+    {
+      "asset_id": "manual-native-carga-supporting-images",
+      "status": "accepted",
+      "reason": "Zona completa para imagenes o documentos secundarios con limite visible; el recorte es atomico y no muestra archivos privados reales."
+    },
+    {
+      "asset_id": "manual-native-carga-main-image",
+      "status": "accepted",
+      "reason": "Zona completa de imagen principal con ejemplo visual del manual; el recorte muestra carga y previsualizacion sin exponer datos owner privados."
+    },
+    {
+      "asset_id": "manual-native-carga-save-edits",
+      "status": "accepted",
+      "reason": "Boton Confirmar completo y nitido para guardar cambios; la reutilizacion visual es fiel a Atelier y el contexto queda en la StepCard."
+    },
+    {
+      "asset_id": "manual-native-carga-open-owner-form",
+      "status": "accepted",
+      "reason": "Cabecera completa de Obras Propias con la accion Cargar Obra; el hotspot identifica el acceso al formulario sin confundirlo con Mint."
+    },
+    {
+      "asset_id": "manual-native-carga-series-value-province",
+      "status": "accepted",
+      "reason": "Grupo atomico de serie, valor y estado o provincia; tres hotspots separan datos opcionales que conservan su disposicion real."
+    },
+    {
+      "asset_id": "manual-native-carga-select-delegating-owner",
+      "status": "accepted",
+      "reason": "Selector de Propietario completo en el flujo gestionado; el recorte mantiene el campo y el inicio de la ficha sin mostrar una identidad real."
     }
   ]
 }
