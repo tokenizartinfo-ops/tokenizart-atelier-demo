@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.atelier_manual_native_microsteps.v1",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "source": {
     "filename": "Manual_Atelier 2026.pptx",
     "sha256": "402a524390648e66966c514b357de1c468f1bb3c782a488a4012b81ddf475151",
@@ -5295,17 +5295,8 @@
             "x": 420,
             "y": 180,
             "width": 740,
-            "height": 1650
+            "height": 1120
           },
-          "mask_rects_px": [
-            {
-              "x": 220,
-              "y": 1320,
-              "width": 470,
-              "height": 105,
-              "fill": "#ffffff"
-            }
-          ],
           "copy": {
             "es": {
               "title": "Elegir una obra minteada",
@@ -5487,33 +5478,24 @@
           "media_path": "ppt/media/image145.png",
           "source_crop_px": {
             "x": 40,
-            "y": 500,
+            "y": 635,
             "width": 860,
-            "height": 340
+            "height": 205
           },
-          "mask_rects_px": [
-            {
-              "x": 35,
-              "y": 55,
-              "width": 620,
-              "height": 58,
-              "fill": "#ffffff"
-            }
-          ],
           "copy": {
             "es": {
               "title": "Revisar y enviar la solicitud",
-              "body": "Antes de enviar, comprueba que el certificador y el tipo de Certify correspondan al mismo hecho. El boton Enviar Solicitud inicia el pedido; todavia no completa la certificacion.",
+              "body": "Antes de enviar, comprueba que el tipo de Certify sea correcto y que el certificador elegido en el paso anterior corresponda al mismo hecho. El boton Enviar Solicitud inicia el pedido; todavia no completa la certificacion.",
               "next_question": "Revisamos la pantalla de confirmacion del envio?"
             },
             "en": {
               "title": "Review and send the request",
-              "body": "Before sending, check that the certifier and the Certify type match the same fact. Send Request starts the request; it does not complete the certification yet.",
+              "body": "Before sending, check that the Certify type is correct and that the certifier chosen in the previous step matches the same fact. Send Request starts the request; it does not complete the certification yet.",
               "next_question": "Shall we review the send-confirmation screen?"
             },
             "pt": {
               "title": "Revisar e enviar a solicitacao",
-              "body": "Antes de enviar, confira se o certificador e o tipo de Certify correspondem ao mesmo fato. Enviar solicitacao inicia o pedido; ainda nao conclui a certificacao.",
+              "body": "Antes de enviar, confira se o tipo de Certify esta correto e se o certificador escolhido no passo anterior corresponde ao mesmo fato. Enviar solicitacao inicia o pedido; ainda nao conclui a certificacao.",
               "next_question": "Revisamos a tela de confirmacao do envio?"
             }
           },

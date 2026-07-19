@@ -1,6 +1,6 @@
 {
   "schema": "tokenizart.demo_atelier_visual_qa_decisions.v1",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "reviewed_at": "2026-07-19",
   "policy": {
     "accepted": "La alerta geometrica fue revisada. El asset es atomico, legible con el foco ampliado y no necesita recomposicion.",
@@ -336,6 +336,46 @@
       "asset_id": "manual-native-mint-review-voucher",
       "status": "accepted",
       "reason": "Resumen atomico del voucher Mint a consumir y etiqueta de contrasena sin valor visible; explica la precondicion sin exponer credenciales."
+    },
+    {
+      "asset_id": "manual-native-certify-request-sent",
+      "status": "accepted",
+      "reason": "Toast completo que confirma el envio de la solicitud sin confundirlo con la certificacion final ni exponer datos personales."
+    },
+    {
+      "asset_id": "manual-native-certify-success",
+      "status": "accepted",
+      "reason": "Toast completo de obra certificada con exito; su formato atomico es legible y no contiene datos owner."
+    },
+    {
+      "asset_id": "manual-native-certify-certifier-received",
+      "status": "accepted",
+      "reason": "Vista completa de Certificaciones Recibidas con estados y acciones; no muestra emails ni credenciales y explica el rol del certificador."
+    },
+    {
+      "asset_id": "manual-native-certify-choose-certifier",
+      "status": "accepted",
+      "reason": "Controles completos para elegir certificador y tipo de Certify; no incluye una identidad seleccionada ni datos innecesarios."
+    },
+    {
+      "asset_id": "manual-native-certify-confirm-request",
+      "status": "accepted",
+      "reason": "Dialogo completo de confirmacion con opciones Cancelar y Aceptar; no expone contenido owner y conserva el punto de decision."
+    },
+    {
+      "asset_id": "manual-native-certify-requester-pending",
+      "status": "accepted",
+      "reason": "Vista completa de Certificaciones Solicitadas pendientes con tipos y acciones; conserva el estado del flujo sin emails ni datos de acceso."
+    },
+    {
+      "asset_id": "manual-native-certify-review-request",
+      "status": "accepted",
+      "reason": "Recorte saneado al tipo de Certify y comando Enviar Solicitud; excluye el nombre real del certificador y mantiene el hotspot operativo."
+    },
+    {
+      "asset_id": "manual-native-certify-select-minted-artwork",
+      "status": "accepted",
+      "reason": "Recorte saneado a filtros y tarjeta visual de la obra; excluye avatar y nombre real del owner sin perder la seleccion de obra minteada."
     }
   ]
 }
