@@ -1,0 +1,71 @@
+{
+  "schema": "tokenizart.demo_atelier_visual_qa_decisions.v1",
+  "version": "1.0.0",
+  "reviewed_at": "2026-07-18",
+  "policy": {
+    "accepted": "La alerta geometrica fue revisada. El asset es atomico, legible con el foco ampliado y no necesita recomposicion.",
+    "needs_review": "La alerta automatica sigue abierta hasta una decision editorial explicita."
+  },
+  "decisions": [
+    {
+      "asset_id": "manual-native-onboarding-accept-terms",
+      "status": "accepted",
+      "reason": "Recorte atomico intencional del control de terminos y del comando de registro; el hotspot cubre la decision completa."
+    },
+    {
+      "asset_id": "manual-native-onboarding-submit-registration",
+      "status": "accepted",
+      "reason": "Recorte atomico intencional del comando Registrarme; el foco ampliado conserva el contexto inmediato de ingreso."
+    },
+    {
+      "asset_id": "manual-native-wallet-copy-confirmed",
+      "status": "accepted",
+      "reason": "Toast de confirmacion completo y legible; su relacion panoramica corresponde a la interfaz original."
+    },
+    {
+      "asset_id": "manual-native-wallet-copy-data",
+      "status": "accepted",
+      "reason": "Par de comandos Copiar datos y Comenzar completo; el hotspot enfoca la accion relevante sin exponer credenciales."
+    },
+    {
+      "asset_id": "manual-native-vouchers-recognize-icons",
+      "status": "accepted",
+      "reason": "Fila atomica de los tres iconos de vouchers; cada icono tiene hotspot y leyenda localizada fuera del bitmap."
+    },
+    {
+      "asset_id": "manual-native-vouchers-header-balances",
+      "status": "accepted",
+      "reason": "Ubicacion saneada de los contadores de vouchers; los saldos permanecen ocultos y la explicacion identifica cada tipo."
+    },
+    {
+      "asset_id": "manual-native-action-load",
+      "status": "accepted",
+      "reason": "Icono cuadrado nativo de Carga, nitido a 320 px y acompanado por etiqueta localizada en la interfaz."
+    },
+    {
+      "asset_id": "manual-native-action-mint",
+      "status": "accepted",
+      "reason": "Icono cuadrado nativo de Mint, nitido a 320 px y acompanado por etiqueta localizada en la interfaz."
+    },
+    {
+      "asset_id": "manual-native-action-chip",
+      "status": "accepted",
+      "reason": "Icono cuadrado nativo de Chip NFC, nitido a 320 px y acompanado por etiqueta localizada en la interfaz."
+    },
+    {
+      "asset_id": "manual-native-action-certify",
+      "status": "accepted",
+      "reason": "Icono cuadrado nativo de Certify, nitido a 320 px y acompanado por etiqueta localizada en la interfaz."
+    },
+    {
+      "asset_id": "manual-native-action-transfer",
+      "status": "accepted",
+      "reason": "Icono cuadrado nativo de Transferencia, nitido a 320 px y acompanado por etiqueta localizada en la interfaz."
+    },
+    {
+      "asset_id": "manual-native-action-privacy",
+      "status": "accepted",
+      "reason": "Icono cuadrado nativo de Data Privacy, nitido a 320 px y acompanado por etiqueta localizada en la interfaz."
+    }
+  ]
+}
