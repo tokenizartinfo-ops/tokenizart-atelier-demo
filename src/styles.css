@@ -99,6 +99,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .practice-zone[data-flow="certify"] { box-shadow: inset 4px 0 0 var(--brand-magenta); }
 .practice-zone[data-flow="carga_obra"] { box-shadow: inset 4px 0 0 var(--brand-cyan); }
 .practice-zone[data-flow="onboarding"] { box-shadow: inset 4px 0 0 var(--coral); }
+.practice-zone[data-flow="account_wallet"] { box-shadow: inset 4px 0 0 var(--brand-cyan); }
+.practice-zone[data-flow="mint"] { box-shadow: inset 4px 0 0 var(--brand-magenta); }
+.practice-zone[data-flow="chip"] { box-shadow: inset 4px 0 0 var(--coral); }
 .practice-title { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
 .practice-heading { min-width: 0; flex: 1; display: grid; gap: 2px; }
 .practice-heading strong { font-size: 15px; }
@@ -130,6 +133,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .practice-context-card.request > svg { color: #a127aa; }
 .practice-context-card.managed { background: #fff4f8; border-left-color: var(--coral); }
 .practice-context-card.managed > svg { color: #b82d60; }
+.credential-simulation, .practice-receipt { min-height: 76px; display: flex; align-items: center; gap: 11px; padding: 13px; background: #f2f8fa; border: 1px solid #d5e4e8; }
+.credential-simulation > svg, .practice-receipt > svg { flex: 0 0 auto; color: var(--aqua-dark); }
+.credential-simulation > span, .practice-receipt > span { min-width: 0; display: grid; gap: 4px; }
+.credential-simulation strong, .practice-receipt strong { font-size: 14px; line-height: 1.4; }
+.credential-simulation small, .practice-receipt small { color: #4f626d; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.credential-simulation.success, .practice-receipt { background: #eaf7f3; border-color: #b9dcd2; }
+.credential-simulation.success > svg, .practice-receipt > svg { color: var(--green); }
+.practice-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.practice-comparison article { min-width: 0; min-height: 138px; display: grid; align-content: start; gap: 7px; padding: 13px; background: #eefafa; border-top: 4px solid var(--brand-cyan); }
+.practice-comparison article.private { background: #fff4f8; border-top-color: var(--brand-magenta); }
+.practice-comparison article > svg { color: var(--aqua-dark); }
+.practice-comparison article.private > svg { color: #a127aa; }
+.practice-comparison strong { font-size: 14px; line-height: 1.35; }
+.practice-comparison small { color: #4f626d; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
 .safety-note { display: flex; align-items: flex-start; gap: 8px; padding: 12px; color: #236c60; background: #eaf7f3; font-size: 13px; line-height: 1.5; }
 .text-action { border: 0; padding: 2px 0; display: flex; align-items: center; gap: 7px; background: transparent; color: #ad2c59; font-weight: 750; font-size: 13px; justify-self: start; }
 .actor-selector { display: grid; gap: 6px; }
@@ -158,7 +175,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .confirmation-check { min-height: 46px; grid-template-columns: 20px 1fr !important; align-items: flex-start; gap: 8px !important; padding: 9px; border: 1px solid var(--line); background: white; }
 .confirmation-check input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--aqua); }
 .confirmation-check > span { display: grid; gap: 3px; font-size: 13px; line-height: 1.45; }
-.confirmation-check small { color: var(--muted); font-weight: 400; }
+.confirmation-check small { color: var(--muted); font-size: 12px; font-weight: 400; }
 .mint-result dl { gap: 5px; }
 .visibility-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .visibility-selector button { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); background: white; color: var(--ink); font-size: 13px; }
@@ -332,6 +349,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .visual-stage { min-height: 270px; }
   .practice-zone { padding: 16px; }
   .fixture-selector { grid-template-columns: 1fr; }
+  .practice-comparison, .mode-selector { grid-template-columns: 1fr; }
   .voucher-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .voucher-row span { font-size: 10px; }
   .visual-meta span:last-child { width: 100%; overflow-wrap: anywhere; }

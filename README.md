@@ -18,6 +18,7 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Uses the `Atelier first` layout: flow rail plus one framed practice surface, with screen, synthetic controls and current-step guidance in the same journey.
 - Applies the verified Tokenizart identity from `Aplicaciones_Marca_tokenizart.pdf`: Montserrat, the real fingerprint symbol, and restrained cyan, magenta and coral accents.
 - Uses native action icons from Manual Atelier 2026 and changes the practice controls with the current step instead of repeating one form throughout the flow.
+- Applies that focused practice pattern to all nine Smart Wallet, fifteen Mint and twenty-six NFC microsteps, with at most one contextual decision cluster per step.
 
 ## What it never does
 
@@ -135,7 +136,7 @@ npm run deploy:staging
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
 Validated staging Worker for the current `Atelier first` layout:
-`60bc684c-14c0-4cf4-9ebc-835969c12ce7`. Production was not changed.
+`bf8d7c63-95d9-4f52-8f23-aaec7d1d56e8`. Production was not changed.
 
 ## Source synchronization
 
@@ -154,6 +155,6 @@ The optional `display_asset_id` keeps the native PPTX-derived `asset_id` as the 
 
 `audit:visual:staging` checks all 163 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. Editorial decisions are versioned in `src/data/atelier-visual-qa-decisions.v1.json`: automatic geometry flags remain visible, but inspected atomic crops can be accepted without pretending that their original dimensions changed. QA decisions `1.6.0` leave zero pending and 84 accepted assets, with zero unavailable resources and zero steps without a focus hotspot. All active visual flows have completed human visual QA; geometry flags remain observable but no longer represent unresolved editorial work.
 
-`eval:human-journeys:staging` walks incorporation, artwork preload and Certify from start to finish on desktop and mobile. It verifies all 94 rendered states for image availability, step/practice alignment, adjacent explanation continuity, critical font sizes and horizontal overflow. The 2026-07-22 staging run passed with zero failures in every category.
+`eval:human-journeys:staging` walks incorporation, Smart Wallet, artwork preload, Mint, Certify and NFC from start to finish on desktop and mobile. It verifies all 194 rendered states for image availability, step/practice alignment, adjacent explanation continuity, critical font sizes, horizontal overflow and more than one contextual practice action per step. The 2026-07-22 staging run passed with zero failures in every category.
 
 The production build separates React, XState and Lucide into stable vendor chunks. The main JavaScript chunk is 363 kB instead of the previous 605 kB monolith. A staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.

@@ -11,8 +11,11 @@ const baseUrl = (process.env.DEMO_BASE_URL ?? "https://demo-atelier-staging.toke
 const outputDir = path.join(repoRoot, "output", "human-journeys-staging");
 const journeys = [
   { flow: "onboarding", expectedSteps: 10 },
+  { flow: "account_wallet", expectedSteps: 9 },
   { flow: "carga_obra", expectedSteps: 22 },
+  { flow: "mint", expectedSteps: 15 },
   { flow: "certify", expectedSteps: 15 },
+  { flow: "chip", expectedSteps: 26 },
 ];
 
 async function inspectStep(page) {
@@ -44,6 +47,7 @@ async function inspectStep(page) {
         supporting: fontSize(".practice-fields small"),
       },
       horizontal_overflow_px: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
+      practice_action_count: document.querySelectorAll("[data-practice-action]").length,
     };
   });
 }
@@ -79,6 +83,7 @@ async function runJourney(browser, journey, viewport) {
     duplicate_adjacent_coach: steps.slice(1).filter((step, index) => step.coach === steps[index].coach).length,
     font_failures: steps.flatMap((step) => step.font_failures.map((failure) => ({ step: step.index, ...failure }))),
     horizontal_overflow_steps: steps.filter((step) => step.horizontal_overflow_px > 1).length,
+    multiple_practice_action_steps: steps.filter((step) => step.practice_action_count > 1).length,
     steps,
   };
 }
@@ -105,6 +110,7 @@ async function main() {
     duplicate_adjacent_coach: results.reduce((total, result) => total + result.duplicate_adjacent_coach, 0),
     font_failures: results.reduce((total, result) => total + result.font_failures.length, 0),
     horizontal_overflow_steps: results.reduce((total, result) => total + result.horizontal_overflow_steps, 0),
+    multiple_practice_action_steps: results.reduce((total, result) => total + result.multiple_practice_action_steps, 0),
     step_count_failures: results.filter((result) => result.expected_steps !== result.observed_steps).length,
   };
   const report = { ...summary, results };
@@ -112,7 +118,7 @@ async function main() {
   await fs.writeFile(path.join(outputDir, "report.json"), `${JSON.stringify(report, null, 2)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
 
-  if (summary.missing_images || summary.mismatched_step_focus || summary.font_failures || summary.horizontal_overflow_steps || summary.step_count_failures) {
+  if (summary.missing_images || summary.mismatched_step_focus || summary.font_failures || summary.horizontal_overflow_steps || summary.multiple_practice_action_steps || summary.step_count_failures) {
     process.exitCode = 1;
   }
 }

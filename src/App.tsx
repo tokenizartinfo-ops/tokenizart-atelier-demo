@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Shirt,
   ShoppingCart,
+  Smartphone,
   Tag,
   TicketCheck,
   UserRoundPlus,
@@ -353,10 +354,90 @@ function statusText(context: DemoContext, language: Language) {
   return map[status][language];
 }
 
+const adaptivePracticeCopy = {
+  es: {
+    accessCredential: "Acceso a Atelier",
+    accessCredentialHelp: "Permite entrar a la cuenta de usuario.",
+    walletCredential: "Autorización de wallet",
+    walletCredentialHelp: "Confirma acciones blockchain dentro del flujo guiado.",
+    publicAddress: "Dirección pública",
+    publicAddressHelp: "Se puede usar para identificar la wallet y recibir activos.",
+    privateCredential: "Clave privada",
+    privateCredentialHelp: "Es secreta: no se comparte ni se pega en el chat.",
+    browserStorageOff: "No guardar en el navegador",
+    copiedSafely: "Datos de recuperación guardados fuera del chat",
+    selectedArtwork: "Obra seleccionada",
+    mintVoucher: "Voucher Mint disponible",
+    waitingBlockchain: "Confirmación blockchain en curso",
+    mintReceipt: "Comprobante Mint simulado",
+    mintedStatus: "La obra ya muestra identidad digital",
+    toolboxReady: "Toolbox de práctica preparado",
+    mobileReady: "Móvil compatible y app Tokenizart listos",
+    nfcRequest: "Solicitud de vinculación NFC",
+    pendingRequest: "Solicitud pendiente de revisión",
+    mobileApp: "Aplicación móvil Tokenizart",
+    nfcVoucher: "Voucher NFC disponible",
+    nfcReceipt: "Comprobante NFC simulado",
+  },
+  en: {
+    accessCredential: "Atelier access",
+    accessCredentialHelp: "Lets the user sign in to their account.",
+    walletCredential: "Wallet authorization",
+    walletCredentialHelp: "Confirms blockchain actions inside the guided flow.",
+    publicAddress: "Public address",
+    publicAddressHelp: "It can identify the wallet and receive assets.",
+    privateCredential: "Private key",
+    privateCredentialHelp: "It is secret: never share it or paste it into chat.",
+    browserStorageOff: "Do not save in the browser",
+    copiedSafely: "Recovery data stored outside the chat",
+    selectedArtwork: "Selected artwork",
+    mintVoucher: "Available Mint voucher",
+    waitingBlockchain: "Blockchain confirmation in progress",
+    mintReceipt: "Simulated Mint receipt",
+    mintedStatus: "The artwork now shows a digital identity",
+    toolboxReady: "Practice Toolbox ready",
+    mobileReady: "Compatible phone and Tokenizart app ready",
+    nfcRequest: "NFC linking request",
+    pendingRequest: "Request awaiting review",
+    mobileApp: "Tokenizart mobile app",
+    nfcVoucher: "Available NFC voucher",
+    nfcReceipt: "Simulated NFC receipt",
+  },
+  pt: {
+    accessCredential: "Acesso ao Atelier",
+    accessCredentialHelp: "Permite entrar na conta do usuário.",
+    walletCredential: "Autorização da wallet",
+    walletCredentialHelp: "Confirma ações blockchain dentro do fluxo guiado.",
+    publicAddress: "Endereço público",
+    publicAddressHelp: "Pode identificar a wallet e receber ativos.",
+    privateCredential: "Chave privada",
+    privateCredentialHelp: "É secreta: nunca compartilhe nem cole no chat.",
+    browserStorageOff: "Não salvar no navegador",
+    copiedSafely: "Dados de recuperação guardados fora do chat",
+    selectedArtwork: "Obra selecionada",
+    mintVoucher: "Voucher Mint disponível",
+    waitingBlockchain: "Confirmação blockchain em andamento",
+    mintReceipt: "Comprovante Mint simulado",
+    mintedStatus: "A obra agora mostra uma identidade digital",
+    toolboxReady: "Toolbox de prática preparado",
+    mobileReady: "Celular compatível e app Tokenizart prontos",
+    nfcRequest: "Solicitação de vinculação NFC",
+    pendingRequest: "Solicitação aguardando revisão",
+    mobileApp: "Aplicativo móvel Tokenizart",
+    nfcVoucher: "Voucher NFC disponível",
+    nfcReceipt: "Comprovante NFC simulado",
+  },
+} satisfies Record<Language, Record<string, string>>;
+
+function PracticeContextCard({ icon: Icon, title, body, tone = "" }: { icon: typeof Blocks; title: string; body: string; tone?: string }) {
+  return <div className={`practice-context-card ${tone}`.trim()}><Icon size={24} /><span><strong>{title}</strong><small>{body}</small></span></div>;
+}
+
 function PracticeFields({ context, step, send }: { context: DemoContext; step: ManualStep; send: (event: any) => void }) {
   const lang = context.language;
   const t = ui[lang];
   const stepCopy = step.copy[lang];
+  const p = adaptivePracticeCopy[lang];
 
   if (context.flow === "onboarding") {
     const isAccess = step.order <= 3;
@@ -375,11 +456,25 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
   }
 
   if (context.flow === "account_wallet") {
+    const order = step.order;
     return (
-      <div className="practice-fields">
-        <div className="wallet-preview"><KeyRound size={26} /><span><strong>Smart Wallet de práctica</strong><small>0xD3m0...8A71 · sin valor real</small></span><ShieldCheck size={22} /></div>
-        <div className="safety-note"><ShieldCheck size={18} />{t.noSecrets}</div>
-        <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "wrong_wallet_password" })}><CircleAlert size={17} />{t.errorPractice}</button>
+      <div className="practice-fields wallet-practice">
+        {order === 1 && <PracticeContextCard icon={WalletCards} title={stepCopy.title} body={stepCopy.body} />}
+        {order === 2 && <div className="credential-simulation"><KeyRound size={24} /><span><strong>••••••••••••</strong><small>{stepCopy.body}</small></span><ShieldCheck size={20} /></div>}
+        {order === 2 && <button data-practice-action className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "wrong_wallet_password" })}><CircleAlert size={17} />{t.errorPractice}</button>}
+        {order === 3 && <PracticeContextCard icon={ShieldCheck} title={p.browserStorageOff} body={stepCopy.body} tone="success" />}
+        {order === 4 && <div className="practice-comparison">
+          <article><UserRoundPlus size={21} /><strong>{p.accessCredential}</strong><small>{p.accessCredentialHelp}</small></article>
+          <article><KeyRound size={21} /><strong>{p.walletCredential}</strong><small>{p.walletCredentialHelp}</small></article>
+        </div>}
+        {order === 5 && <div className="practice-comparison">
+          <article><WalletCards size={21} /><strong>{p.publicAddress}</strong><small>0xD3m0...8A71 · {p.publicAddressHelp}</small></article>
+          <article className="private"><ShieldCheck size={21} /><strong>{p.privateCredential}</strong><small>{p.privateCredentialHelp}</small></article>
+        </div>}
+        {order === 6 && <><div className="wallet-preview"><KeyRound size={26} /><span><strong>Smart Wallet · {t.simulated}</strong><small>0xD3m0...8A71 · {p.publicAddress}</small></span><ShieldCheck size={22} /></div><div className="safety-note"><ShieldCheck size={18} />{t.noSecrets}</div></>}
+        {order === 7 && <div className="credential-simulation success"><Check size={24} /><span><strong>{p.copiedSafely}</strong><small>{stepCopy.body}</small></span></div>}
+        {order === 8 && <PracticeContextCard icon={BadgeCheck} title={stepCopy.title} body={stepCopy.body} tone="success" />}
+        {order === 9 && <PracticeContextCard icon={UserRoundPlus} title={stepCopy.title} body={stepCopy.body} />}
       </div>
     );
   }
@@ -463,9 +558,15 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
     const draft = context.world.nfcDraft;
     const completed = context.world.events.includes("chip.completed");
     const selectedTag = nfcTagStates[draft.tagState][lang];
+    const order = step.order;
     return (
       <div className="practice-fields nfc-config">
-        <fieldset>
+        {order === 1 && <PracticeContextCard icon={Nfc} title={stepCopy.title} body={stepCopy.body} />}
+        {order === 2 && <PracticeContextCard icon={PackageCheck} title={p.toolboxReady} body={stepCopy.body} />}
+        {order === 3 && <PracticeContextCard icon={Smartphone} title={p.mobileReady} body={stepCopy.body} tone="success" />}
+        {order === 4 && <PracticeContextCard icon={ImageIcon} title={p.selectedArtwork} body={`${context.world.artworkTitle} · ${stepCopy.body}`} />}
+        {order === 5 && <PracticeContextCard icon={FileCheck2} title={stepCopy.title} body={stepCopy.body} />}
+        {order === 6 && <fieldset data-practice-action>
           <legend>{t.nfcActor}</legend>
           <div className="actor-selector">
             {(Object.keys(nfcActors) as NfcActorId[]).map((actorId) => {
@@ -473,8 +574,18 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
               return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => send({ type: "SET_NFC_DRAFT", actorId })}><Nfc size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
             })}
           </div>
-        </fieldset>
-        <fieldset>
+        </fieldset>}
+        {order === 7 && <PracticeContextCard icon={Nfc} title={stepCopy.title} body={stepCopy.body} />}
+        {order >= 8 && order <= 12 && <PracticeContextCard icon={order === 10 ? BadgeCheck : FileCheck2} title={order === 10 ? p.nfcRequest : order >= 11 ? p.pendingRequest : stepCopy.title} body={stepCopy.body} tone={order === 10 ? "success" : "request"} />}
+        {order >= 13 && order <= 17 && <PracticeContextCard icon={Smartphone} title={order === 13 ? p.mobileApp : stepCopy.title} body={stepCopy.body} />}
+        {order === 18 && <><div className="phone-simulation nfc-ready_to_link"><Nfc size={38} /><strong>Ready to link</strong><small>{stepCopy.body}</small></div><label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.scanConfirmed} onChange={(event) => send({ type: "SET_NFC_DRAFT", tagState: "ready_to_link", scanConfirmed: event.target.checked })} /><span>{t.confirmNfcScan}<small>{t.nfcScanHelp}</small></span></label></>}
+        {order >= 19 && order <= 20 && <PracticeContextCard icon={BadgeCheck} title={stepCopy.title} body={stepCopy.body} tone="success" />}
+        {order === 21 && <div className="transaction-preview"><TicketCheck size={25} /><span><strong>{p.nfcVoucher}: {context.world.vouchers.nfc}</strong><small>{context.world.artworkTitle} · {stepCopy.body}</small></span></div>}
+        {order === 22 && <label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_NFC_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmNfcSignature}<small>{t.signatureHelp}</small></span></label>}
+        {order === 23 && <PracticeContextCard icon={BadgeCheck} title={stepCopy.title} body={stepCopy.body} tone="success" />}
+        {order === 24 && <div className="practice-receipt"><FileCheck2 size={24} /><span><strong>{p.nfcReceipt}</strong><small>CERT-NFC-DEMO-001 · TX-DEMO-NFC-001</small></span></div>}
+        {order === 25 && <div className="phone-simulation nfc-linked_artwork"><Nfc size={38} /><strong>{nfcTagStates.linked_artwork[lang].systemMessage}</strong><small>{stepCopy.body}</small></div>}
+        {order === 26 && <fieldset data-practice-action>
           <legend>{t.nfcTagReading}</legend>
           <div className="nfc-state-selector">
             {(Object.keys(nfcTagStates) as NfcTagState[]).map((tagState) => {
@@ -482,12 +593,8 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
               return <button type="button" key={tagState} disabled={completed} className={draft.tagState === tagState ? "selected" : ""} onClick={() => send({ type: "SET_NFC_DRAFT", tagState, scanConfirmed: false, signatureConfirmed: false })}><Nfc size={17} /><span><strong>{tag.name}</strong><small>{tag.description}</small></span></button>;
             })}
           </div>
-        </fieldset>
-        <div className={`phone-simulation nfc-${draft.tagState}`}><Nfc size={38} /><strong>{selectedTag.systemMessage}</strong><small>{selectedTag.description}</small></div>
-        <label className="confirmation-check"><input type="checkbox" disabled={completed || draft.tagState !== "ready_to_link"} checked={draft.scanConfirmed} onChange={(event) => send({ type: "SET_NFC_DRAFT", scanConfirmed: event.target.checked })} /><span>{t.confirmNfcScan}<small>{t.nfcScanHelp}</small></span></label>
-        <label className="confirmation-check"><input type="checkbox" disabled={completed || draft.tagState !== "ready_to_link"} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_NFC_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmNfcSignature}<small>{t.signatureHelp}</small></span></label>
-        <div className="transaction-preview"><Nfc size={25} /><span><strong>NFC {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherCost}: 1 · {t.voucherAvailable}: {context.world.vouchers.nfc}</small></span></div>
-        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: draft.tagState === "linked_artwork" ? "nfc_already_linked" : draft.tagState === "not_tokenizart" ? "nfc_not_tokenizart" : "nfc_scan_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}
+        </fieldset>}
+        {order === 26 && <div className={`phone-simulation nfc-${draft.tagState}`}><Nfc size={38} /><strong>{selectedTag.systemMessage}</strong><small>{selectedTag.description}</small></div>}
       </div>
     );
   }
@@ -537,9 +644,12 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
     const draft = context.world.mintDraft;
     const completed = context.world.events.includes("mint.completed");
     const voucherRequirement = draft.mode === "batch" ? 2 : 1;
+    const order = step.order;
     return (
       <div className="practice-fields mint-config">
-        <fieldset>
+        {order === 1 && <PracticeContextCard icon={ImageIcon} title={p.selectedArtwork} body={`${context.world.artworkTitle} · ${stepCopy.body}`} />}
+        {order === 2 && <><div className="mint-readiness"><strong>{t.reviewBeforeMint}</strong><span><Check size={16} />{t.artworkDataReady}</span><span><Check size={16} />{t.artworkImagesReady}</span><span><Check size={16} />{t.artworkVisibilityReady}</span></div><label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.reviewConfirmed} onChange={(event) => send({ type: "SET_MINT_DRAFT", reviewConfirmed: event.target.checked })} /><span>{t.confirmReview}</span></label></>}
+        {order === 3 && <fieldset data-practice-action>
           <legend>{t.mintActor}</legend>
           <div className="actor-selector">
             {(Object.keys(mintActors) as MintActorId[]).map((actorId) => {
@@ -547,8 +657,16 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
               return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => send({ type: "SET_MINT_DRAFT", actorId })}><Fingerprint size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
             })}
           </div>
-        </fieldset>
-        <fieldset>
+        </fieldset>}
+        {order === 4 && <div className="transaction-preview"><TicketCheck size={25} /><span><strong>{p.mintVoucher}: {context.world.vouchers.mint}</strong><small>{t.voucherCost}: {voucherRequirement} · {context.world.artworkTitle}</small></span></div>}
+        {order === 5 && <><PracticeContextCard icon={KeyRound} title={stepCopy.title} body={stepCopy.body} /><div className="safety-note"><ShieldCheck size={18} />{t.noSecrets}</div></>}
+        {order === 6 && <label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_MINT_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmSignature}<small>{t.signatureHelp}</small></span></label>}
+        {order === 7 && <PracticeContextCard icon={RefreshCcw} title={p.waitingBlockchain} body={stepCopy.body} />}
+        {order === 8 && <PracticeContextCard icon={BadgeCheck} title={stepCopy.title} body={stepCopy.body} tone="success" />}
+        {order === 9 && <div className="practice-receipt"><FileCheck2 size={24} /><span><strong>{p.mintReceipt}</strong><small>TX-DEMO-MINT-001 · IPFS-DEMO-001</small></span></div>}
+        {order === 10 && <PracticeContextCard icon={Fingerprint} title={p.mintedStatus} body={stepCopy.body} tone="success" />}
+        {order === 11 && <><PracticeContextCard icon={CircleAlert} title={stepCopy.title} body={stepCopy.body} tone="managed" /><button data-practice-action className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: context.world.vouchers.mint < voucherRequirement ? "missing_voucher" : "wrong_wallet_password" })}><CircleAlert size={17} />{t.errorPractice}</button></>}
+        {order === 12 && <fieldset data-practice-action>
           <legend>{t.mintMode}</legend>
           <div className="mode-selector">
             {(Object.keys(mintModes) as MintMode[]).map((mode) => {
@@ -556,17 +674,10 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
               return <button type="button" key={mode} disabled={completed} className={draft.mode === mode ? "selected" : ""} onClick={() => send({ type: "SET_MINT_DRAFT", mode })}><Blocks size={18} /><span><strong>{option.name}</strong><small>{option.description}</small></span></button>;
             })}
           </div>
-        </fieldset>
-        <div className="mint-readiness">
-          <strong>{t.reviewBeforeMint}</strong>
-          <span><Check size={16} />{t.artworkDataReady}</span>
-          <span><Check size={16} />{t.artworkImagesReady}</span>
-          <span><Check size={16} />{t.artworkVisibilityReady}</span>
-        </div>
-        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.reviewConfirmed} onChange={(event) => send({ type: "SET_MINT_DRAFT", reviewConfirmed: event.target.checked })} /><span>{t.confirmReview}</span></label>
-        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_MINT_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmSignature}<small>{t.signatureHelp}</small></span></label>
-        <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Mint {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherCost}: {voucherRequirement} · {t.voucherAvailable}: {context.world.vouchers.mint}</small></span></div>
-        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: context.world.vouchers.mint < voucherRequirement ? "missing_voucher" : "wrong_wallet_password" })}><CircleAlert size={17} />{t.errorPractice}</button>}
+        </fieldset>}
+        {order === 13 && <><div className="mint-readiness"><strong>{stepCopy.title}</strong><span><Check size={16} />{t.artworkDataReady}</span><span><Check size={16} />{t.artworkImagesReady}</span><span><Check size={16} />{t.artworkVisibilityReady}</span></div><label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.reviewConfirmed} onChange={(event) => send({ type: "SET_MINT_DRAFT", reviewConfirmed: event.target.checked })} /><span>{t.confirmReview}</span></label></>}
+        {order === 14 && <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Mint · {t.simulated}</strong><small>{draft.mode === "batch" ? t.mintBatch : t.mintSingle} · {t.voucherCost}: {voucherRequirement}</small></span></div>}
+        {order === 15 && <PracticeContextCard icon={BadgeCheck} title={stepCopy.title} body={stepCopy.body} tone="success" />}
       </div>
     );
   }

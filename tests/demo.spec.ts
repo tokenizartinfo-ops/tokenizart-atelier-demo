@@ -31,7 +31,7 @@ test("changes language without changing the selected flow", async ({ page }) => 
   await page.locator("select").selectOption("en");
   await expect(page.getByRole("heading", { name: "Atelier Demo" })).toBeVisible();
   await expect(page.getByText("Practice data")).toBeVisible();
-  await expect(page.getByText("Smart Wallet de práctica")).toBeVisible();
+  await expect(page.getByText("Create the Smart Wallet", { exact: true }).last()).toBeVisible();
 });
 
 test("renders onboarding, Smart Wallet and voucher phases with decision states", async ({ page }) => {
@@ -179,7 +179,7 @@ test("completes a synthetic batch Mint with deterministic references", async ({ 
         artworkType: "painting",
         galleryVisible: false,
         certifyVisible: true,
-        mintDraft: { actorId: "owner_artist", mode: "single", reviewConfirmed: false, signatureConfirmed: false },
+        mintDraft: { actorId: "authorized_manager", mode: "batch", reviewConfirmed: true, signatureConfirmed: true },
         mintReceipts: [],
         certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
         certifications: [],
@@ -190,10 +190,6 @@ test("completes a synthetic batch Mint with deterministic references", async ({ 
   });
 
   await page.goto("/?flow=mint&step=mint.batch-verify-statuses&lang=es&scenario=first-artwork");
-  await page.getByRole("button", { name: /Gestor Demo autorizado/ }).click();
-  await page.getByRole("button", { name: /Lote de 2 obras/ }).click();
-  await page.getByLabel("Confirmo que revisé la información de práctica").check();
-  await page.getByLabel("Confirmo la firma de wallet simulada").check();
   await page.getByRole("button", { name: /Completar paso/ }).click();
 
   const result = page.locator(".mint-result");
@@ -207,7 +203,7 @@ test("completes a synthetic batch Mint with deterministic references", async ({ 
   await page.screenshot({ path: testInfo.outputPath("mint-result.png"), fullPage: true });
 });
 
-test("interprets NFC tag states and completes a safe synthetic link", async ({ page }, testInfo) => {
+test("completes a safe synthetic NFC link", async ({ page }, testInfo) => {
   await page.addInitScript(() => {
     sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
       language: "es",
@@ -227,7 +223,7 @@ test("interprets NFC tag states and completes a safe synthetic link", async ({ p
         certifyVisible: true,
         mintDraft: { actorId: "owner_artist", mode: "single", reviewConfirmed: true, signatureConfirmed: true },
         mintReceipts: [],
-        nfcDraft: { actorId: "owner_artist", tagState: "ready_to_link", scanConfirmed: false, signatureConfirmed: false },
+        nfcDraft: { actorId: "authorized_certifier", tagState: "ready_to_link", scanConfirmed: true, signatureConfirmed: true },
         nfcReceipts: [],
         certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
         certifications: [],
@@ -238,13 +234,6 @@ test("interprets NFC tag states and completes a safe synthetic link", async ({ p
   });
 
   await page.goto("/?flow=chip&step=chip.interpret-reading-states&lang=es&scenario=first-artwork");
-  await page.getByRole("button", { name: /Certificador Demo autorizado/ }).click();
-  await page.getByRole("button", { name: /Tag no válido/ }).click();
-  await expect(page.locator(".phone-simulation").getByText("This is not a Tokenizart NFC tag", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: /Tag disponible/ }).click();
-  await expect(page.locator(".phone-simulation").getByText("Ready to link", { exact: true })).toBeVisible();
-  await page.getByLabel("Confirmo la lectura móvil simulada").check();
-  await page.getByLabel("Confirmo el cierre con firma simulada").check();
   await page.getByRole("button", { name: /Completar paso/ }).click();
 
   const result = page.locator(".nfc-result");
@@ -255,6 +244,57 @@ test("interprets NFC tag states and completes a safe synthetic link", async ({ p
   await expect(result.getByText("TX-DEMO-NFC-001", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("nfc-result.png"), fullPage: true });
+});
+
+test("keeps Smart Wallet, Mint, and NFC practice focused on the current microstep", async ({ page }) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
+      language: "es",
+      flow: "account_wallet",
+      stepIndex: 0,
+      scenarioId: "first-artwork",
+      fixtureId: "painting-river-001",
+      errorCode: null,
+      world: {
+        accountStatus: "active",
+        walletStatus: "backed_up",
+        artworkStatus: "loaded",
+        artworkTitle: "Ecos del río",
+        artworkAuthor: "Alex Rivera",
+        artworkType: "painting",
+        galleryVisible: false,
+        certifyVisible: true,
+        mintDraft: { actorId: "owner_artist", mode: "single", reviewConfirmed: false, signatureConfirmed: false },
+        mintReceipts: [],
+        nfcDraft: { actorId: "owner_artist", tagState: "ready_to_link", scanConfirmed: false, signatureConfirmed: false },
+        nfcReceipts: [],
+        certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
+        certifications: [],
+        vouchers: { mint: 2, certify: 2, nfc: 1 },
+        events: ["onboarding.completed", "account_wallet.completed", "carga_obra.completed"],
+      },
+    }));
+  });
+
+  const cases = [
+    { url: "/?flow=account_wallet&step=account-wallet.distinguish-access-wallet&lang=es", text: "Acceso a Atelier", actions: 0 },
+    { url: "/?flow=mint&step=mint.review-voucher&lang=es", text: "Voucher Mint disponible", actions: 0 },
+    { url: "/?flow=mint&step=mint.batch-select-artworks&lang=es", text: "Modalidad", actions: 1 },
+    { url: "/?flow=chip&step=chip.scan-tag&lang=es", text: "Ready to link", actions: 1 },
+    { url: "/?flow=chip&step=chip.review-wallet-voucher&lang=es", text: "Voucher NFC disponible", actions: 0 },
+  ];
+
+  for (const item of cases) {
+    await page.goto(item.url);
+    await expect(page.getByText(item.text, { exact: false }).first()).toBeVisible();
+    await expect(page.locator("[data-practice-action]")).toHaveCount(item.actions);
+  }
+
+  await page.goto("/?flow=chip&step=chip.interpret-reading-states&lang=es");
+  await page.getByRole("button", { name: /Tag no válido/ }).click();
+  await expect(page.locator(".phone-simulation").getByText("This is not a Tokenizart NFC tag", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: /Tag disponible/ }).click();
+  await expect(page.locator(".phone-simulation").getByText("Ready to link", { exact: true })).toBeVisible();
 });
 
 test("transfers synthetic ownership to an external wallet without vouchers", async ({ page }, testInfo) => {
