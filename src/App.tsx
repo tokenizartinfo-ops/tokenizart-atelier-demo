@@ -16,7 +16,6 @@ import {
   Image as ImageIcon,
   KeyRound,
   Languages,
-  LogIn,
   MessageCircleQuestion,
   Nfc,
   PackageCheck,
@@ -55,6 +54,15 @@ const flowIcons: Record<string, typeof Blocks> = {
   action_overview: Blocks,
 };
 
+const nativeFlowIconAssets: Partial<Record<string, string>> = {
+  carga_obra: "manual-native-action-load",
+  mint: "manual-native-action-mint",
+  certify: "manual-native-action-certify",
+  chip: "manual-native-action-chip",
+  transferencia: "manual-native-action-transfer",
+  privacy: "manual-native-action-privacy",
+};
+
 const flowOrder = [
   "onboarding",
   "account_wallet",
@@ -69,6 +77,19 @@ const flowOrder = [
   "public_gallery_traceability",
   "action_overview",
 ];
+
+function FlowIconMark({ flowId, size = 20 }: { flowId: string; size?: number }) {
+  const assetId = nativeFlowIconAssets[flowId];
+  const FallbackIcon = flowIcons[flowId] ?? Blocks;
+
+  if (!assetId) return <FallbackIcon size={size} aria-hidden="true" />;
+
+  return (
+    <span className="native-flow-icon" style={{ width: size + 8, height: size + 8 }} aria-hidden="true">
+      <img src={`/api/manual-asset/${encodeURIComponent(assetId)}`} alt="" />
+    </span>
+  );
+}
 
 const errors: Record<string, Record<Language, { title: string; body: string }>> = {
   account_required: {
@@ -332,16 +353,23 @@ function statusText(context: DemoContext, language: Language) {
   return map[status][language];
 }
 
-function PracticeFields({ context, send }: { context: DemoContext; send: (event: any) => void }) {
+function PracticeFields({ context, step, send }: { context: DemoContext; step: ManualStep; send: (event: any) => void }) {
   const lang = context.language;
   const t = ui[lang];
+  const stepCopy = step.copy[lang];
 
   if (context.flow === "onboarding") {
+    const isAccess = step.order <= 3;
+    const isRegistration = step.order >= 4 && step.order <= 5;
+    const isActivation = step.order >= 6 && step.order <= 8;
+    const isProfile = step.order >= 9;
     return (
       <div className="practice-fields">
-        <label>{t.emailLabel}<input value="visitante.demo@ejemplo.test" readOnly /></label>
-        <div className="fake-mail"><BadgeCheck size={20} /><span><strong>Tokenizart Atelier</strong><small>Activación simulada · código 482 731</small></span></div>
-        <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "email_not_received" })}><CircleAlert size={17} />{t.errorPractice}</button>
+        {isAccess && <label>{t.emailLabel}<input value="visitante.demo@ejemplo.test" readOnly /></label>}
+        {isRegistration && <div className="practice-context-card"><UserRoundPlus size={24} /><span><strong>{stepCopy.title}</strong><small>{stepCopy.body}</small></span></div>}
+        {isActivation && <div className="fake-mail"><BadgeCheck size={22} /><span><strong>Tokenizart Atelier</strong><small>Activación simulada · código 482 731</small></span></div>}
+        {isProfile && <div className="practice-context-card success"><BadgeCheck size={24} /><span><strong>{stepCopy.title}</strong><small>{stepCopy.body}</small></span></div>}
+        {(step.order === 6 || step.order === 7) && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "email_not_received" })}><CircleAlert size={17} />{t.errorPractice}</button>}
       </div>
     );
   }
@@ -357,16 +385,27 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
   }
 
   if (context.flow === "carga_obra") {
+    const isStart = step.order <= 3;
+    const isIdentity = step.order >= 4 && step.order <= 7;
+    const isImages = step.order >= 8 && step.order <= 9;
+    const isTechnicalSheet = step.order >= 10 && step.order <= 14;
+    const isReview = step.order >= 15 && step.order <= 19;
+    const isManaged = step.order >= 20;
     return (
       <div className="practice-fields artwork-form">
-        <div className="fixture-selector" aria-label="Fixtures">
+        {isStart && <div className="fixture-selector" aria-label="Fixtures">
           <button className={context.fixtureId === "painting-river-001" ? "selected" : ""} onClick={() => send({ type: "SET_FIXTURE", fixtureId: "painting-river-001", artworkType: "painting" })}><ImageIcon size={18} />Pintura</button>
           <button className={context.fixtureId === "sculpture-signal-001" ? "selected" : ""} onClick={() => send({ type: "SET_FIXTURE", fixtureId: "sculpture-signal-001", artworkType: "sculpture" })}><Box size={18} />Escultura</button>
           <button className={context.fixtureId === "sports-shirt-001" ? "selected" : ""} onClick={() => send({ type: "SET_FIXTURE", fixtureId: "sports-shirt-001", artworkType: "sports" })}><Shirt size={18} />Camiseta</button>
-        </div>
-        <label>{t.titleLabel}<input value={context.world.artworkTitle} onChange={(event) => send({ type: "UPDATE_ARTWORK", title: event.target.value })} /></label>
-        <label>{t.authorLabel}<input value={context.world.artworkAuthor} onChange={(event) => send({ type: "UPDATE_ARTWORK", author: event.target.value })} /></label>
-        <div className="upload-simulation"><ImageIcon size={22} /><span><strong>3 imágenes de práctica</strong><small>Frente · reverso/firma · detalle</small></span><Check size={18} /></div>
+        </div>}
+        {isIdentity && <>
+          <label>{t.titleLabel}<input value={context.world.artworkTitle} onChange={(event) => send({ type: "UPDATE_ARTWORK", title: event.target.value })} /></label>
+          <label>{t.authorLabel}<input value={context.world.artworkAuthor} onChange={(event) => send({ type: "UPDATE_ARTWORK", author: event.target.value })} /></label>
+        </>}
+        {isImages && <div className="upload-simulation"><ImageIcon size={24} /><span><strong>3 imágenes de práctica</strong><small>Frente · reverso/firma · detalle</small></span><Check size={20} /></div>}
+        {isTechnicalSheet && <div className="practice-context-card"><FileCheck2 size={24} /><span><strong>{stepCopy.title}</strong><small>{stepCopy.body}</small></span></div>}
+        {isReview && <div className="practice-context-card success"><PackageCheck size={24} /><span><strong>{context.world.artworkTitle}</strong><small>{stepCopy.body}</small></span></div>}
+        {isManaged && <div className="practice-context-card managed"><UserRoundPlus size={24} /><span><strong>{stepCopy.title}</strong><small>{stepCopy.body}</small></span></div>}
         <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "missing_required_field" })}><CircleAlert size={17} />{t.errorPractice}</button>
       </div>
     );
@@ -456,9 +495,16 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
   if (context.flow === "certify") {
     const draft = context.world.certifyDraft;
     const completed = context.world.events.includes("certify.completed");
+    const isArtworkSelection = step.order <= 2;
+    const isActor = step.order === 3;
+    const isType = step.order === 4;
+    const isRequest = step.order >= 5 && step.order <= 9;
+    const isEvidence = step.order >= 10 && step.order <= 11;
+    const isRegistration = step.order >= 12;
     return (
       <div className="practice-fields certify-config">
-        <fieldset>
+        {isArtworkSelection && <div className="practice-context-card"><FileCheck2 size={24} /><span><strong>{context.world.artworkTitle}</strong><small>{stepCopy.body}</small></span></div>}
+        {isActor && <fieldset>
           <legend>{t.certifierRole}</legend>
           <div className="actor-selector">
             {(Object.keys(certifyActors) as CertifyActorId[]).map((actorId) => {
@@ -466,22 +512,23 @@ function PracticeFields({ context, send }: { context: DemoContext; send: (event:
               return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => send({ type: "SET_CERTIFY_DRAFT", actorId })}><BadgeCheck size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
             })}
           </div>
-        </fieldset>
-        <label>{t.certifyType}
+        </fieldset>}
+        {isType && <label>{t.certifyType}
           <select disabled={completed} value={draft.typeId} onChange={(event) => send({ type: "SET_CERTIFY_DRAFT", typeId: event.target.value as CertifyTypeId })}>
             {(Object.keys(certifyTypes) as CertifyTypeId[]).map((typeId) => <option key={typeId} value={typeId}>{certifyTypes[typeId][lang].name}</option>)}
           </select>
-        </label>
-        <fieldset>
+        </label>}
+        {(isType || step.order === 5) && <fieldset>
           <legend>{t.visibilityLabel}</legend>
           <div className="visibility-selector">
             <button type="button" disabled={completed} className={draft.visibility === "public" ? "selected" : ""} onClick={() => send({ type: "SET_CERTIFY_DRAFT", visibility: "public" })}><Eye size={17} />{t.publicVisibility}</button>
             <button type="button" disabled={completed} className={draft.visibility === "owner" ? "selected" : ""} onClick={() => send({ type: "SET_CERTIFY_DRAFT", visibility: "owner" })}><ShieldCheck size={17} />{t.ownerVisibility}</button>
           </div>
-        </fieldset>
-        <div className="evidence-preview"><FileCheck2 size={24} /><span><strong>{t.evidenceLabel}</strong><small>{certifyTypes[draft.typeId][lang].evidence}</small></span></div>
-        <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Certify {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherAvailable}: {context.world.vouchers.certify}</small></span></div>
-        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: context.world.vouchers.certify ? "wrong_wallet_password" : "missing_voucher" })}><CircleAlert size={17} />{t.errorPractice}</button>}
+        </fieldset>}
+        {isRequest && <div className="practice-context-card request"><BadgeCheck size={24} /><span><strong>{stepCopy.title}</strong><small>{stepCopy.body}</small></span></div>}
+        {isEvidence && <div className="evidence-preview"><FileCheck2 size={24} /><span><strong>{t.evidenceLabel}</strong><small>{certifyTypes[draft.typeId][lang].evidence}</small></span></div>}
+        {isRegistration && <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Certify {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherAvailable}: {context.world.vouchers.certify}</small></span></div>}
+        {!completed && (step.order === 12 || step.order === 13) && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: context.world.vouchers.certify ? "wrong_wallet_password" : "missing_voucher" })}><CircleAlert size={17} />{t.errorPractice}</button>}
       </div>
     );
   }
@@ -934,7 +981,7 @@ function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div className="brand-block"><span className="brand-mark">T</span><div><h1>{t.brand}</h1><p>{t.tagline}</p></div></div>
+        <div className="brand-block"><span className="brand-mark"><img src="/brand/tokenizart-symbol.png" alt="" /></span><div><h1>{t.brand}</h1><p>{t.tagline}</p></div></div>
         <div className="top-actions">
           <label className="language-control"><Languages size={18} /><select value={lang} onChange={(event) => send({ type: "SET_LANGUAGE", language: event.target.value as Language })}><option value="es">ES</option><option value="en">EN</option><option value="pt">PT</option></select></label>
           <button className="icon-button" onClick={reset} title={t.reset} aria-label={t.reset}><RefreshCcw size={19} /></button>
@@ -946,8 +993,7 @@ function App() {
           <div className="rail-heading"><strong>{t.chooseFlow}</strong><small>{t.freeMode}</small></div>
           <nav>
             {flowOrder.map((flowId) => {
-              const Icon = flowIcons[flowId] ?? Blocks;
-              return <button key={flowId} className={flowId === context.flow ? "active" : ""} onClick={() => send({ type: "SELECT_FLOW", flow: flowId })}><Icon size={18} /><span>{flowLabels[flowId][lang]}</span><small>{manualContract.flows[flowId].steps.length}</small></button>;
+              return <button key={flowId} className={flowId === context.flow ? "active" : ""} onClick={() => send({ type: "SELECT_FLOW", flow: flowId })}><FlowIconMark flowId={flowId} size={18} /><span>{flowLabels[flowId][lang]}</span><small>{manualContract.flows[flowId].steps.length}</small></button>;
             })}
           </nav>
         </aside>
@@ -972,9 +1018,10 @@ function App() {
               <ManualVisual step={step} language={lang} onZoom={() => setZoomed(true)} />
               <div className="visual-meta"><span>{t.source}: Manual Atelier 2026</span><span>{t.slide} {step.source_slide}</span><span>{step.step_id}</span></div>
             </div>
-            <div className="practice-zone">
-              <div className="practice-title"><LogIn size={20} /><strong>{t.demoData}</strong><span>{t.simulated}</span></div>
-              <PracticeFields context={context} send={send} />
+            <div className="practice-zone" data-flow={context.flow}>
+              <div className="practice-title"><FlowIconMark flowId={context.flow} size={22} /><span className="practice-heading"><strong>{t.demoData}</strong><small>{flowLabels[context.flow][lang]}</small></span><span className="simulated-badge">{t.simulated}</span></div>
+              <div className="practice-step-focus"><span>{step.order}</span><div><small>{t.currentStep}</small><strong>{step.copy[lang].title}</strong></div></div>
+              <PracticeFields context={context} step={step} send={send} />
               <MintCompletion context={context} />
               <CertifyCompletion context={context} />
               <NfcCompletion context={context} />

@@ -16,6 +16,8 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Opens through a Companion bridge that keeps the current synthetic step synchronized with an A2UI card.
 - Shows a deterministic local explanation on every step and requests an optional grounded Companion expansion without sending identity, owner context or free text from the Demo.
 - Uses the `Atelier first` layout: flow rail plus one framed practice surface, with screen, synthetic controls and current-step guidance in the same journey.
+- Applies the verified Tokenizart identity from `Aplicaciones_Marca_tokenizart.pdf`: Montserrat, the real fingerprint symbol, and restrained cyan, magenta and coral accents.
+- Uses native action icons from Manual Atelier 2026 and changes the practice controls with the current step instead of repeating one form throughout the flow.
 
 ## What it never does
 
@@ -116,6 +118,7 @@ npm install
 npm run dev
 npm test
 npm run test:ui
+npm run eval:human-journeys:staging
 npm run audit:visual:staging
 npm run smoke:assets:staging
 ```
@@ -132,7 +135,7 @@ npm run deploy:staging
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
 Validated staging Worker for the current `Atelier first` layout:
-`f72bf8e0-b14c-46f7-9a45-fe9835769806`. Production was not changed.
+`60bc684c-14c0-4cf4-9ebc-835969c12ce7`. Production was not changed.
 
 ## Source synchronization
 
@@ -150,5 +153,7 @@ Atelier captures.
 The optional `display_asset_id` keeps the native PPTX-derived `asset_id` as the auditable source while allowing a reviewed, sanitized didactic visual to be rendered when the source crop is truncated or does not explain the intended concept. It never replaces source traceability. Gallery metadata now uses a dedicated `ipfs-metadata-anatomy` display asset with synthetic values; the native source remains linked for audit.
 
 `audit:visual:staging` checks all 163 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. Editorial decisions are versioned in `src/data/atelier-visual-qa-decisions.v1.json`: automatic geometry flags remain visible, but inspected atomic crops can be accepted without pretending that their original dimensions changed. QA decisions `1.6.0` leave zero pending and 84 accepted assets, with zero unavailable resources and zero steps without a focus hotspot. All active visual flows have completed human visual QA; geometry flags remain observable but no longer represent unresolved editorial work.
+
+`eval:human-journeys:staging` walks incorporation, artwork preload and Certify from start to finish on desktop and mobile. It verifies all 94 rendered states for image availability, step/practice alignment, adjacent explanation continuity, critical font sizes and horizontal overflow. The 2026-07-22 staging run passed with zero failures in every category.
 
 The production build separates React, XState and Lucide into stable vendor chunks. The main JavaScript chunk is 363 kB instead of the previous 605 kB monolith. A staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.

@@ -16,7 +16,7 @@ test("keeps Atelier first and synchronizes the local guide with every step", asy
   await page.goto("/?flow=onboarding&lang=es&scenario=first-artwork");
   await expect(page.locator(".guide-panel")).toHaveCount(0);
   await expect(page.locator(".simulation-workspace")).toBeVisible();
-  await expect(page.getByText("Paso actual", { exact: true })).toBeVisible();
+  await expect(page.locator(".coach-heading").getByText("Paso actual", { exact: true })).toBeVisible();
 
   const explanation = page.locator(".coach-summary > p");
   const firstExplanation = await explanation.innerText();
@@ -141,10 +141,14 @@ test("configures a synthetic Certify actor and renders the completed provenance"
     }));
   });
 
-  await page.goto("/?flow=certify&step=certify.open-receipt&lang=es&scenario=first-artwork");
+  await page.goto("/?flow=certify&step=certify.choose-certifier&lang=es&scenario=first-artwork");
   await page.getByRole("button", { name: /Museo Demo/ }).click();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
   await page.getByLabel("¿Qué hecho respalda?").selectOption("exhibition");
   await page.getByRole("button", { name: /Solo owner/ }).click();
+  for (let index = 0; index < 11; index += 1) {
+    await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  }
   await page.getByRole("button", { name: /Completar paso/ }).click();
 
   const result = page.locator(".completion-result");
@@ -287,13 +291,14 @@ test("transfers synthetic ownership to an external wallet without vouchers", asy
   });
 
   await page.goto("/?flow=transferencia&step=transferencia.verify-blockchain-record&lang=es&scenario=first-artwork");
-  await expect(page.getByText("Verificar el registro de transferencia", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Verificar el registro de transferencia", exact: true })).toBeVisible();
   await expect(page.getByText("Resultado y verificacion", { exact: true })).toBeVisible();
+  await page.getByText("Estado de la práctica y referencias", { exact: true }).click();
   await expect(page.getByText("Estados posibles de Transferencia", { exact: true })).toBeVisible();
 
   await page.goto("/?flow=transferencia&step=transferencia.external-wallet-boundary&lang=es&scenario=first-artwork");
   await expect(page.getByText("Recuperacion o salida externa", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: /Wallet externa/ }).click();
+  await page.locator(".transfer-config .mode-selector").getByRole("button", { name: /Wallet externa/ }).click();
   await page.getByLabel("Confirmo que verifiqué el destinatario").check();
   await page.getByLabel("Comprendo que sale de la gestión de Atelier").check();
   await page.getByLabel("Confirmo la firma simulada de la transferencia").check();
@@ -345,10 +350,11 @@ test("compares owner and visitor privacy before applying a partial public view",
   });
 
   await page.goto("/?flow=privacy&step=privacy.understand-owner-control&lang=es&scenario=first-artwork");
-  await expect(page.getByText("Entender quien decide la visibilidad", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Entender quien decide la visibilidad", exact: true })).toBeVisible();
   await expect(page.getByText("Decision de visibilidad", { exact: true })).toBeVisible();
 
   await page.goto("/?flow=privacy&step=privacy.partial-restriction&lang=es&scenario=first-artwork");
+  await page.getByText("Estado de la práctica y referencias", { exact: true }).click();
   await expect(page.getByText("Que ve cada audiencia", { exact: true })).toBeVisible();
   const preview = page.getByTestId("privacy-preview");
   await expect(preview.getByText("Vista visitante", { exact: true })).toBeVisible();

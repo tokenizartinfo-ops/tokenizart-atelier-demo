@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run src",
     "test:ui": "playwright test",
+    "eval:human-journeys:staging": "node scripts/evaluate-human-journeys.mjs",
     "audit:visual:staging": "node scripts/audit-visual-microsteps.mjs",
     "smoke:assets:staging": "node scripts/verify-deployed-assets.mjs",
     "deploy:staging": "npm run build && wrangler deploy --env staging",
