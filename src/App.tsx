@@ -799,6 +799,7 @@ function VoucherBalances({ context, compact = false }: { context: DemoContext; c
 function ManualVisual({ step, language, onZoom }: { step: ManualStep; language: Language; onZoom: () => void }) {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [focusIndex, setFocusIndex] = useState(0);
+  const [viewMode, setViewMode] = useState<"full" | "detail">("full");
   const displayAssetId = step.display_asset_id || step.asset_id;
   const assetUrl = `/api/manual-asset/${encodeURIComponent(displayAssetId)}`;
   const layout = classifyVisualLayout(dimensions.width, dimensions.height);
@@ -806,43 +807,48 @@ function ManualVisual({ step, language, onZoom }: { step: ManualStep; language: 
   const showDetail = hotspots.length > 0 || needsVisualDetail(dimensions.width, dimensions.height);
   const activeHotspot = hotspots[focusIndex] ?? null;
   const labels = {
-    es: { detail: "Detalle ampliado", full: "Recorre la captura completa", previous: "Detalle anterior", next: "Siguiente detalle" },
-    en: { detail: "Enlarged detail", full: "Explore the full capture", previous: "Previous detail", next: "Next detail" },
-    pt: { detail: "Detalhe ampliado", full: "Percorra a captura completa", previous: "Detalhe anterior", next: "Proximo detalhe" },
+    es: { detail: "Detalle guiado", full: "Pantalla completa", previous: "Detalle anterior", next: "Siguiente detalle" },
+    en: { detail: "Guided detail", full: "Full screen", previous: "Previous detail", next: "Next detail" },
+    pt: { detail: "Detalhe guiado", full: "Tela completa", previous: "Detalhe anterior", next: "Proximo detalhe" },
   }[language];
 
   useEffect(() => {
     setDimensions({ width: 0, height: 0 });
     setFocusIndex(0);
+    setViewMode("full");
   }, [step.step_id]);
 
   return (
     <div className="manual-visual" data-visual-layout={layout}>
-      <div className="visual-stage">
-        <img src={assetUrl} alt={step.copy[language].title} onLoad={(event) => setDimensions({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })} />
-        {hotspots.map((hotspot, index) => (
-          <button
-            className={index === focusIndex ? "hotspot active" : "hotspot"}
-            key={`${step.step_id}-${index}`}
-            title={hotspot.label[language]}
-            aria-label={`${labels.detail} ${index + 1}`}
-            onClick={() => setFocusIndex(index)}
-            style={{ left: `${hotspot.x_pct}%`, top: `${hotspot.y_pct}%`, width: `${hotspot.width_pct}%`, height: `${hotspot.height_pct}%` }}
-          />
-        ))}
+      {showDetail && (
+        <div className="visual-view-controls" aria-label={labels.detail}>
+          <button type="button" className={viewMode === "full" ? "active" : ""} onClick={() => setViewMode("full")}>{labels.full}</button>
+          <button type="button" className={viewMode === "detail" ? "active" : ""} onClick={() => setViewMode("detail")}><ZoomIn size={15} />{activeHotspot?.label[language] || labels.detail}</button>
+          {hotspots.length > 1 && <div><button type="button" disabled={focusIndex === 0} onClick={() => { setFocusIndex((current) => Math.max(0, current - 1)); setViewMode("detail"); }} title={labels.previous} aria-label={labels.previous}><ArrowLeft size={16} /></button><b>{focusIndex + 1}/{hotspots.length}</b><button type="button" disabled={focusIndex === hotspots.length - 1} onClick={() => { setFocusIndex((current) => Math.min(hotspots.length - 1, current + 1)); setViewMode("detail"); }} title={labels.next} aria-label={labels.next}><ArrowRight size={16} /></button></div>}
+        </div>
+      )}
+      <div className={viewMode === "detail" ? "visual-stage detail-mode" : "visual-stage"}>
+        {viewMode === "full" || !showDetail ? (
+          <>
+            <img src={assetUrl} alt={step.copy[language].title} onLoad={(event) => setDimensions({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })} />
+            {hotspots.map((hotspot, index) => (
+              <button
+                className={index === focusIndex ? "hotspot active" : "hotspot"}
+                key={`${step.step_id}-${index}`}
+                title={hotspot.label[language]}
+                aria-label={`${labels.detail} ${index + 1}`}
+                onClick={() => { setFocusIndex(index); setViewMode("detail"); }}
+                style={{ left: `${hotspot.x_pct}%`, top: `${hotspot.y_pct}%`, width: `${hotspot.width_pct}%`, height: `${hotspot.height_pct}%` }}
+              />
+            ))}
+          </>
+        ) : activeHotspot ? (
+          <div className="visual-focus-viewport" role="img" aria-label={`${labels.detail}: ${activeHotspot.label[language]}`}><img src={assetUrl} alt="" style={focusImageStyle(activeHotspot)} /></div>
+        ) : (
+          <div className="visual-pan-scroll" tabIndex={0} aria-label={labels.full}><img src={assetUrl} alt="" /></div>
+        )}
         <button className="icon-button zoom" onClick={onZoom} title="Ampliar imagen" aria-label="Ampliar imagen"><ZoomIn size={20} /></button>
       </div>
-      {showDetail && (
-        <section className="visual-detail" aria-label={labels.detail}>
-          <header>
-            <span><ZoomIn size={17} /><strong>{activeHotspot?.label[language] || labels.full}</strong><small>{labels.detail}</small></span>
-            {hotspots.length > 1 && <div><button type="button" disabled={focusIndex === 0} onClick={() => setFocusIndex((current) => Math.max(0, current - 1))} title={labels.previous} aria-label={labels.previous}><ArrowLeft size={16} /></button><b>{focusIndex + 1}/{hotspots.length}</b><button type="button" disabled={focusIndex === hotspots.length - 1} onClick={() => setFocusIndex((current) => Math.min(hotspots.length - 1, current + 1))} title={labels.next} aria-label={labels.next}><ArrowRight size={16} /></button></div>}
-          </header>
-          {activeHotspot
-            ? <div className="visual-focus-viewport" role="img" aria-label={`${labels.detail}: ${activeHotspot.label[language]}`}><img src={assetUrl} alt="" style={focusImageStyle(activeHotspot)} /></div>
-            : <div className="visual-pan-scroll" tabIndex={0} aria-label={labels.full}><img src={assetUrl} alt="" /></div>}
-        </section>
-      )}
     </div>
   );
 }
@@ -877,6 +883,14 @@ function App() {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(context));
     document.documentElement.lang = lang;
   }, [context, lang]);
+
+  useEffect(() => {
+    if (!window.matchMedia("(max-width: 860px)").matches) return;
+    const frame = window.requestAnimationFrame(() => {
+      document.querySelector<HTMLButtonElement>(".flow-rail nav button.active")?.scrollIntoView({ block: "nearest", inline: "center" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [context.flow, lang]);
 
   useEffect(() => {
     emitDemoMessage("demo.ready");
@@ -941,7 +955,16 @@ function App() {
         <main className="simulation-workspace">
           <section className="simulation-header">
             <div><span className="eyebrow">{flowLabels[context.flow][lang]}</span><h2>{step.copy[lang].title}</h2></div>
-            <div className="progress-block"><span>{context.stepIndex + 1} / {flow.steps.length}</span><div><i style={{ width: `${progress}%` }} /></div></div>
+            <div className="header-actions">
+              <div className="progress-block"><span>{context.stepIndex + 1} / {flow.steps.length}</span><div><i style={{ width: `${progress}%` }} /></div></div>
+              <div className="step-navigation compact">
+                <button className="secondary" disabled={context.stepIndex === 0} onClick={() => send({ type: "PREVIOUS" })}><ArrowLeft size={18} />{t.previous}</button>
+                <button className="primary" disabled={flowCompleted && context.stepIndex === flow.steps.length - 1} onClick={() => {
+                  if (context.stepIndex === flow.steps.length - 1) send({ type: "COMPLETE_STEP" });
+                  else send({ type: "NEXT" });
+                }}>{flowCompleted && context.stepIndex === flow.steps.length - 1 ? t.completed : context.stepIndex === flow.steps.length - 1 ? t.complete : t.next}<ArrowRight size={18} /></button>
+              </div>
+            </div>
           </section>
 
           <section className="simulation-grid">
@@ -962,46 +985,49 @@ function App() {
             </div>
           </section>
 
-          <section className="step-navigation">
-            <button className="secondary" disabled={context.stepIndex === 0} onClick={() => send({ type: "PREVIOUS" })}><ArrowLeft size={18} />{t.previous}</button>
-            <button className="primary" disabled={flowCompleted && context.stepIndex === flow.steps.length - 1} onClick={() => {
-              if (context.stepIndex === flow.steps.length - 1) send({ type: "COMPLETE_STEP" });
-              else send({ type: "NEXT" });
-            }}>{flowCompleted && context.stepIndex === flow.steps.length - 1 ? t.completed : context.stepIndex === flow.steps.length - 1 ? t.complete : t.next}<ArrowRight size={18} /></button>
+          <section className="step-coach" aria-live="polite">
+            <div className="coach-summary">
+              <div className="coach-heading">
+                <span><MessageCircleQuestion size={20} /><strong>{t.currentStep}</strong></span>
+                {phase && <span className="phase-badge">{phase.label[lang]}</span>}
+              </div>
+              <p>{step.copy[lang].body}</p>
+              {step.copy[lang].next_question && <blockquote>{step.copy[lang].next_question}</blockquote>}
+              <div className="coach-actions">
+                {bridgeStatus !== "disconnected" && <span className="bridge-status">{bridgeStatus === "explanation_ready" ? (lang === "en" ? "Companion explanation ready" : lang === "pt" ? "Explicacao do Companion pronta" : "Explicacion del Companion lista") : (lang === "en" ? "Companion connected" : lang === "pt" ? "Companion conectado" : "Companion conectado")}</span>}
+                <button className="companion-link" type="button" onClick={requestExplanation}><MessageCircleQuestion size={18} />{t.explain}</button>
+              </div>
+            </div>
+            <details className="practice-details">
+              <summary>{t.practiceDetails}</summary>
+              <div className="coach-details-grid">
+                {enrichment && (
+                  <section className="state-legend" aria-label={enrichment.state_legend_title[lang]}>
+                    <h3>{enrichment.state_legend_title[lang]}</h3>
+                    <div>
+                      {enrichment.state_legend.map((item) => (
+                        <article key={item.state} data-tone={item.tone}>
+                          <strong>{item.label[lang]}</strong>
+                          <span>{item.message[lang]}</span>
+                          <small>{item.meaning[lang]}</small>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                )}
+                <div className="world-status">
+                  <h3>{t.session}</h3>
+                  <dl>
+                    <div><dt>{t.account}</dt><dd>{context.world.accountStatus}</dd></div>
+                    <div><dt>{t.wallet}</dt><dd>{context.world.walletStatus}</dd></div>
+                    <div><dt>{t.artwork}</dt><dd>{statusText(context, lang)}</dd></div>
+                  </dl>
+                  <VoucherBalances context={context} compact />
+                </div>
+              </div>
+            </details>
           </section>
         </main>
-
-        <aside className="guide-panel">
-          <div className="guide-heading"><MessageCircleQuestion size={21} /><strong>{t.guide}</strong></div>
-          {phase && <span className="phase-badge">{phase.label[lang]}</span>}
-          <p>{step.copy[lang].body}</p>
-          {step.copy[lang].next_question && <blockquote>{step.copy[lang].next_question}</blockquote>}
-          {enrichment && (
-            <section className="state-legend" aria-label={enrichment.state_legend_title[lang]}>
-              <h3>{enrichment.state_legend_title[lang]}</h3>
-              <div>
-                {enrichment.state_legend.map((item) => (
-                  <article key={item.state} data-tone={item.tone}>
-                    <strong>{item.label[lang]}</strong>
-                    <span>{item.message[lang]}</span>
-                    <small>{item.meaning[lang]}</small>
-                  </article>
-                ))}
-              </div>
-            </section>
-          )}
-          <div className="world-status">
-            <h3>{t.session}</h3>
-            <dl>
-              <div><dt>{t.account}</dt><dd>{context.world.accountStatus}</dd></div>
-              <div><dt>{t.wallet}</dt><dd>{context.world.walletStatus}</dd></div>
-              <div><dt>{t.artwork}</dt><dd>{statusText(context, lang)}</dd></div>
-            </dl>
-            <VoucherBalances context={context} compact />
-          </div>
-          {bridgeStatus !== "disconnected" && <span className="bridge-status" aria-live="polite">{bridgeStatus === "explanation_ready" ? (lang === "en" ? "The explanation is ready beside the Demo." : lang === "pt" ? "A explicacao esta disponivel ao lado da Demo." : "La explicacion esta disponible junto a la Demo.") : (lang === "en" ? "Companion connected" : lang === "pt" ? "Companion conectado" : "Companion conectado")}</span>}
-          <button className="companion-link" type="button" onClick={requestExplanation}><MessageCircleQuestion size={18} />{t.explain}</button>
-        </aside>
       </div>
 
       {zoomed && <div className="lightbox" role="dialog" aria-modal="true" aria-label={step.copy[lang].title}><button className="icon-button" onClick={() => setZoomed(false)} title="Cerrar" aria-label="Cerrar"><X size={22} /></button><img src={`/api/manual-asset/${encodeURIComponent(displayAssetId)}`} alt={step.copy[lang].title} /><div><strong>{step.copy[lang].title}</strong><span>{t.imageHint}</span></div></div>}

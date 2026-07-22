@@ -12,6 +12,19 @@ test("opens every flow and keeps practice controls visible", async ({ page }) =>
   await expect(page.getByRole("button", { name: /Camiseta/ })).toBeVisible();
 });
 
+test("keeps Atelier first and synchronizes the local guide with every step", async ({ page }) => {
+  await page.goto("/?flow=onboarding&lang=es&scenario=first-artwork");
+  await expect(page.locator(".guide-panel")).toHaveCount(0);
+  await expect(page.locator(".simulation-workspace")).toBeVisible();
+  await expect(page.getByText("Paso actual", { exact: true })).toBeVisible();
+
+  const explanation = page.locator(".coach-summary > p");
+  const firstExplanation = await explanation.innerText();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await expect(explanation).not.toHaveText(firstExplanation);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+});
+
 test("changes language without changing the selected flow", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /Smart Wallet/ }).click();
@@ -50,6 +63,7 @@ test("renders onboarding, Smart Wallet and voucher phases with decision states",
     await page.goto(scenario.url);
     await expect(page.getByText(scenario.counter, { exact: true })).toBeVisible();
     await expect(page.getByText(scenario.phase, { exact: true })).toBeVisible();
+    await page.getByText("Estado de la práctica y referencias", { exact: true }).click();
     await expect(page.getByText(scenario.legend, { exact: true })).toBeVisible();
     await expect(page.getByText(scenario.state, { exact: true })).toBeVisible();
   }
@@ -75,8 +89,8 @@ test("adds a focused readable detail to a panoramic manual asset", async ({ page
   await page.goto("/?flow=onboarding&step=onboarding.choose-registration&lang=es&scenario=first-artwork");
   const manualVisual = page.locator(".manual-visual");
   await expect(manualVisual).toHaveAttribute("data-visual-layout", "panoramic");
-  await expect(page.getByRole("region", { name: "Detalle ampliado" })).toBeVisible();
-  await expect(page.getByRole("img", { name: /Detalle ampliado/ })).toBeVisible();
+  await manualVisual.locator(".visual-view-controls > button").nth(1).click();
+  await expect(page.getByRole("img", { name: /Detalle guiado/ })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("panoramic-focus-detail.png"), fullPage: true });
 });
 
@@ -93,10 +107,11 @@ test("adds focused navigation to a standard manual asset with multiple fields", 
   await page.goto("/?flow=carga_obra&step=carga-obra.choose-country-type&lang=es&scenario=first-artwork");
   const manualVisual = page.locator(".manual-visual");
   await expect(manualVisual).toHaveAttribute("data-visual-layout", "standard");
-  const detail = page.getByRole("region", { name: "Detalle ampliado" });
-  await expect(detail.getByText("Pais de creacion", { exact: true })).toBeVisible();
-  await detail.getByRole("button", { name: "Siguiente detalle" }).click();
-  await expect(detail.getByText("Tipo de obra", { exact: true })).toBeVisible();
+  const controls = manualVisual.locator(".visual-view-controls");
+  await expect(controls.getByText("Pais de creacion", { exact: true })).toBeVisible();
+  await controls.locator(":scope > button").nth(1).click();
+  await controls.getByRole("button", { name: "Siguiente detalle" }).click();
+  await expect(controls.getByText("Tipo de obra", { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("standard-focus-detail.png"), fullPage: true });
 });
 
@@ -462,9 +477,9 @@ test("exchanges metadata-only A2UI bridge messages with an allowlisted Companion
   await expect.poll(async () => page.evaluate(() => (window as unknown as { demoEvents: Array<{ type?: string }> }).demoEvents.map((item) => item.type))).toContain("demo.step.changed");
   await expect(demoFrame.getByText("Companion conectado")).toBeVisible();
 
-  await demoFrame.getByRole("button", { name: "Preguntar al Companion" }).click();
+  await demoFrame.getByRole("button", { name: "Ampliar con el Companion" }).click();
   await expect.poll(async () => page.evaluate(() => (window as unknown as { demoEvents: Array<{ type?: string }> }).demoEvents.map((item) => item.type))).toContain("demo.explain.requested");
-  await expect(demoFrame.getByText("La explicacion esta disponible junto a la Demo.")).toBeVisible();
+  await expect(demoFrame.getByText("Explicacion del Companion lista")).toBeVisible();
 
   const envelopes = await page.evaluate(() => (window as unknown as { demoEvents: Array<Record<string, unknown>> }).demoEvents);
   expect(envelopes.every((item) => !Object.hasOwn(item, "owner_context") && !Object.hasOwn(item, "real_email") && !Object.hasOwn(item, "real_wallet"))).toBe(true);

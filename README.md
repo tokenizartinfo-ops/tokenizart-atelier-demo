@@ -14,7 +14,8 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Shows the dated public Shop snapshot, who consumes each voucher, and a synthetic credit receipt without performing a purchase.
 - Keeps state only in browser `sessionStorage`.
 - Opens through a Companion bridge that keeps the current synthetic step synchronized with an A2UI card.
-- Requests a grounded Companion explanation for the current step without sending identity, owner context or free text from the Demo.
+- Shows a deterministic local explanation on every step and requests an optional grounded Companion expansion without sending identity, owner context or free text from the Demo.
+- Uses the `Atelier first` layout: flow rail plus one framed practice surface, with screen, synthetic controls and current-step guidance in the same journey.
 
 ## What it never does
 
@@ -37,8 +38,10 @@ Allowlisted synthetic IDs -> exact-origin postMessage -> Companion A2UI bridge
 `/demo-atelier` on the Companion embeds this app and validates the versioned
 `tokenizart.demo_atelier_message.v1` contract. The Demo emits ready, step,
 error, completion, reset and explanation-request events. The Companion returns
-only transport acknowledgements; it cannot navigate the machine or execute a
-transition.
+transport acknowledgements and a grounded explanation-available signal; it
+cannot navigate the machine or execute a transition. The bridge automatically
+refreshes the Companion explanation when the synthetic step changes, cancels
+stale requests and caches expansions per language, flow, step and fixture.
 
 The bridge requires an allowlisted `return_origin` that matches the referrer
 origin, uses an exact `targetOrigin`, checks `event.source`, rejects unknown
@@ -128,8 +131,8 @@ npm run deploy:staging
 
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
-Validated staging Worker for the current shared visual contract:
-`492175f3-aa57-4142-b21d-b3b295b1becf`. Production was not changed.
+Validated staging Worker for the current `Atelier first` layout:
+`f72bf8e0-b14c-46f7-9a45-fe9835769806`. Production was not changed.
 
 ## Source synchronization
 
