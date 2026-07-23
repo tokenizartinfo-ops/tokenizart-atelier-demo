@@ -19,6 +19,9 @@ const journeys = [
   { flow: "transferencia", expectedSteps: 12 },
   { flow: "privacy", expectedSteps: 6 },
   { flow: "vouchers", expectedSteps: 7 },
+  { flow: "atelier_navigation", expectedSteps: 22 },
+  { flow: "public_gallery_traceability", expectedSteps: 13 },
+  { flow: "action_overview", expectedSteps: 6 },
 ];
 
 async function inspectStep(page) {

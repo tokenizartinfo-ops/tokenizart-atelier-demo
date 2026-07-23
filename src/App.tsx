@@ -13,14 +13,17 @@ import {
   FileCheck2,
   Fingerprint,
   GalleryHorizontalEnd,
+  Globe2,
   Image as ImageIcon,
   KeyRound,
   Languages,
+  ListFilter,
   MessageCircleQuestion,
   Nfc,
   PackageCheck,
   RefreshCcw,
   Route,
+  Search,
   ShieldCheck,
   Shirt,
   ShoppingCart,
@@ -28,6 +31,7 @@ import {
   Tag,
   TicketCheck,
   UserRoundPlus,
+  Users,
   WalletCards,
   X,
   ZoomIn,
@@ -433,11 +437,151 @@ function PracticeContextCard({ icon: Icon, title, body, tone = "" }: { icon: typ
   return <div className={`practice-context-card ${tone}`.trim()}><Icon size={24} /><span><strong>{title}</strong><small>{body}</small></span></div>;
 }
 
+type PracticeOption = { id: string; label: string; description: string; count?: number };
+
+function PracticeOptionSelector({ legend, options, initialId }: { legend: string; options: PracticeOption[]; initialId: string }) {
+  const [selectedId, setSelectedId] = useState(initialId);
+  const selected = options.find((option) => option.id === selectedId) ?? options[0];
+  return (
+    <fieldset data-practice-action className="practice-option-selector">
+      <legend>{legend}</legend>
+      <div className="practice-option-grid">
+        {options.map((option) => <button type="button" key={option.id} className={selected.id === option.id ? "selected" : ""} aria-pressed={selected.id === option.id} onClick={() => setSelectedId(option.id)}><ListFilter size={17} /><span>{option.label}</span>{typeof option.count === "number" && <b>{option.count}</b>}</button>)}
+      </div>
+      <div className="practice-selection-result"><Route size={22} /><span><strong>{selected.label}</strong><small>{selected.description}</small></span>{typeof selected.count === "number" && <b>{selected.count}</b>}</div>
+    </fieldset>
+  );
+}
+
+function AtelierNavigationPractice({ context, step }: { context: DemoContext; step: ManualStep }) {
+  const lang = context.language;
+  const t = ui[lang];
+  const copy = step.copy[lang];
+  const steps = manualContract.flows.atelier_navigation.steps;
+  const option = (order: number, count: number): PracticeOption => {
+    const source = steps[order - 1];
+    return { id: source.step_id, label: source.copy[lang].title, description: source.copy[lang].body, count };
+  };
+  const sectionCopy = {
+    es: { mode: "Elegir una vista de práctica", menu: "Secciones principales", own: "Filtros de Obras Propias", managed: "Filtros de Obras Gestionadas", received: "Estados de Certificaciones Recibidas", requested: "Estados de Certificaciones Solicitadas", synthetic: "Datos sintéticos de navegación", ownerOnly: "Disponible para el usuario autenticado" },
+    en: { mode: "Choose a practice view", menu: "Main sections", own: "Own Artwork filters", managed: "Managed Artwork filters", received: "Received Certification states", requested: "Requested Certification states", synthetic: "Synthetic navigation data", ownerOnly: "Available to the authenticated user" },
+    pt: { mode: "Escolher uma vista de prática", menu: "Seções principais", own: "Filtros de Obras Próprias", managed: "Filtros de Obras Gerenciadas", received: "Estados de Certificações Recebidas", requested: "Estados de Certificações Solicitadas", synthetic: "Dados sintéticos de navegação", ownerOnly: "Disponível para o usuário autenticado" },
+  }[lang];
+
+  if (step.order === 1) return <div className="practice-fields navigation-practice"><PracticeContextCard icon={Route} title={copy.title} body={copy.body} /><div className="navigation-path"><span>Gallery</span><ArrowRight size={16} /><span>{sectionCopy.ownerOnly}</span><ArrowRight size={16} /><span>{t.simulated}</span></div></div>;
+  if (step.order === 2 || step.order === 3) {
+    const options = [option(2, 12), option(3, 8)];
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.mode} options={options} initialId={step.step_id} /><div className="safety-note"><ShieldCheck size={18} />{sectionCopy.synthetic}</div></div>;
+  }
+  if (step.order === 4) return <div className="practice-fields navigation-practice"><PracticeContextCard icon={UserRoundPlus} title={copy.title} body={copy.body} /><div className="navigation-path"><span>{steps[2].copy[lang].title}</span><ArrowRight size={16} /><strong>{copy.title}</strong></div></div>;
+  if (step.order === 5) {
+    const menuItems = [steps[5], steps[10], steps[14], steps[18], steps[20], steps[21]];
+    return <div className="practice-fields navigation-practice"><h3 className="practice-section-title">{sectionCopy.menu}</h3><div className="navigation-menu-grid">{menuItems.map((item) => <div key={item.step_id}><Route size={19} /><span><strong>{item.copy[lang].title}</strong><small>{sectionCopy.ownerOnly}</small></span></div>)}</div></div>;
+  }
+  if (step.order >= 6 && step.order <= 10) {
+    const options = [option(6, 8), option(7, 5), option(8, 3), option(9, 4), option(10, 2)];
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.own} options={options} initialId={step.step_id} /></div>;
+  }
+  if (step.order >= 11 && step.order <= 14) {
+    const options = [option(11, 4), option(12, 2), option(13, 3), option(14, 1)];
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.managed} options={options} initialId={step.step_id} /></div>;
+  }
+  if (step.order >= 15 && step.order <= 18) {
+    const options = [option(15, 3), option(16, 2), option(17, 7), option(18, 1)];
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.received} options={options} initialId={step.step_id} /></div>;
+  }
+  if (step.order >= 19 && step.order <= 20) {
+    const options = [option(19, 2), option(20, 6)];
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.requested} options={options} initialId={step.step_id} /></div>;
+  }
+  return <div className="practice-fields navigation-practice"><PracticeContextCard icon={step.order === 21 ? Users : UserRoundPlus} title={copy.title} body={copy.body} /><div className="directory-preview"><Users size={22} /><span><strong>{copy.title}</strong><small>{sectionCopy.synthetic} · 3</small></span><Search size={20} /></div></div>;
+}
+
+function GalleryTraceabilityPractice({ context, step }: { context: DemoContext; step: ManualStep }) {
+  const lang = context.language;
+  const copy = step.copy[lang];
+  const steps = manualContract.flows.public_gallery_traceability.steps;
+  const c = {
+    es: { publicCard: "Tarjeta pública de práctica", visibleByOwner: "Visible porque el owner decidió publicarlo", endpoints: "Elegir una referencia pública", publicBoundary: "Estos recursos son públicos solo mientras el owner exponga la obra y esos datos en Gallery.", technical: "Ficha pública", statuses: "Estados visibles", certify: "Certify públicos", simulated: "Referencia sintética" },
+    en: { publicCard: "Public practice card", visibleByOwner: "Visible because the owner chose to publish it", endpoints: "Choose a public reference", publicBoundary: "These resources are public only while the owner exposes the artwork and those fields in Gallery.", technical: "Public details", statuses: "Visible states", certify: "Public Certify records", simulated: "Synthetic reference" },
+    pt: { publicCard: "Cartão público de prática", visibleByOwner: "Visível porque o owner decidiu publicá-lo", endpoints: "Escolher uma referência pública", publicBoundary: "Estes recursos são públicos somente enquanto o owner expõe a obra e esses dados na Gallery.", technical: "Ficha pública", statuses: "Estados visíveis", certify: "Certify públicos", simulated: "Referência sintética" },
+  }[lang];
+  const endpointRefs: Record<number, { icon: typeof Blocks; label: string; value: string }> = {
+    5: { icon: FileCheck2, label: steps[4].copy[lang].title, value: "bafy...metadata-demo-255" },
+    6: { icon: ImageIcon, label: steps[5].copy[lang].title, value: "bafy...image-demo-255" },
+    7: { icon: Fingerprint, label: steps[6].copy[lang].title, value: "TOKEN-DEMO-255" },
+    8: { icon: BadgeCheck, label: steps[7].copy[lang].title, value: "TX-DEMO-ARTWORK-255" },
+    9: { icon: Route, label: steps[8].copy[lang].title, value: "Transfer(DEMO_FROM, DEMO_TO, 255)" },
+    11: { icon: FileCheck2, label: steps[10].copy[lang].title, value: "bafy...certify-evidence-demo" },
+    12: { icon: FileCheck2, label: steps[11].copy[lang].title, value: "bafy...certify-document-demo" },
+    13: { icon: BadgeCheck, label: steps[12].copy[lang].title, value: "TX-DEMO-CERTIFY-004" },
+  };
+
+  if (step.order === 1) return <div className="practice-fields gallery-practice"><div className="gallery-public-card"><ImageIcon size={30} /><span><strong>Ecos del río</strong><small>Alex Rivera · {c.publicCard}</small></span><b>Gallery</b></div><div className="safety-note"><Eye size={18} />{c.visibleByOwner}</div></div>;
+  if (step.order === 2) return <div className="practice-fields gallery-practice"><h3 className="practice-section-title">{c.statuses}</h3><div className="gallery-status-grid"><span><ImageIcon size={18} />Precargada</span><span><Fingerprint size={18} />Mint</span><span><BadgeCheck size={18} />Certify</span><span><Tag size={18} />NFC</span></div></div>;
+  if (step.order === 3) return <div className="practice-fields gallery-practice"><PracticeContextCard icon={GalleryHorizontalEnd} title={c.technical} body={copy.body} /><dl className="gallery-facts"><div><dt>Autor</dt><dd>Alex Rivera</dd></div><div><dt>Técnica</dt><dd>Óleo sobre tela</dd></div><div><dt>Medidas</dt><dd>100 x 120 cm</dd></div><div><dt>Token ID</dt><dd>DEMO-255</dd></div></dl></div>;
+  if (step.order === 4) {
+    const options = [5, 6, 7, 8].map((order) => ({ id: steps[order - 1].step_id, label: steps[order - 1].copy[lang].title, description: steps[order - 1].copy[lang].body }));
+    return <div className="practice-fields gallery-practice"><PracticeOptionSelector key={step.step_id} legend={c.endpoints} options={options} initialId={options[0].id} /><div className="safety-note"><Globe2 size={18} />{c.publicBoundary}</div></div>;
+  }
+  if (step.order === 10) return <div className="practice-fields gallery-practice"><h3 className="practice-section-title">{c.certify}</h3><div className="gallery-certify-grid"><div><BadgeCheck size={19} /><span><strong>Autenticidad</strong><small>CERT-DEMO-001</small></span></div><div><BadgeCheck size={19} /><span><strong>Exhibición</strong><small>CERT-DEMO-002</small></span></div><div><BadgeCheck size={19} /><span><strong>Estado</strong><small>CERT-DEMO-003</small></span></div></div><div className="safety-note"><Eye size={18} />{c.publicBoundary}</div></div>;
+  const endpoint = endpointRefs[step.order];
+  if (endpoint) {
+    const EndpointIcon = endpoint.icon;
+    return <div className="practice-fields gallery-practice"><div className="gallery-endpoint-card"><EndpointIcon size={26} /><span><strong>{endpoint.label}</strong><small>{c.simulated}</small><code>{endpoint.value}</code></span><ExternalLink size={19} /></div><PracticeContextCard icon={ShieldCheck} title={copy.title} body={copy.body} /><div className="safety-note"><Globe2 size={18} />{c.publicBoundary}</div></div>;
+  }
+  return <div className="practice-fields gallery-practice"><PracticeContextCard icon={GalleryHorizontalEnd} title={copy.title} body={copy.body} /></div>;
+}
+
+function ActionOverviewPractice({ context, step }: { context: DemoContext; step: ManualStep }) {
+  const lang = context.language;
+  const copy = step.copy[lang];
+  const flowByAction: Record<string, string> = {
+    "atelier_action.load": "carga_obra",
+    "atelier_action.mint": "mint",
+    "atelier_action.chip": "chip",
+    "atelier_action.certify": "certify",
+    "atelier_action.transfer": "transferencia",
+    "atelier_action.privacy": "privacy",
+  };
+  const relation = {
+    es: {
+      "atelier_action.load": "Punto de partida: prepara información e imágenes antes de Mint.",
+      "atelier_action.mint": "Crea identidad digital después de revisar la obra cargada.",
+      "atelier_action.chip": "Conecta el objeto físico con su identidad digital cuando aporta valor.",
+      "atelier_action.certify": "Suma evidencia y hechos verificables a una obra con identidad digital.",
+      "atelier_action.transfer": "Traslada titularidad registrada; no es una venta automática.",
+      "atelier_action.privacy": "El owner decide qué información expone y qué conserva en Nivel 4.",
+    },
+    en: {
+      "atelier_action.load": "Starting point: prepare information and images before Mint.",
+      "atelier_action.mint": "Creates digital identity after reviewing the loaded artwork.",
+      "atelier_action.chip": "Connects the physical object to its digital identity when useful.",
+      "atelier_action.certify": "Adds evidence and verifiable events to an artwork with digital identity.",
+      "atelier_action.transfer": "Moves registered ownership; it is not an automated sale.",
+      "atelier_action.privacy": "The owner decides what to expose and what stays in Level 4.",
+    },
+    pt: {
+      "atelier_action.load": "Ponto de partida: prepare informações e imagens antes do Mint.",
+      "atelier_action.mint": "Cria identidade digital depois de revisar a obra carregada.",
+      "atelier_action.chip": "Conecta o objeto físico à identidade digital quando agrega valor.",
+      "atelier_action.certify": "Adiciona evidências e fatos verificáveis à obra com identidade digital.",
+      "atelier_action.transfer": "Transfere titularidade registrada; não é uma venda automática.",
+      "atelier_action.privacy": "O owner decide o que expõe e o que conserva no Nível 4.",
+    },
+  }[lang];
+  return <div className="practice-fields action-overview-practice"><div className="action-sequence">{manualContract.flows.action_overview.steps.map((item) => <div key={item.step_id} className={item.step_id === step.step_id ? "active" : ""}><FlowIconMark flowId={flowByAction[item.step_id]} size={18} /><span>{item.copy[lang].title}</span></div>)}</div><PracticeContextCard icon={Blocks} title={copy.title} body={copy.body} /><div className="practice-selection-result"><Route size={22} /><span><strong>{copy.title}</strong><small>{relation[step.step_id as keyof typeof relation]}</small></span></div></div>;
+}
+
 function PracticeFields({ context, step, send }: { context: DemoContext; step: ManualStep; send: (event: any) => void }) {
   const lang = context.language;
   const t = ui[lang];
   const stepCopy = step.copy[lang];
   const p = adaptivePracticeCopy[lang];
+
+  if (context.flow === "atelier_navigation") return <AtelierNavigationPractice context={context} step={step} />;
+  if (context.flow === "public_gallery_traceability") return <GalleryTraceabilityPractice context={context} step={step} />;
+  if (context.flow === "action_overview") return <ActionOverviewPractice context={context} step={step} />;
 
   if (context.flow === "onboarding") {
     const isAccess = step.order <= 3;

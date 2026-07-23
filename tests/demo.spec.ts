@@ -246,7 +246,7 @@ test("completes a safe synthetic NFC link", async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath("nfc-result.png"), fullPage: true });
 });
 
-test("keeps Smart Wallet, Mint, and NFC practice focused on the current microstep", async ({ page }) => {
+test("keeps every adaptive practice surface focused on the current microstep", async ({ page }) => {
   await page.addInitScript(() => {
     sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
       language: "es",
@@ -289,6 +289,11 @@ test("keeps Smart Wallet, Mint, and NFC practice focused on the current microste
     { url: "/?flow=vouchers&step=vouchers.check-shop-prices&lang=es", text: "USD 20.00", actions: 0 },
     { url: "/?flow=vouchers&step=vouchers.compare-starter-kit&lang=es", text: "Elegir una adquisición de práctica", actions: 1 },
     { url: "/?flow=vouchers&step=vouchers.understand-consumption&lang=es", text: "Quién consume cada voucher", actions: 1 },
+    { url: "/?flow=atelier_navigation&step=navigation.own-minted&lang=es", text: "Filtros de Obras Propias", actions: 1 },
+    { url: "/?flow=atelier_navigation&step=navigation.contacts&lang=es", text: "Datos sintéticos de navegación", actions: 0 },
+    { url: "/?flow=public_gallery_traceability&step=gallery.choose-traceability-endpoint&lang=es", text: "Elegir una referencia pública", actions: 1 },
+    { url: "/?flow=public_gallery_traceability&step=gallery.read-ipfs-metadata&lang=es", text: "bafy...metadata-demo-255", actions: 0 },
+    { url: "/?flow=action_overview&step=atelier_action.chip&lang=es", text: "Conecta el objeto físico", actions: 0 },
   ];
 
   for (const item of cases) {
