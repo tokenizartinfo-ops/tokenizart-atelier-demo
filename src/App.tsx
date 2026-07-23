@@ -5,7 +5,6 @@ import {
   ArrowRight,
   BadgeCheck,
   Blocks,
-  Box,
   Check,
   CircleAlert,
   Eye,
@@ -25,7 +24,6 @@ import {
   Route,
   Search,
   ShieldCheck,
-  Shirt,
   ShoppingCart,
   Smartphone,
   Tag,
@@ -36,6 +34,7 @@ import {
   X,
   ZoomIn,
 } from "lucide-react";
+import { AtelierSurface, usesInteractiveAtelierSurface } from "./AtelierSurface";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
 import { isCompanionBridgeMessage, postDemoBridgeMessage, practiceStateForContext, practiceStateForSelection, resolveDemoBridgeOrigin } from "./demoBridge";
 import type { DemoPracticeState } from "./demoBridge";
@@ -87,12 +86,13 @@ const flowOrder = [
 function FlowIconMark({ flowId, size = 20 }: { flowId: string; size?: number }) {
   const assetId = nativeFlowIconAssets[flowId];
   const FallbackIcon = flowIcons[flowId] ?? Blocks;
+  const [nativeAssetFailed, setNativeAssetFailed] = useState(false);
 
-  if (!assetId) return <FallbackIcon size={size} aria-hidden="true" />;
+  if (!assetId || nativeAssetFailed) return <FallbackIcon size={size} aria-hidden="true" />;
 
   return (
     <span className="native-flow-icon" style={{ width: size + 8, height: size + 8 }} aria-hidden="true">
-      <img src={`/api/manual-asset/${encodeURIComponent(assetId)}`} alt="" />
+      <img src={`/api/manual-asset/${encodeURIComponent(assetId)}`} alt="" onError={() => setNativeAssetFailed(true)} />
     </span>
   );
 }
@@ -202,9 +202,9 @@ const errors: Record<string, Record<Language, { title: string; body: string }>> 
 
 const certifyActors: Record<CertifyActorId, Record<Language, { name: string; description: string }>> = {
   owner_artist: {
-    es: { name: "Alex Rivera · owner/artista", description: "Declara un hecho propio sobre la obra." },
-    en: { name: "Alex Rivera · owner/artist", description: "Declares a first-party fact about the artwork." },
-    pt: { name: "Alex Rivera · owner/artista", description: "Declara um fato próprio sobre a obra." },
+    es: { name: "Owner/artista de práctica", description: "Declara un hecho propio sobre la obra." },
+    en: { name: "Practice owner/artist", description: "Declares a first-party fact about the artwork." },
+    pt: { name: "Owner/artista de prática", description: "Declara um fato próprio sobre a obra." },
   },
   expert: {
     es: { name: "Perito Demo", description: "Aporta una evaluación profesional independiente." },
@@ -220,9 +220,9 @@ const certifyActors: Record<CertifyActorId, Record<Language, { name: string; des
 
 const mintActors: Record<MintActorId, Record<Language, { name: string; description: string }>> = {
   owner_artist: {
-    es: { name: "Alex Rivera · owner/artista", description: "Registra una obra propia previamente revisada." },
-    en: { name: "Alex Rivera · owner/artist", description: "Registers a reviewed artwork they own." },
-    pt: { name: "Alex Rivera · owner/artista", description: "Registra uma obra própria previamente revisada." },
+    es: { name: "Owner/artista de práctica", description: "Registra una obra propia previamente revisada." },
+    en: { name: "Practice owner/artist", description: "Registers a reviewed artwork they own." },
+    pt: { name: "Owner/artista de prática", description: "Registra uma obra própria previamente revisada." },
   },
   authorized_manager: {
     es: { name: "Gestor Demo autorizado", description: "Prepara el Mint de una obra gestionada dentro del escenario sintético." },
@@ -246,9 +246,9 @@ const mintModes: Record<MintMode, Record<Language, { name: string; description: 
 
 const nfcActors: Record<NfcActorId, Record<Language, { name: string; description: string }>> = {
   owner_artist: {
-    es: { name: "Alex Rivera · owner/artista", description: "Solicita y completa la vinculación de su obra dentro de la práctica." },
-    en: { name: "Alex Rivera · owner/artist", description: "Requests and completes the artwork link inside the practice flow." },
-    pt: { name: "Alex Rivera · owner/artista", description: "Solicita e conclui a vinculação da obra no fluxo de prática." },
+    es: { name: "Owner/artista de práctica", description: "Solicita y completa la vinculación de su obra dentro de la práctica." },
+    en: { name: "Practice owner/artist", description: "Requests and completes the artwork link inside the practice flow." },
+    pt: { name: "Owner/artista de prática", description: "Solicita e conclui a vinculação da obra no fluxo de prática." },
   },
   authorized_certifier: {
     es: { name: "Certificador Demo autorizado", description: "Recibe la solicitud y acerca el teléfono al tag asignado." },
@@ -501,6 +501,7 @@ function AtelierNavigationPractice({ context, step, onPracticeSelection }: { con
 function GalleryTraceabilityPractice({ context, step, onPracticeSelection }: { context: DemoContext; step: ManualStep; onPracticeSelection: (selectionId: string) => void }) {
   const lang = context.language;
   const copy = step.copy[lang];
+  const artwork = context.world.artwork;
   const steps = manualContract.flows.public_gallery_traceability.steps;
   const c = {
     es: { publicCard: "Tarjeta pública de práctica", visibleByOwner: "Visible porque el owner decidió publicarlo", endpoints: "Elegir una referencia pública", publicBoundary: "Estos recursos son públicos solo mientras el owner exponga la obra y esos datos en Gallery.", technical: "Ficha pública", statuses: "Estados visibles", certify: "Certify públicos", simulated: "Referencia sintética" },
@@ -518,9 +519,9 @@ function GalleryTraceabilityPractice({ context, step, onPracticeSelection }: { c
     13: { icon: BadgeCheck, label: steps[12].copy[lang].title, value: "TX-DEMO-CERTIFY-004" },
   };
 
-  if (step.order === 1) return <div className="practice-fields gallery-practice"><div className="gallery-public-card"><ImageIcon size={30} /><span><strong>Ecos del río</strong><small>Alex Rivera · {c.publicCard}</small></span><b>Gallery</b></div><div className="safety-note"><Eye size={18} />{c.visibleByOwner}</div></div>;
+  if (step.order === 1) return <div className="practice-fields gallery-practice"><div className="gallery-public-card"><ImageIcon size={30} /><span><strong>{artwork.title}</strong><small>{artwork.author} · {c.publicCard}</small></span><b>Gallery</b></div><div className="safety-note"><Eye size={18} />{c.visibleByOwner}</div></div>;
   if (step.order === 2) return <div className="practice-fields gallery-practice"><h3 className="practice-section-title">{c.statuses}</h3><div className="gallery-status-grid"><span><ImageIcon size={18} />Precargada</span><span><Fingerprint size={18} />Mint</span><span><BadgeCheck size={18} />Certify</span><span><Tag size={18} />NFC</span></div></div>;
-  if (step.order === 3) return <div className="practice-fields gallery-practice"><PracticeContextCard icon={GalleryHorizontalEnd} title={c.technical} body={copy.body} /><dl className="gallery-facts"><div><dt>Autor</dt><dd>Alex Rivera</dd></div><div><dt>Técnica</dt><dd>Óleo sobre tela</dd></div><div><dt>Medidas</dt><dd>100 x 120 cm</dd></div><div><dt>Token ID</dt><dd>DEMO-255</dd></div></dl></div>;
+  if (step.order === 3) return <div className="practice-fields gallery-practice"><PracticeContextCard icon={GalleryHorizontalEnd} title={c.technical} body={copy.body} /><dl className="gallery-facts"><div><dt>Autor</dt><dd>{artwork.author}</dd></div><div><dt>Técnica</dt><dd>{artwork.technique[lang]} · {artwork.support[lang]}</dd></div><div><dt>Medidas</dt><dd>{artwork.widthCm} × {artwork.heightCm} cm</dd></div><div><dt>Token ID</dt><dd>DEMO-255</dd></div></dl></div>;
   if (step.order === 4) {
     const options = [5, 6, 7, 8].map((order) => ({ id: steps[order - 1].step_id, label: steps[order - 1].copy[lang].title, description: steps[order - 1].copy[lang].body }));
     return <div className="practice-fields gallery-practice"><PracticeOptionSelector key={step.step_id} legend={c.endpoints} options={options} initialId={options[0].id} onChange={onPracticeSelection} /><div className="safety-note"><Globe2 size={18} />{c.publicBoundary}</div></div>;
@@ -633,18 +634,11 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
     const isManaged = step.order >= 20;
     return (
       <div className="practice-fields artwork-form">
-        {isStart && <div className="fixture-selector" aria-label="Fixtures">
-          <button className={context.fixtureId === "painting-river-001" ? "selected" : ""} onClick={() => send({ type: "SET_FIXTURE", fixtureId: "painting-river-001", artworkType: "painting" })}><ImageIcon size={18} />Pintura</button>
-          <button className={context.fixtureId === "sculpture-signal-001" ? "selected" : ""} onClick={() => send({ type: "SET_FIXTURE", fixtureId: "sculpture-signal-001", artworkType: "sculpture" })}><Box size={18} />Escultura</button>
-          <button className={context.fixtureId === "sports-shirt-001" ? "selected" : ""} onClick={() => send({ type: "SET_FIXTURE", fixtureId: "sports-shirt-001", artworkType: "sports" })}><Shirt size={18} />Camiseta</button>
-        </div>}
-        {isIdentity && <>
-          <label>{t.titleLabel}<input value={context.world.artworkTitle} onChange={(event) => send({ type: "UPDATE_ARTWORK", title: event.target.value })} /></label>
-          <label>{t.authorLabel}<input value={context.world.artworkAuthor} onChange={(event) => send({ type: "UPDATE_ARTWORK", author: event.target.value })} /></label>
-        </>}
+        {isStart && <PracticeContextCard icon={ImageIcon} title={context.world.artwork.title} body={stepCopy.body} />}
+        {isIdentity && <div className="practice-receipt"><FileCheck2 size={24} /><span><strong>{context.world.artwork.title}</strong><small>{context.world.artwork.author} · {context.world.artwork.countryName[lang]}</small></span></div>}
         {isImages && <div className="upload-simulation"><ImageIcon size={24} /><span><strong>3 imágenes de práctica</strong><small>Frente · reverso/firma · detalle</small></span><Check size={20} /></div>}
-        {isTechnicalSheet && <div className="practice-context-card"><FileCheck2 size={24} /><span><strong>{stepCopy.title}</strong><small>{stepCopy.body}</small></span></div>}
-        {isReview && <div className="practice-context-card success"><PackageCheck size={24} /><span><strong>{context.world.artworkTitle}</strong><small>{stepCopy.body}</small></span></div>}
+        {isTechnicalSheet && <div className="practice-context-card"><FileCheck2 size={24} /><span><strong>{stepCopy.title}</strong><small>{context.world.artwork.technique[lang]} · {context.world.artwork.widthCm} × {context.world.artwork.heightCm} cm</small></span></div>}
+        {isReview && <div className="practice-context-card success"><PackageCheck size={24} /><span><strong>{context.world.artwork.title}</strong><small>{stepCopy.body}</small></span></div>}
         {isManaged && <div className="practice-context-card managed"><UserRoundPlus size={24} /><span><strong>{stepCopy.title}</strong><small>{stepCopy.body}</small></span></div>}
         <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "missing_required_field" })}><CircleAlert size={17} />{t.errorPractice}</button>
       </div>
@@ -664,12 +658,12 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
       : [];
     const privacyPreview = (
       <div className={`privacy-preview ${audience}`} data-testid="privacy-preview">
-        <div className="privacy-preview-heading"><ImageIcon size={25} /><span><strong>{context.world.artworkTitle}</strong><small>{audience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</small></span><b>{audience === "owner" ? "Nivel 4" : "Nivel 5"}</b></div>
+        <div className="privacy-preview-heading"><ImageIcon size={25} /><span><strong>{context.world.artwork.title}</strong><small>{audience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</small></span><b>{audience === "owner" ? "Nivel 4" : "Nivel 5"}</b></div>
         {audience === "visitor" && !draft.galleryVisible ? (
           <div className="privacy-hidden"><Eye size={24} /><strong>{t.privacyArtworkHidden}</strong><small>{t.privacyHiddenHelp}</small></div>
         ) : (
           <>
-            {(audience === "owner" || draft.technicalSheetVisible) && <div className="privacy-technical"><strong>{t.privacyTechnicalSheet}</strong><span>{context.world.artworkAuthor} · 100 x 120 cm · {t.simulated}</span></div>}
+            {(audience === "owner" || draft.technicalSheetVisible) && <div className="privacy-technical"><strong>{t.privacyTechnicalSheet}</strong><span>{context.world.artwork.author} · {context.world.artwork.widthCm} × {context.world.artwork.heightCm} cm · {t.simulated}</span></div>}
             <div className="privacy-certify-list">
               {privacyCertifyIds.filter((id) => audience === "owner" || effectivePublicCertify.includes(id)).map((id) => <div key={id}><BadgeCheck size={17} /><span>{certifyTypes[id][lang].name}</span><small>{draft.galleryVisible && draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></div>)}
               {audience === "visitor" && effectivePublicCertify.length === 0 && <p>{t.privacyNoPublicCertify}</p>}
@@ -719,7 +713,7 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
         {order === 1 && <PracticeContextCard icon={Nfc} title={stepCopy.title} body={stepCopy.body} />}
         {order === 2 && <PracticeContextCard icon={PackageCheck} title={p.toolboxReady} body={stepCopy.body} />}
         {order === 3 && <PracticeContextCard icon={Smartphone} title={p.mobileReady} body={stepCopy.body} tone="success" />}
-        {order === 4 && <PracticeContextCard icon={ImageIcon} title={p.selectedArtwork} body={`${context.world.artworkTitle} · ${stepCopy.body}`} />}
+        {order === 4 && <PracticeContextCard icon={ImageIcon} title={p.selectedArtwork} body={`${context.world.artwork.title} · ${stepCopy.body}`} />}
         {order === 5 && <PracticeContextCard icon={FileCheck2} title={stepCopy.title} body={stepCopy.body} />}
         {order === 6 && <fieldset data-practice-action>
           <legend>{t.nfcActor}</legend>
@@ -738,7 +732,7 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
         {order >= 13 && order <= 17 && <PracticeContextCard icon={Smartphone} title={order === 13 ? p.mobileApp : stepCopy.title} body={stepCopy.body} />}
         {order === 18 && <><div className="phone-simulation nfc-ready_to_link"><Nfc size={38} /><strong>Ready to link</strong><small>{stepCopy.body}</small></div><label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.scanConfirmed} onChange={(event) => send({ type: "SET_NFC_DRAFT", tagState: "ready_to_link", scanConfirmed: event.target.checked })} /><span>{t.confirmNfcScan}<small>{t.nfcScanHelp}</small></span></label></>}
         {order >= 19 && order <= 20 && <PracticeContextCard icon={BadgeCheck} title={stepCopy.title} body={stepCopy.body} tone="success" />}
-        {order === 21 && <div className="transaction-preview"><TicketCheck size={25} /><span><strong>{p.nfcVoucher}: {context.world.vouchers.nfc}</strong><small>{context.world.artworkTitle} · {stepCopy.body}</small></span></div>}
+        {order === 21 && <div className="transaction-preview"><TicketCheck size={25} /><span><strong>{p.nfcVoucher}: {context.world.vouchers.nfc}</strong><small>{context.world.artwork.title} · {stepCopy.body}</small></span></div>}
         {order === 22 && <label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_NFC_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmNfcSignature}<small>{t.signatureHelp}</small></span></label>}
         {order === 23 && <PracticeContextCard icon={BadgeCheck} title={stepCopy.title} body={stepCopy.body} tone="success" />}
         {order === 24 && <div className="practice-receipt"><FileCheck2 size={24} /><span><strong>{p.nfcReceipt}</strong><small>CERT-NFC-DEMO-001 · TX-DEMO-NFC-001</small></span></div>}
@@ -771,7 +765,7 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
     const isRegistration = step.order >= 12;
     return (
       <div className="practice-fields certify-config">
-        {isArtworkSelection && <div className="practice-context-card"><FileCheck2 size={24} /><span><strong>{context.world.artworkTitle}</strong><small>{stepCopy.body}</small></span></div>}
+        {isArtworkSelection && <div className="practice-context-card"><FileCheck2 size={24} /><span><strong>{context.world.artwork.title}</strong><small>{stepCopy.body}</small></span></div>}
         {isActor && <fieldset>
           <legend>{t.certifierRole}</legend>
           <div className="actor-selector">
@@ -808,7 +802,7 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
         </fieldset>}
         {isRequest && <div className="practice-context-card request"><BadgeCheck size={24} /><span><strong>{stepCopy.title}</strong><small>{stepCopy.body}</small></span></div>}
         {isEvidence && <div className="evidence-preview"><FileCheck2 size={24} /><span><strong>{t.evidenceLabel}</strong><small>{certifyTypes[draft.typeId][lang].evidence}</small></span></div>}
-        {isRegistration && <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Certify {t.simulated}</strong><small>{context.world.artworkTitle} · {t.voucherAvailable}: {context.world.vouchers.certify}</small></span></div>}
+        {isRegistration && <div className="transaction-preview"><Fingerprint size={25} /><span><strong>Certify {t.simulated}</strong><small>{context.world.artwork.title} · {t.voucherAvailable}: {context.world.vouchers.certify}</small></span></div>}
         {!completed && (step.order === 12 || step.order === 13) && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: context.world.vouchers.certify ? "wrong_wallet_password" : "missing_voucher" })}><CircleAlert size={17} />{t.errorPractice}</button>}
       </div>
     );
@@ -821,7 +815,7 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
     const order = step.order;
     return (
       <div className="practice-fields mint-config">
-        {order === 1 && <PracticeContextCard icon={ImageIcon} title={p.selectedArtwork} body={`${context.world.artworkTitle} · ${stepCopy.body}`} />}
+        {order === 1 && <PracticeContextCard icon={ImageIcon} title={p.selectedArtwork} body={`${context.world.artwork.title} · ${stepCopy.body}`} />}
         {order === 2 && <><div className="mint-readiness"><strong>{t.reviewBeforeMint}</strong><span><Check size={16} />{t.artworkDataReady}</span><span><Check size={16} />{t.artworkImagesReady}</span><span><Check size={16} />{t.artworkVisibilityReady}</span></div><label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.reviewConfirmed} onChange={(event) => send({ type: "SET_MINT_DRAFT", reviewConfirmed: event.target.checked })} /><span>{t.confirmReview}</span></label></>}
         {order === 3 && <fieldset data-practice-action>
           <legend>{t.mintActor}</legend>
@@ -835,7 +829,7 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
             })}
           </div>
         </fieldset>}
-        {order === 4 && <div className="transaction-preview"><TicketCheck size={25} /><span><strong>{p.mintVoucher}: {context.world.vouchers.mint}</strong><small>{t.voucherCost}: {voucherRequirement} · {context.world.artworkTitle}</small></span></div>}
+        {order === 4 && <div className="transaction-preview"><TicketCheck size={25} /><span><strong>{p.mintVoucher}: {context.world.vouchers.mint}</strong><small>{t.voucherCost}: {voucherRequirement} · {context.world.artwork.title}</small></span></div>}
         {order === 5 && <><PracticeContextCard icon={KeyRound} title={stepCopy.title} body={stepCopy.body} /><div className="safety-note"><ShieldCheck size={18} />{t.noSecrets}</div></>}
         {order === 6 && <label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_MINT_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmSignature}<small>{t.signatureHelp}</small></span></label>}
         {order === 7 && <PracticeContextCard icon={RefreshCcw} title={p.waitingBlockchain} body={stepCopy.body} />}
@@ -869,9 +863,9 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
     const order = step.order;
     return (
       <div className="practice-fields transfer-config">
-        {order === 1 && <><PracticeContextCard icon={ImageIcon} title={p.selectedArtwork} body={`${context.world.artworkTitle} · ${stepCopy.body}`} /><label>{t.transferCurrentOwner}<input value="Alex Rivera · OWNER-DEMO-ALEX" readOnly /></label></>}
+        {order === 1 && <><PracticeContextCard icon={ImageIcon} title={p.selectedArtwork} body={`${context.world.artwork.title} · ${stepCopy.body}`} /><label>{t.transferCurrentOwner}<input value={`${context.world.artwork.ownerDisplayName} · ${context.world.currentOwnerRef}`} readOnly /></label></>}
         {order === 2 && <PracticeContextCard icon={ArrowRight} title={stepCopy.title} body={stepCopy.body} />}
-        {order === 3 && <div className="practice-receipt"><FileCheck2 size={24} /><span><strong>{context.world.artworkTitle}</strong><small>{context.world.artworkAuthor} · Token ID DEMO-255 · 100 x 120 cm</small></span></div>}
+        {order === 3 && <div className="practice-receipt"><FileCheck2 size={24} /><span><strong>{context.world.artwork.title}</strong><small>{context.world.artwork.author} · Token ID DEMO-255 · {context.world.artwork.widthCm} × {context.world.artwork.heightCm} cm</small></span></div>}
         {order === 4 && <fieldset data-practice-action>
           <legend>{t.transferDestination}</legend>
           <div className="mode-selector">
@@ -1219,6 +1213,7 @@ function App() {
   const progress = Math.round(((context.stepIndex + 1) / flow.steps.length) * 100);
   const activeError = context.errorCode ? errors[context.errorCode]?.[lang] : null;
   const flowCompleted = context.world.events.includes(`${context.flow}.completed`);
+  const interactiveSurface = usesInteractiveAtelierSurface(context.flow);
   const bridgeOrigin = useMemo(() => resolveDemoBridgeOrigin(window.location.search, document.referrer), []);
   const bridgeTarget = bridgeOrigin && window.parent !== window ? window.parent : null;
   const defaultPracticeState = useMemo(() => practiceStateForContext(context, step.step_id), [
@@ -1264,10 +1259,6 @@ function App() {
   }, [context.flow, lang]);
 
   useEffect(() => {
-    emitDemoMessage("demo.ready");
-  }, [bridgeOrigin]);
-
-  useEffect(() => {
     setPracticeState(defaultPracticeState);
     emitDemoMessage("demo.step.changed", defaultPracticeState);
   }, [bridgeOrigin, context.flow, context.fixtureId, context.scenarioId, lang, step.step_id]);
@@ -1290,6 +1281,31 @@ function App() {
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, [bridgeOrigin, bridgeTarget, context.fixtureId, context.flow, context.scenarioId, step.step_id]);
+
+  useEffect(() => {
+    if (!bridgeOrigin || !bridgeTarget || bridgeStatus !== "disconnected") return;
+
+    const announce = () => {
+      postDemoBridgeMessage(bridgeTarget, bridgeOrigin, "demo.ready", context, step.step_id, defaultPracticeState);
+      postDemoBridgeMessage(bridgeTarget, bridgeOrigin, "demo.step.changed", context, step.step_id, defaultPracticeState);
+    };
+    announce();
+    const retry = window.setInterval(announce, 500);
+    const stop = window.setTimeout(() => window.clearInterval(retry), 5000);
+    return () => {
+      window.clearInterval(retry);
+      window.clearTimeout(stop);
+    };
+  }, [
+    bridgeOrigin,
+    bridgeStatus,
+    bridgeTarget,
+    context.fixtureId,
+    context.flow,
+    context.scenarioId,
+    defaultPracticeState,
+    step.step_id,
+  ]);
 
   function reset() {
     emitDemoMessage("demo.reset");
@@ -1338,10 +1354,23 @@ function App() {
             </div>
           </section>
 
-          <section className="simulation-grid">
+          <section className={interactiveSurface ? "simulation-grid interactive-surface" : "simulation-grid"}>
             <div className="screen-zone">
-              <ManualVisual step={step} language={lang} onZoom={() => setZoomed(true)} />
-              <div className="visual-meta"><span>{t.source}: Manual Atelier 2026</span><span>{t.slide} {step.source_slide}</span><span>{step.step_id}</span></div>
+              {interactiveSurface ? (
+                <>
+                  <AtelierSurface context={context} step={step} send={send} />
+                  <details className="manual-reference">
+                    <summary>{lang === "en" ? "Compare with the verified manual" : lang === "pt" ? "Comparar com o manual verificado" : "Comparar con el manual verificado"}</summary>
+                    <ManualVisual step={step} language={lang} onZoom={() => setZoomed(true)} />
+                    <div className="visual-meta"><span>{t.source}: Manual Atelier 2026</span><span>{t.slide} {step.source_slide}</span><span>{step.step_id}</span></div>
+                  </details>
+                </>
+              ) : (
+                <>
+                  <ManualVisual step={step} language={lang} onZoom={() => setZoomed(true)} />
+                  <div className="visual-meta"><span>{t.source}: Manual Atelier 2026</span><span>{t.slide} {step.source_slide}</span><span>{step.step_id}</span></div>
+                </>
+              )}
             </div>
             <div className="practice-zone" data-flow={context.flow}>
               <div className="practice-title"><FlowIconMark flowId={context.flow} size={22} /><span className="practice-heading"><strong>{t.demoData}</strong><small>{flowLabels[context.flow][lang]}</small></span><span className="simulated-badge">{t.simulated}</span></div>

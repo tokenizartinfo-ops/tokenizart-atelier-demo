@@ -1,15 +1,34 @@
 import { expect, test } from "@playwright/test";
 
-test("opens every flow and keeps practice controls visible", async ({ page }) => {
+const localDemo = !process.env.DEMO_BASE_URL || /^https?:\/\/(127\.0\.0\.1|localhost)/.test(process.env.DEMO_BASE_URL);
+
+test("opens the dynamic artwork flow and keeps one coherent artwork across actions", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Demo Atelier" })).toBeVisible();
   await expect(page.getByText("Nada de esto ejecuta acciones reales.")).toBeVisible();
 
   await page.getByRole("button", { name: /Cargar obra/ }).click();
   await expect(page.getByText("Datos de práctica")).toBeVisible();
-  await expect(page.getByRole("button", { name: /Pintura/ })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Escultura/ })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Camiseta/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Obras propias/ })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByRole("button", { name: /Abrir formulario de carga/ }).click();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await expect(page.getByLabel("Nombre de la obra")).toHaveValue("Curvas");
+  await expect(page.getByLabel("Autor")).toHaveValue("Jorge Norberto Leporace");
+  await expect(page.locator(".atelier-main-image img")).toHaveAttribute("src", "/fixtures/curvas.png");
+
+  await page.getByLabel("Nombre de la obra").fill("Curvas del Sur");
+  await page.getByRole("button", { name: /^Mint/ }).click();
+  await expect(page.locator(".atelier-operation-copy").getByRole("heading", { name: "Curvas del Sur" })).toBeVisible();
+  await expect(page.locator(".atelier-operation-copy").getByText("Jorge Norberto Leporace", { exact: true })).toBeVisible();
+});
+
+test("renders the complete technical sheet in the selected language", async ({ page }) => {
+  await page.goto("/?flow=carga_obra&step=carga-obra.review-loaded-artwork&lang=en&scenario=first-artwork&fixture=painting-river-001");
+  await expect(page.locator(".atelier-artwork-detail").getByRole("heading", { name: "Curvas" })).toBeVisible();
+  await expect(page.locator(".atelier-artwork-detail").getByText("Jorge Norberto Leporace", { exact: true })).toBeVisible();
+  await expect(page.locator(".atelier-artwork-detail").getByText("Personal collection", { exact: true })).toBeVisible();
+  await expect(page.locator(".atelier-artwork-detail img").first()).toHaveAttribute("src", "/fixtures/curvas.png");
 });
 
 test("keeps Atelier first and synchronizes the local guide with every step", async ({ page }) => {
@@ -70,14 +89,14 @@ test("renders onboarding, Smart Wallet and voucher phases with decision states",
 });
 
 test("opens an allowlisted deep link from Companion", async ({ page }) => {
-  await page.goto("/?flow=certify&step=certify.attach-evidence&lang=en&scenario=first-artwork&fixture=sculpture-signal-001");
+  await page.goto("/?flow=certify&step=certify.attach-evidence&lang=en&scenario=first-artwork&fixture=painting-river-001");
   await expect(page.getByRole("heading", { name: "Attach relevant evidence" })).toBeVisible();
   await expect(page.getByText("11 / 15")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Atelier Demo" })).toBeVisible();
 });
 
 test("adds a focused readable detail to a panoramic manual asset", async ({ page }, testInfo) => {
-  if (!process.env.DEMO_BASE_URL) {
+  if (localDemo) {
     await page.route("**/api/manual-asset/**", async (route) => {
       await route.fulfill({
         status: 200,
@@ -95,7 +114,7 @@ test("adds a focused readable detail to a panoramic manual asset", async ({ page
 });
 
 test("adds focused navigation to a standard manual asset with multiple fields", async ({ page }, testInfo) => {
-  if (!process.env.DEMO_BASE_URL) {
+  if (localDemo) {
     await page.route("**/api/manual-asset/**", async (route) => {
       await route.fulfill({
         status: 200,
@@ -105,6 +124,7 @@ test("adds focused navigation to a standard manual asset with multiple fields", 
     });
   }
   await page.goto("/?flow=carga_obra&step=carga-obra.choose-country-type&lang=es&scenario=first-artwork");
+  await page.getByText("Comparar con el manual verificado", { exact: true }).click();
   const manualVisual = page.locator(".manual-visual");
   await expect(manualVisual).toHaveAttribute("data-visual-layout", "standard");
   const controls = manualVisual.locator(".visual-view-controls");
@@ -128,8 +148,8 @@ test("configures a synthetic Certify actor and renders the completed provenance"
         accountStatus: "active",
         walletStatus: "backed_up",
         artworkStatus: "minted",
-        artworkTitle: "Ecos del río",
-        artworkAuthor: "Alex Rivera",
+        artworkTitle: "Curvas",
+        artworkAuthor: "Jorge Norberto Leporace",
         artworkType: "painting",
         galleryVisible: false,
         certifyVisible: true,
@@ -174,8 +194,8 @@ test("completes a synthetic batch Mint with deterministic references", async ({ 
         accountStatus: "active",
         walletStatus: "backed_up",
         artworkStatus: "loaded",
-        artworkTitle: "Ecos del río",
-        artworkAuthor: "Alex Rivera",
+        artworkTitle: "Curvas",
+        artworkAuthor: "Jorge Norberto Leporace",
         artworkType: "painting",
         galleryVisible: false,
         certifyVisible: true,
@@ -216,8 +236,8 @@ test("completes a safe synthetic NFC link", async ({ page }, testInfo) => {
         accountStatus: "active",
         walletStatus: "backed_up",
         artworkStatus: "certified",
-        artworkTitle: "Ecos del río",
-        artworkAuthor: "Alex Rivera",
+        artworkTitle: "Curvas",
+        artworkAuthor: "Jorge Norberto Leporace",
         artworkType: "painting",
         galleryVisible: false,
         certifyVisible: true,
@@ -259,8 +279,8 @@ test("keeps every adaptive practice surface focused on the current microstep", a
         accountStatus: "active",
         walletStatus: "backed_up",
         artworkStatus: "loaded",
-        artworkTitle: "Ecos del río",
-        artworkAuthor: "Alex Rivera",
+        artworkTitle: "Curvas",
+        artworkAuthor: "Jorge Norberto Leporace",
         artworkType: "painting",
         galleryVisible: false,
         certifyVisible: true,
@@ -322,10 +342,10 @@ test("transfers synthetic ownership to an external wallet without vouchers", asy
         accountStatus: "active",
         walletStatus: "backed_up",
         artworkStatus: "tagged",
-        artworkTitle: "Ecos del río",
-        artworkAuthor: "Alex Rivera",
+        artworkTitle: "Curvas",
+        artworkAuthor: "Jorge Norberto Leporace",
         artworkType: "painting",
-        currentOwnerRef: "OWNER-DEMO-ALEX",
+        currentOwnerRef: "OWNER-DEMO-GABRIEL",
         galleryVisible: false,
         certifyVisible: true,
         mintDraft: { actorId: "owner_artist", mode: "single", reviewConfirmed: true, signatureConfirmed: true },
@@ -355,7 +375,7 @@ test("transfers synthetic ownership to an external wallet without vouchers", asy
 
   const result = page.locator(".transfer-result");
   await expect(result.getByText("Titularidad transferida en la simulación")).toBeVisible();
-  await expect(result.getByText("OWNER-DEMO-ALEX", { exact: true })).toBeVisible();
+  await expect(result.getByText("OWNER-DEMO-GABRIEL", { exact: true })).toBeVisible();
   await expect(result.getByText("OWNER-DEMO-EXTERNAL", { exact: true })).toBeVisible();
   await expect(result.getByText("0xEXTERNAL-DEMO-0001", { exact: true })).toBeVisible();
   await expect(result.getByText("Fuera de la gestión de Atelier", { exact: true })).toBeVisible();
@@ -378,10 +398,10 @@ test("compares owner and visitor privacy before applying a partial public view",
         accountStatus: "active",
         walletStatus: "backed_up",
         artworkStatus: "certified",
-        artworkTitle: "Ecos del rio",
-        artworkAuthor: "Alex Rivera",
+        artworkTitle: "Curvas",
+        artworkAuthor: "Jorge Norberto Leporace",
         artworkType: "painting",
-        currentOwnerRef: "OWNER-DEMO-ALEX",
+        currentOwnerRef: "OWNER-DEMO-GABRIEL",
         galleryVisible: false,
         certifyVisible: true,
         privacyDraft: {
@@ -441,10 +461,10 @@ test("credits a synthetic Starter Kit and explains voucher consumption boundarie
         accountStatus: "active",
         walletStatus: "backed_up",
         artworkStatus: "loaded",
-        artworkTitle: "Ecos del rio",
-        artworkAuthor: "Alex Rivera",
+        artworkTitle: "Curvas",
+        artworkAuthor: "Jorge Norberto Leporace",
         artworkType: "painting",
-        currentOwnerRef: "OWNER-DEMO-ALEX",
+        currentOwnerRef: "OWNER-DEMO-GABRIEL",
         galleryVisible: false,
         certifyVisible: true,
         voucherDraft: { productId: "starter_kit", creditConfirmed: false },
@@ -481,9 +501,7 @@ test("credits a synthetic Starter Kit and explains voucher consumption boundarie
 test("exchanges metadata-only A2UI bridge messages with an allowlisted Companion parent", async ({ page }) => {
   const demoBaseUrl = process.env.DEMO_BASE_URL ?? "http://127.0.0.1:5178";
   const companionOrigin = "https://companion-staging.tokenizart.info";
-  const runtimeDemoOrigin = process.env.DEMO_BASE_URL
-    ? new URL(process.env.DEMO_BASE_URL).origin
-    : "https://demo-atelier-staging.tokenizart.info";
+  const runtimeDemoOrigin = "https://demo-atelier-staging.tokenizart.info";
   const iframeUrl = new URL(runtimeDemoOrigin);
   iframeUrl.search = new URLSearchParams({
     flow: "atelier_navigation",
@@ -494,7 +512,7 @@ test("exchanges metadata-only A2UI bridge messages with an allowlisted Companion
     return_origin: companionOrigin,
   }).toString();
 
-  if (!process.env.DEMO_BASE_URL) {
+  if (localDemo) {
     await page.route(`${runtimeDemoOrigin}/**`, async (route) => {
       const requested = new URL(route.request().url());
       const local = new URL(requested.pathname + requested.search, demoBaseUrl);

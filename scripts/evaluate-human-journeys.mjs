@@ -9,6 +9,15 @@ import { chromium } from "playwright";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const baseUrl = (process.env.DEMO_BASE_URL ?? "https://demo-atelier-staging.tokenizart.info").replace(/\/$/, "");
 const outputDir = path.join(repoRoot, "output", "human-journeys-staging");
+const interactiveFlows = new Set([
+  "carga_obra",
+  "mint",
+  "certify",
+  "chip",
+  "transferencia",
+  "privacy",
+  "public_gallery_traceability",
+]);
 const journeys = [
   { flow: "onboarding", expectedSteps: 10 },
   { flow: "account_wallet", expectedSteps: 9 },
@@ -24,14 +33,19 @@ const journeys = [
   { flow: "action_overview", expectedSteps: 6 },
 ];
 
-async function inspectStep(page) {
-  await page.locator(".manual-visual img").waitFor({ state: "visible" });
+async function inspectStep(page, flow) {
+  if (interactiveFlows.has(flow)) {
+    await page.locator(".atelier-surface").waitFor({ state: "visible" });
+  } else {
+    await page.locator(".manual-visual").waitFor({ state: "visible" });
+  }
+  await page.locator(".manual-visual img").waitFor({ state: "attached" });
   await page.waitForFunction(() => {
     const image = document.querySelector(".manual-visual img");
     return image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0;
   });
 
-  return page.evaluate(() => {
+  return page.evaluate(({ interactive }) => {
     const first = (selector) => document.querySelector(selector);
     const fontSize = (selector) => {
       const element = first(selector);
@@ -45,6 +59,9 @@ async function inspectStep(page) {
       image_src: image?.getAttribute("src") ?? "",
       image_width: image instanceof HTMLImageElement ? image.naturalWidth : 0,
       image_height: image instanceof HTMLImageElement ? image.naturalHeight : 0,
+      primary_surface_visible: interactive
+        ? Boolean(first(".atelier-surface") && first(".atelier-surface").getBoundingClientRect().height > 0)
+        : Boolean(first(".manual-visual") && first(".manual-visual").getBoundingClientRect().height > 0),
       practice_font_px: {
         heading: fontSize(".practice-heading strong"),
         current_step: fontSize(".practice-step-focus strong"),
@@ -55,7 +72,7 @@ async function inspectStep(page) {
       horizontal_overflow_px: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
       practice_action_count: document.querySelectorAll("[data-practice-action]").length,
     };
-  });
+  }, { interactive: interactiveFlows.has(flow) });
 }
 
 function fontFailures(step) {
@@ -73,7 +90,7 @@ async function runJourney(browser, journey, viewport) {
   const steps = [];
 
   for (let index = 0; index < total; index += 1) {
-    const step = await inspectStep(page);
+    const step = await inspectStep(page, journey.flow);
     steps.push({ index: index + 1, ...step, font_failures: fontFailures(step) });
     if (index < total - 1) await page.locator(".step-navigation.compact .primary").click();
   }
@@ -85,6 +102,7 @@ async function runJourney(browser, journey, viewport) {
     expected_steps: journey.expectedSteps,
     observed_steps: total,
     missing_images: steps.filter((step) => !step.image_width || !step.image_height).length,
+    missing_primary_surfaces: steps.filter((step) => !step.primary_surface_visible).length,
     mismatched_step_focus: steps.filter((step) => step.title !== step.practice_title).length,
     duplicate_adjacent_coach: steps.slice(1).filter((step, index) => step.coach === steps[index].coach).length,
     font_failures: steps.flatMap((step) => step.font_failures.map((failure) => ({ step: step.index, ...failure }))),
@@ -112,6 +130,7 @@ async function main() {
     journeys: results.length,
     steps_checked: results.reduce((total, result) => total + result.observed_steps, 0),
     missing_images: results.reduce((total, result) => total + result.missing_images, 0),
+    missing_primary_surfaces: results.reduce((total, result) => total + result.missing_primary_surfaces, 0),
     mismatched_step_focus: results.reduce((total, result) => total + result.mismatched_step_focus, 0),
     duplicate_adjacent_coach: results.reduce((total, result) => total + result.duplicate_adjacent_coach, 0),
     font_failures: results.reduce((total, result) => total + result.font_failures.length, 0),
@@ -124,7 +143,7 @@ async function main() {
   await fs.writeFile(path.join(outputDir, "report.json"), `${JSON.stringify(report, null, 2)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
 
-  if (summary.missing_images || summary.mismatched_step_focus || summary.font_failures || summary.horizontal_overflow_steps || summary.multiple_practice_action_steps || summary.step_count_failures) {
+  if (summary.missing_images || summary.missing_primary_surfaces || summary.mismatched_step_focus || summary.font_failures || summary.horizontal_overflow_steps || summary.multiple_practice_action_steps || summary.step_count_failures) {
     process.exitCode = 1;
   }
 }

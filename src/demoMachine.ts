@@ -1,7 +1,8 @@
 import { assign, setup } from "xstate";
 import manual from "./data/atelier-manual-native-microsteps.v1.json";
 import iconAtlas from "./data/atelier-manual-native-icon-atlas.v1.json";
-import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoCertification, DemoContext, DemoMintReceipt, DemoNfcReceipt, DemoPrivacyReceipt, DemoTransferReceipt, DemoVoucherReceipt, Language, ManualContract, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType, VoucherBalances, VoucherProductId } from "./types";
+import { createCurvasArtworkFixture } from "./fixtures";
+import type { CertifyActorId, CertifyTypeId, CertifyVisibility, DemoArtwork, DemoCertification, DemoContext, DemoMintReceipt, DemoNfcReceipt, DemoPrivacyReceipt, DemoTransferReceipt, DemoVoucherReceipt, Language, ManualContract, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType, VoucherBalances, VoucherProductId } from "./types";
 
 const manualBase = manual as ManualContract;
 const actionIcons = iconAtlas.icons.filter((icon) => icon.context === "atelier_action");
@@ -36,10 +37,12 @@ export const initialContext: DemoContext = {
     accountStatus: "not_created",
     walletStatus: "not_created",
     artworkStatus: "none",
-    artworkTitle: "Ecos del río",
-    artworkAuthor: "Alex Rivera",
-    artworkType: "painting",
-    currentOwnerRef: "OWNER-DEMO-ALEX",
+    artwork: createCurvasArtworkFixture(),
+    loadDraft: {
+      mode: "own",
+      delegatingOwnerDisplayName: "Gabriel Mucchiut (owner demo)",
+    },
+    currentOwnerRef: "OWNER-DEMO-GABRIEL",
     galleryVisible: false,
     certifyVisible: true,
     mintDraft: {
@@ -91,13 +94,14 @@ export const initialContext: DemoContext = {
   },
 };
 
-type DemoEvent =
+export type DemoEvent =
   | { type: "SELECT_FLOW"; flow: string }
   | { type: "NEXT" }
   | { type: "PREVIOUS" }
   | { type: "SET_LANGUAGE"; language: Language }
-  | { type: "SET_FIXTURE"; fixtureId: string; artworkType: DemoContext["world"]["artworkType"] }
-  | { type: "UPDATE_ARTWORK"; title?: string; author?: string }
+  | { type: "SET_FIXTURE"; fixtureId: string }
+  | { type: "UPDATE_ARTWORK"; patch: Partial<DemoArtwork> }
+  | { type: "SET_LOAD_DRAFT"; mode?: "own" | "managed"; delegatingOwnerDisplayName?: string }
   | { type: "SET_MINT_DRAFT"; actorId?: MintActorId; mode?: MintMode; reviewConfirmed?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_NFC_DRAFT"; actorId?: NfcActorId; tagState?: NfcTagState; scanConfirmed?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_TRANSFER_DRAFT"; destinationType?: TransferDestinationType; recipientVerified?: boolean; externalWarningAccepted?: boolean; signatureConfirmed?: boolean }
@@ -309,7 +313,11 @@ export const demoMachine = setup({
           actions: assign(({ context, event }) => ({
             ...context,
             fixtureId: event.fixtureId,
-            world: { ...context.world, artworkType: event.artworkType },
+            world: {
+              ...context.world,
+              artwork: createCurvasArtworkFixture(),
+              artworkStatus: "draft",
+            },
           })),
         },
         UPDATE_ARTWORK: {
@@ -317,9 +325,20 @@ export const demoMachine = setup({
             ...context,
             world: {
               ...context.world,
-              artworkTitle: event.title ?? context.world.artworkTitle,
-              artworkAuthor: event.author ?? context.world.artworkAuthor,
+              artwork: { ...context.world.artwork, ...event.patch },
               artworkStatus: context.world.artworkStatus === "none" ? "draft" : context.world.artworkStatus,
+            },
+          })),
+        },
+        SET_LOAD_DRAFT: {
+          actions: assign(({ context, event }) => ({
+            ...context,
+            world: {
+              ...context.world,
+              loadDraft: {
+                mode: event.mode ?? context.world.loadDraft.mode,
+                delegatingOwnerDisplayName: event.delegatingOwnerDisplayName ?? context.world.loadDraft.delegatingOwnerDisplayName,
+              },
             },
           })),
         },
@@ -445,13 +464,48 @@ export function contextFromSearch(search: string, base: DemoContext = initialCon
   }
   if ((["es", "en", "pt"] as string[]).includes(requestedLanguage)) next.language = requestedLanguage as Language;
   if (requestedScenario === "first-artwork") next.scenarioId = requestedScenario;
-  if (["painting-river-001", "sculpture-signal-001", "sports-shirt-001"].includes(requestedFixture)) next.fixtureId = requestedFixture;
+  if (requestedFixture === "painting-river-001") next.fixtureId = requestedFixture;
   next.errorCode = null;
   return next;
 }
 
 function normalizeContext(context: DemoContext): DemoContext {
   const next = structuredClone(context);
+  const legacyWorld = next.world as typeof next.world & {
+    artworkTitle?: string;
+    artworkAuthor?: string;
+    artworkType?: DemoArtwork["type"];
+  };
+  const fallbackArtwork = createCurvasArtworkFixture();
+  const legacyInconsistentFixture = !next.world.artwork
+    && ["Ecos del río", "Ecos del rio"].includes(legacyWorld.artworkTitle ?? "")
+    && legacyWorld.artworkAuthor === "Alex Rivera";
+  next.world.artwork = {
+    ...fallbackArtwork,
+    ...(next.world.artwork ?? {}),
+    title: next.world.artwork?.title || (!legacyInconsistentFixture && legacyWorld.artworkTitle) || fallbackArtwork.title,
+    author: next.world.artwork?.author || (!legacyInconsistentFixture && legacyWorld.artworkAuthor) || fallbackArtwork.author,
+    type: next.world.artwork?.type || legacyWorld.artworkType || fallbackArtwork.type,
+    countryName: { ...fallbackArtwork.countryName, ...(next.world.artwork?.countryName ?? {}) },
+    description: { ...fallbackArtwork.description, ...(next.world.artwork?.description ?? {}) },
+    style: { ...fallbackArtwork.style, ...(next.world.artwork?.style ?? {}) },
+    theme: { ...fallbackArtwork.theme, ...(next.world.artwork?.theme ?? {}) },
+    technique: { ...fallbackArtwork.technique, ...(next.world.artwork?.technique ?? {}) },
+    support: { ...fallbackArtwork.support, ...(next.world.artwork?.support ?? {}) },
+    period: { ...fallbackArtwork.period, ...(next.world.artwork?.period ?? {}) },
+    series: typeof next.world.artwork?.series === "object"
+      ? { ...fallbackArtwork.series, ...next.world.artwork.series }
+      : fallbackArtwork.series,
+    notes: { ...fallbackArtwork.notes, ...(next.world.artwork?.notes ?? {}) },
+    images: Array.isArray(next.world.artwork?.images) && next.world.artwork.images.length
+      ? next.world.artwork.images
+      : fallbackArtwork.images,
+  };
+  const loadDraft = next.world.loadDraft;
+  next.world.loadDraft = {
+    mode: loadDraft?.mode === "managed" ? "managed" : "own",
+    delegatingOwnerDisplayName: loadDraft?.delegatingOwnerDisplayName || "Gabriel Mucchiut (owner demo)",
+  };
   const mintActorIds: MintActorId[] = ["owner_artist", "authorized_manager"];
   const mintModes: MintMode[] = ["single", "batch"];
   const nfcActorIds: NfcActorId[] = ["owner_artist", "authorized_certifier"];
@@ -497,7 +551,8 @@ function normalizeContext(context: DemoContext): DemoContext {
   const transferDraft = next.world.transferDraft;
   next.world.currentOwnerRef = typeof next.world.currentOwnerRef === "string" && next.world.currentOwnerRef
     ? next.world.currentOwnerRef
-    : "OWNER-DEMO-ALEX";
+    : "OWNER-DEMO-GABRIEL";
+  if (next.world.currentOwnerRef === "OWNER-DEMO-ALEX") next.world.currentOwnerRef = "OWNER-DEMO-GABRIEL";
   next.world.transferDraft = {
     destinationType: transferDestinationTypes.includes(transferDraft?.destinationType) ? transferDraft.destinationType : "tokenizart_user",
     recipientVerified: transferDraft?.recipientVerified === true,

@@ -21,6 +21,60 @@ describe("Demo Atelier contracts", () => {
     }
   });
 
+  it("uses Curvas as the coherent artwork fixture across the complete demo", () => {
+    expect(initialContext.world.artwork).toEqual(expect.objectContaining({
+      artworkId: "ARTWORK-DEMO-CURVAS-001",
+      title: "Curvas",
+      author: "Jorge Norberto Leporace",
+      ownerDisplayName: "Gabriel Mucchiut",
+      type: "painting",
+      creationYear: "2020",
+      series: {
+        es: "Colección personal",
+        en: "Personal collection",
+        pt: "Coleção pessoal",
+      },
+    }));
+    expect(initialContext.world.artwork.images[0].assetPath).toBe("/fixtures/curvas.png");
+    expect(initialContext.world.currentOwnerRef).toBe("OWNER-DEMO-GABRIEL");
+  });
+
+  it("keeps the selected load mode in session state", () => {
+    const actor = createActor(demoMachine, { input: structuredClone(initialContext) }).start();
+    actor.send({ type: "SELECT_FLOW", flow: "carga_obra" });
+    actor.send({ type: "SET_LOAD_DRAFT", mode: "managed", delegatingOwnerDisplayName: "María Torres (owner sintético)" });
+
+    expect(actor.getSnapshot().context.world.loadDraft).toEqual({
+      mode: "managed",
+      delegatingOwnerDisplayName: "María Torres (owner sintético)",
+    });
+  });
+
+  it("preserves dynamic artwork edits when the user moves from preload to Mint", () => {
+    const actor = createActor(demoMachine, { input: structuredClone(initialContext) }).start();
+    actor.send({ type: "SELECT_FLOW", flow: "carga_obra" });
+    actor.send({ type: "UPDATE_ARTWORK", patch: { title: "Curvas del Sur", creationYear: "2021" } });
+    actor.send({ type: "SELECT_FLOW", flow: "mint" });
+
+    expect(actor.getSnapshot().context.world.artwork.title).toBe("Curvas del Sur");
+    expect(actor.getSnapshot().context.world.artwork.creationYear).toBe("2021");
+    expect(actor.getSnapshot().context.world.artwork.author).toBe("Jorge Norberto Leporace");
+  });
+
+  it("repairs the former Ecos del rio fixture during session migration", () => {
+    const legacy = structuredClone(initialContext) as any;
+    delete legacy.world.artwork;
+    legacy.world.artworkTitle = "Ecos del río";
+    legacy.world.artworkAuthor = "Alex Rivera";
+    legacy.world.artworkType = "painting";
+    legacy.world.currentOwnerRef = "OWNER-DEMO-ALEX";
+
+    const restored = safeRestore(JSON.stringify(legacy));
+    expect(restored?.world.artwork.title).toBe("Curvas");
+    expect(restored?.world.artwork.author).toBe("Jorge Norberto Leporace");
+    expect(restored?.world.currentOwnerRef).toBe("OWNER-DEMO-GABRIEL");
+  });
+
   it("keeps transfer voucher-free", () => {
     const context = structuredClone(initialContext);
     context.flow = "transferencia";
@@ -44,7 +98,7 @@ describe("Demo Atelier contracts", () => {
     expect(result.transferReceipts).toEqual([expect.objectContaining({
       receiptId: "TRANSFER-DEMO-001",
       destinationType: "tokenizart_user",
-      previousOwnerRef: "OWNER-DEMO-ALEX",
+      previousOwnerRef: "OWNER-DEMO-GABRIEL",
       newOwnerRef: "OWNER-DEMO-COLLECTOR",
       atelierManagement: "inside_atelier",
       vouchersConsumed: 0,
@@ -198,7 +252,7 @@ describe("Demo Atelier contracts", () => {
       signatureConfirmed: false,
     });
     expect(restored?.world.nfcReceipts).toEqual([]);
-    expect(restored?.world.currentOwnerRef).toBe("OWNER-DEMO-ALEX");
+    expect(restored?.world.currentOwnerRef).toBe("OWNER-DEMO-GABRIEL");
     expect(restored?.world.transferDraft).toEqual({
       destinationType: "tokenizart_user",
       recipientVerified: false,
@@ -489,11 +543,11 @@ describe("Demo Atelier contracts", () => {
   });
 
   it("accepts only allowlisted deep-link context", () => {
-    const linked = contextFromSearch("?flow=certify&step=certify.attach-evidence&lang=pt&scenario=first-artwork&fixture=sculpture-signal-001");
+    const linked = contextFromSearch("?flow=certify&step=certify.attach-evidence&lang=pt&scenario=first-artwork&fixture=painting-river-001");
     expect(linked.flow).toBe("certify");
     expect(manualContract.flows.certify.steps[linked.stepIndex].step_id).toBe("certify.attach-evidence");
     expect(linked.language).toBe("pt");
-    expect(linked.fixtureId).toBe("sculpture-signal-001");
+    expect(linked.fixtureId).toBe("painting-river-001");
 
     const blocked = contextFromSearch("?flow=admin&step=../../secret&lang=xx&scenario=owner-live&fixture=private-wallet");
     expect(blocked.flow).toBe("onboarding");

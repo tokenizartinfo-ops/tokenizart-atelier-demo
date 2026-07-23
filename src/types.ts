@@ -10,6 +10,46 @@ export type TransferDestinationType = "tokenizart_user" | "external_wallet";
 export type PrivacyPreviewAudience = "owner" | "visitor";
 export type PrivacyCertifyId = "authenticity" | "exhibition" | "condition";
 export type VoucherProductId = "starter_kit" | "mint" | "certify" | "nfc";
+export type ArtworkType = "painting" | "sculpture" | "sports";
+export type ArtworkImageRole = "main" | "reverse" | "detail";
+
+export interface DemoArtworkImage {
+  imageId: string;
+  role: ArtworkImageRole;
+  assetPath: string;
+  objectPosition: string;
+}
+
+export interface DemoArtwork {
+  artworkId: string;
+  title: string;
+  author: string;
+  ownerDisplayName: string;
+  type: ArtworkType;
+  countryCode: "AR";
+  countryName: Record<Language, string>;
+  galleryVisible: boolean;
+  exhibited: boolean;
+  exhibitionPlace: string;
+  description: Record<Language, string>;
+  popularName: string;
+  style: Record<Language, string>;
+  theme: Record<Language, string>;
+  technique: Record<Language, string>;
+  support: Record<Language, string>;
+  widthCm: string;
+  heightCm: string;
+  depthCm: string;
+  period: Record<Language, string>;
+  creationYear: string;
+  creationPlace: string;
+  province: string;
+  series: Record<Language, string>;
+  declaredValueUsd: string;
+  notes: Record<Language, string>;
+  existingSheetFileName: string;
+  images: DemoArtworkImage[];
+}
 
 export interface VoucherBalances {
   mint: number;
@@ -148,9 +188,11 @@ export interface DemoWorld {
   accountStatus: "not_created" | "email_pending" | "active";
   walletStatus: "not_created" | "created" | "backed_up";
   artworkStatus: "none" | "draft" | "loaded" | "minted" | "certified" | "tagged" | "transferred";
-  artworkTitle: string;
-  artworkAuthor: string;
-  artworkType: "painting" | "sculpture" | "sports";
+  artwork: DemoArtwork;
+  loadDraft: {
+    mode: "own" | "managed";
+    delegatingOwnerDisplayName: string;
+  };
   currentOwnerRef: string;
   galleryVisible: boolean;
   certifyVisible: boolean;

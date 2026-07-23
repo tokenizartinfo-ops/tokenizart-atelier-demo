@@ -19,6 +19,9 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Applies the verified Tokenizart identity from `Aplicaciones_Marca_tokenizart.pdf`: Montserrat, the real fingerprint symbol, and restrained cyan, magenta and coral accents.
 - Uses native action icons from Manual Atelier 2026 and changes the practice controls with the current step instead of repeating one form throughout the flow.
 - Applies that focused practice pattern to the complete 163-step visual contract, including navigation, public Gallery traceability and the six-action map, with at most one contextual decision cluster per step.
+- Uses one versioned `DemoArtwork` state as the source of truth across load, review, Mint, Certify, NFC, privacy, Gallery and transfer. Titles, authors, images and technical data cannot silently switch between flows.
+- Provides a stage-aware load simulation: own/managed mode, opening the form, main data, technical sheet, completed review and preloaded-artwork list.
+- Starts with the coherent public Manual fixture `Curvas`, by Jorge Norberto Leporace. Its complete technical sheet and explanatory copy are localized in Spanish, English and Portuguese.
 
 ## What it never does
 
@@ -32,9 +35,30 @@ The UI is a React/Vite SPA. XState owns deterministic transitions. A Cloudflare 
 
 ```text
 Manual contract -> XState engine -> React UI -> sessionStorage
+DemoArtwork fixture -> editable localized fields -> every downstream action
 Sanitized R2 assets -> read-only Worker route -> React UI
 Allowlisted synthetic IDs -> exact-origin postMessage -> Companion A2UI bridge
 ```
+
+## Interactive artwork contract
+
+The verified Manual remains the auditable reference for sequence and meaning,
+but it is not used as a static substitute for the product. The primary
+practice surface renders editable React controls from the current
+`DemoArtwork` state. Manual images stay collapsed as an optional comparison.
+
+The first fixture deliberately uses one artwork everywhere:
+
+- Artwork: `Curvas`
+- Author: `Jorge Norberto Leporace`
+- Owner: `Gabriel Mucchiut`
+- Main image: `/fixtures/curvas.png`
+- Technical data: one localized ES/EN/PT object shared by every flow
+
+Legacy browser sessions containing the former inconsistent `Ecos del río /
+Alex Rivera` sample are migrated to this fixture on restore. The internal
+`painting-river-001` deep-link identifier is retained temporarily for bridge
+compatibility; it does not control the rendered title, author or image.
 
 ## Companion bridge
 
@@ -141,8 +165,8 @@ npm run deploy:staging
 
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
-Validated staging Worker for the current `Atelier first` layout:
-`bf8d7c63-95d9-4f52-8f23-aaec7d1d56e8`. Production was not changed.
+Validated staging Worker for the coherent interactive artwork release:
+`a724c28e-edec-4a98-98ea-d28e73063825`. Production was not changed.
 
 ## Source synchronization
 
@@ -161,6 +185,6 @@ The optional `display_asset_id` keeps the native PPTX-derived `asset_id` as the 
 
 `audit:visual:staging` checks all 163 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. Editorial decisions are versioned in `src/data/atelier-visual-qa-decisions.v1.json`: automatic geometry flags remain visible, but inspected atomic crops can be accepted without pretending that their original dimensions changed. QA decisions `1.6.0` leave zero pending and 84 accepted assets, with zero unavailable resources and zero steps without a focus hotspot. All active visual flows have completed human visual QA; geometry flags remain observable but no longer represent unresolved editorial work.
 
-`eval:human-journeys:staging` walks all twelve active flows from start to finish on desktop and mobile. It verifies all 326 rendered states for image availability, step/practice alignment, adjacent explanation continuity, critical font sizes, horizontal overflow and more than one contextual practice action per step. The 2026-07-22 staging run passed with zero failures in every category.
+`eval:human-journeys:staging` walks all twelve active flows from start to finish on desktop and mobile. The 2026-07-23 staging run covered 24 journeys and 326 rendered states with zero missing images or primary surfaces, step mismatches, adjacent duplicate explanations, typography failures, horizontal overflow, multi-action steps or step-count failures.
 
 The production build separates React, XState and Lucide into stable vendor chunks. The main JavaScript chunk is 363 kB instead of the previous 605 kB monolith. A staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.
