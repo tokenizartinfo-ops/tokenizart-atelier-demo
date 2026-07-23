@@ -16,6 +16,9 @@ const journeys = [
   { flow: "mint", expectedSteps: 15 },
   { flow: "certify", expectedSteps: 15 },
   { flow: "chip", expectedSteps: 26 },
+  { flow: "transferencia", expectedSteps: 12 },
+  { flow: "privacy", expectedSteps: 6 },
+  { flow: "vouchers", expectedSteps: 7 },
 ];
 
 async function inspectStep(page) {

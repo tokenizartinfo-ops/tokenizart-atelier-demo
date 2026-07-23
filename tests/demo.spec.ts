@@ -282,6 +282,13 @@ test("keeps Smart Wallet, Mint, and NFC practice focused on the current microste
     { url: "/?flow=mint&step=mint.batch-select-artworks&lang=es", text: "Modalidad", actions: 1 },
     { url: "/?flow=chip&step=chip.scan-tag&lang=es", text: "Ready to link", actions: 1 },
     { url: "/?flow=chip&step=chip.review-wallet-voucher&lang=es", text: "Voucher NFC disponible", actions: 0 },
+    { url: "/?flow=transferencia&step=transferencia.enter-recipient-email&lang=es", text: "Destino de la transferencia", actions: 1 },
+    { url: "/?flow=transferencia&step=transferencia.verify-blockchain-record&lang=es", text: "TX-DEMO-TRANSFER-001", actions: 0 },
+    { url: "/?flow=privacy&step=privacy.toggle-gallery&lang=es", text: "Mostrar obra en Gallery", actions: 1 },
+    { url: "/?flow=privacy&step=privacy.all-certify-visible&lang=es", text: "Comparar lo que ve cada persona", actions: 1 },
+    { url: "/?flow=vouchers&step=vouchers.check-shop-prices&lang=es", text: "USD 20.00", actions: 0 },
+    { url: "/?flow=vouchers&step=vouchers.compare-starter-kit&lang=es", text: "Elegir una adquisición de práctica", actions: 1 },
+    { url: "/?flow=vouchers&step=vouchers.understand-consumption&lang=es", text: "Quién consume cada voucher", actions: 1 },
   ];
 
   for (const item of cases) {
@@ -320,7 +327,7 @@ test("transfers synthetic ownership to an external wallet without vouchers", asy
         mintReceipts: [],
         nfcDraft: { actorId: "owner_artist", tagState: "ready_to_link", scanConfirmed: true, signatureConfirmed: true },
         nfcReceipts: [],
-        transferDraft: { destinationType: "tokenizart_user", recipientVerified: false, externalWarningAccepted: false, signatureConfirmed: false },
+        transferDraft: { destinationType: "external_wallet", recipientVerified: true, externalWarningAccepted: true, signatureConfirmed: true },
         transferReceipts: [],
         certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
         certifications: [],
@@ -338,10 +345,7 @@ test("transfers synthetic ownership to an external wallet without vouchers", asy
 
   await page.goto("/?flow=transferencia&step=transferencia.external-wallet-boundary&lang=es&scenario=first-artwork");
   await expect(page.getByText("Recuperacion o salida externa", { exact: true })).toBeVisible();
-  await page.locator(".transfer-config .mode-selector").getByRole("button", { name: /Wallet externa/ }).click();
-  await page.getByLabel("Confirmo que verifiqué el destinatario").check();
-  await page.getByLabel("Comprendo que sale de la gestión de Atelier").check();
-  await page.getByLabel("Confirmo la firma simulada de la transferencia").check();
+  await expect(page.getByText(/fuera de Atelier/i).first()).toBeVisible();
   await page.getByRole("button", { name: /Completar paso/ }).click();
 
   const result = page.locator(".transfer-result");
@@ -393,9 +397,8 @@ test("compares owner and visitor privacy before applying a partial public view",
   await expect(page.getByRole("heading", { name: "Entender quien decide la visibilidad", exact: true })).toBeVisible();
   await expect(page.getByText("Decision de visibilidad", { exact: true })).toBeVisible();
 
-  await page.goto("/?flow=privacy&step=privacy.partial-restriction&lang=es&scenario=first-artwork");
+  await page.goto("/?flow=privacy&step=privacy.all-certify-visible&lang=es&scenario=first-artwork");
   await page.getByText("Estado de la práctica y referencias", { exact: true }).click();
-  await expect(page.getByText("Que ve cada audiencia", { exact: true })).toBeVisible();
   const preview = page.getByTestId("privacy-preview");
   await expect(preview.getByText("Vista visitante", { exact: true })).toBeVisible();
   await expect(preview.getByText("Autenticidad", { exact: true })).toBeVisible();
@@ -407,6 +410,7 @@ test("compares owner and visitor privacy before applying a partial public view",
   await expect(preview.getByText("Solo owner", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: /Vista visitante/ }).click();
 
+  await page.goto("/?flow=privacy&step=privacy.partial-restriction&lang=es&scenario=first-artwork");
   await page.getByLabel(/Confirmo esta/).check();
   await page.getByRole("button", { name: /Completar paso/ }).click();
 
@@ -446,14 +450,16 @@ test("credits a synthetic Starter Kit and explains voucher consumption boundarie
     }));
   });
 
-  await page.goto("/?flow=vouchers&step=vouchers.understand-consumption&lang=es&scenario=first-artwork");
+  await page.goto("/?flow=vouchers&step=vouchers.check-shop-prices&lang=es&scenario=first-artwork");
   await expect(page.getByText(/verificado: 2026-07-14/)).toBeVisible();
   await expect(page.getByRole("link", { name: /Abrir Shop oficial/ })).toHaveAttribute("href", "https://tokenizart.com/es/shop/");
-  await expect(page.locator(".voucher-consumption").getByText(/No consume vouchers/)).toBeVisible();
 
+  await page.goto("/?flow=vouchers&step=vouchers.compare-starter-kit&lang=es&scenario=first-artwork");
   await page.getByRole("button", { name: /Voucher Chip/ }).click();
   await expect(page.getByText("+0 Mint · +0 Certify · +1 NFC")).toBeVisible();
-  await page.getByRole("button", { name: /Starter Kit/ }).click();
+
+  await page.goto("/?flow=vouchers&step=vouchers.understand-consumption&lang=es&scenario=first-artwork");
+  await expect(page.locator(".voucher-consumption").getByText(/No consume vouchers/)).toBeVisible();
   await page.getByLabel(/Confirmo la/).check();
   await page.getByRole("button", { name: /Completar paso/ }).click();
 

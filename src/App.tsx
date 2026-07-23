@@ -507,7 +507,7 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
   }
 
   if (context.flow === "vouchers") {
-    return <VoucherPractice context={context} send={send} />;
+    return <VoucherPractice context={context} step={step} send={send} />;
   }
 
   if (context.flow === "privacy") {
@@ -517,39 +517,40 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
     const effectivePublicCertify = draft.galleryVisible
       ? privacyCertifyIds.filter((id) => draft.certifyVisibility[id])
       : [];
+    const privacyPreview = (
+      <div className={`privacy-preview ${audience}`} data-testid="privacy-preview">
+        <div className="privacy-preview-heading"><ImageIcon size={25} /><span><strong>{context.world.artworkTitle}</strong><small>{audience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</small></span><b>{audience === "owner" ? "Nivel 4" : "Nivel 5"}</b></div>
+        {audience === "visitor" && !draft.galleryVisible ? (
+          <div className="privacy-hidden"><Eye size={24} /><strong>{t.privacyArtworkHidden}</strong><small>{t.privacyHiddenHelp}</small></div>
+        ) : (
+          <>
+            {(audience === "owner" || draft.technicalSheetVisible) && <div className="privacy-technical"><strong>{t.privacyTechnicalSheet}</strong><span>{context.world.artworkAuthor} · 100 x 120 cm · {t.simulated}</span></div>}
+            <div className="privacy-certify-list">
+              {privacyCertifyIds.filter((id) => audience === "owner" || effectivePublicCertify.includes(id)).map((id) => <div key={id}><BadgeCheck size={17} /><span>{certifyTypes[id][lang].name}</span><small>{draft.galleryVisible && draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></div>)}
+              {audience === "visitor" && effectivePublicCertify.length === 0 && <p>{t.privacyNoPublicCertify}</p>}
+            </div>
+          </>
+        )}
+      </div>
+    );
     return (
       <div className="practice-fields privacy-controls">
-        <fieldset>
-          <legend>{t.privacyPreviewAs}</legend>
-          <div className="visibility-selector">
-            {(["owner", "visitor"] as PrivacyPreviewAudience[]).map((previewAudience) => <button type="button" key={previewAudience} className={audience === previewAudience ? "selected" : ""} onClick={() => send({ type: "SET_PRIVACY_DRAFT", previewAudience })}><Eye size={17} />{previewAudience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</button>)}
-          </div>
-        </fieldset>
-        <div className={`privacy-preview ${audience}`} data-testid="privacy-preview">
-          <div className="privacy-preview-heading"><ImageIcon size={25} /><span><strong>{context.world.artworkTitle}</strong><small>{audience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</small></span><b>{audience === "owner" ? "Nivel 4" : "Nivel 5"}</b></div>
-          {audience === "visitor" && !draft.galleryVisible ? (
-            <div className="privacy-hidden"><Eye size={24} /><strong>{t.privacyArtworkHidden}</strong><small>{t.privacyHiddenHelp}</small></div>
-          ) : (
-            <>
-              {(audience === "owner" || draft.technicalSheetVisible) && <div className="privacy-technical"><strong>{t.privacyTechnicalSheet}</strong><span>{context.world.artworkAuthor} · 100 x 120 cm · {t.simulated}</span></div>}
-              <div className="privacy-certify-list">
-                {privacyCertifyIds.filter((id) => audience === "owner" || effectivePublicCertify.includes(id)).map((id) => <div key={id}><BadgeCheck size={17} /><span>{certifyTypes[id][lang].name}</span><small>{draft.galleryVisible && draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></div>)}
-                {audience === "visitor" && effectivePublicCertify.length === 0 && <p>{t.privacyNoPublicCertify}</p>}
-              </div>
-            </>
-          )}
-        </div>
-        <label className="privacy-toggle"><span><strong>{t.privacyGalleryToggle}</strong><small>{t.privacyGalleryHelp}</small></span><input type="checkbox" disabled={completed} checked={draft.galleryVisible} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", galleryVisible: event.target.checked, ownerConfirmed: false })} /></label>
-        <label className="privacy-toggle"><span><strong>{t.privacyTechnicalToggle}</strong><small>{t.privacyTechnicalHelp}</small></span><input type="checkbox" disabled={completed || !draft.galleryVisible} checked={draft.technicalSheetVisible} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", technicalSheetVisible: event.target.checked, ownerConfirmed: false })} /></label>
-        <fieldset>
+        {step.order === 1 && <><PracticeContextCard icon={ShieldCheck} title={stepCopy.title} body={stepCopy.body} /><div className="safety-note"><ShieldCheck size={18} />{t.privacySafety}</div></>}
+        {step.order === 2 && <><PracticeContextCard icon={UserRoundPlus} title={stepCopy.title} body={stepCopy.body} />{privacyPreview}</>}
+        {step.order === 3 && <><label data-practice-action className="privacy-toggle"><span><strong>{t.privacyGalleryToggle}</strong><small>{t.privacyGalleryHelp}</small></span><input type="checkbox" disabled={completed} checked={draft.galleryVisible} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", galleryVisible: event.target.checked, ownerConfirmed: false })} /></label>{privacyPreview}</>}
+        {step.order === 4 && <><fieldset data-practice-action>
           <legend>{t.privacyCertifyControls}</legend>
           <div className="privacy-certify-controls">
             {privacyCertifyIds.map((id) => <label key={id}><span><strong>{certifyTypes[id][lang].name}</strong><small>{draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></span><input type="checkbox" disabled={completed || !draft.galleryVisible} checked={draft.certifyVisibility[id]} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", certifyId: id, certifyVisible: event.target.checked, ownerConfirmed: false })} /></label>)}
           </div>
-        </fieldset>
-        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.ownerConfirmed} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", ownerConfirmed: event.target.checked })} /><span>{t.confirmPrivacy}<small>{t.confirmPrivacyHelp}</small></span></label>
-        <div className="safety-note"><ShieldCheck size={18} />{t.privacySafety}</div>
-        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "privacy_confirmation_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}
+        </fieldset>{privacyPreview}</>}
+        {step.order === 5 && <><fieldset data-practice-action>
+          <legend>{t.privacyPreviewAs}</legend>
+          <div className="visibility-selector">
+            {(["owner", "visitor"] as PrivacyPreviewAudience[]).map((previewAudience) => <button type="button" key={previewAudience} className={audience === previewAudience ? "selected" : ""} onClick={() => send({ type: "SET_PRIVACY_DRAFT", previewAudience })}><Eye size={17} />{previewAudience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</button>)}
+          </div>
+        </fieldset>{privacyPreview}</>}
+        {step.order === 6 && <>{privacyPreview}<label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.ownerConfirmed} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", ownerConfirmed: event.target.checked })} /><span>{t.confirmPrivacy}<small>{t.confirmPrivacyHelp}</small></span></label>{!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "privacy_confirmation_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}</>}
       </div>
     );
   }
@@ -686,10 +687,13 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
     const draft = context.world.transferDraft;
     const completed = context.world.events.includes("transferencia.completed");
     const external = draft.destinationType === "external_wallet";
+    const order = step.order;
     return (
       <div className="practice-fields transfer-config">
-        <label>{t.transferCurrentOwner}<input value="Alex Rivera · OWNER-DEMO-ALEX" readOnly /></label>
-        <fieldset>
+        {order === 1 && <><PracticeContextCard icon={ImageIcon} title={p.selectedArtwork} body={`${context.world.artworkTitle} · ${stepCopy.body}`} /><label>{t.transferCurrentOwner}<input value="Alex Rivera · OWNER-DEMO-ALEX" readOnly /></label></>}
+        {order === 2 && <PracticeContextCard icon={ArrowRight} title={stepCopy.title} body={stepCopy.body} />}
+        {order === 3 && <div className="practice-receipt"><FileCheck2 size={24} /><span><strong>{context.world.artworkTitle}</strong><small>{context.world.artworkAuthor} · Token ID DEMO-255 · 100 x 120 cm</small></span></div>}
+        {order === 4 && <fieldset data-practice-action>
           <legend>{t.transferDestination}</legend>
           <div className="mode-selector">
             {(Object.keys(transferDestinations) as TransferDestinationType[]).map((destinationType) => {
@@ -697,15 +701,16 @@ function PracticeFields({ context, step, send }: { context: DemoContext; step: M
               return <button type="button" key={destinationType} disabled={completed} className={draft.destinationType === destinationType ? "selected" : ""} onClick={() => send({ type: "SET_TRANSFER_DRAFT", destinationType, recipientVerified: false, externalWarningAccepted: false, signatureConfirmed: false })}><ArrowRight size={18} /><span><strong>{destination.name}</strong><small>{destination.description}</small></span></button>;
             })}
           </div>
-        </fieldset>
-        <label>{external ? t.transferExternalWallet : t.transferRecipientEmail}<input value={external ? "0xEXTERNAL-DEMO-0001" : "coleccionista.demo@ejemplo.test"} readOnly /></label>
-        <div className="wallet-preview"><WalletCards size={24} /><span><strong>{external ? "0xEXTERNAL...0001" : "WALLET-DEMO-COLLECTOR"}</strong><small>{transferDestinations[draft.destinationType][lang].description}</small></span><Check size={18} /></div>
-        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.recipientVerified} onChange={(event) => send({ type: "SET_TRANSFER_DRAFT", recipientVerified: event.target.checked })} /><span>{t.confirmTransferRecipient}<small>{t.transferVerifyHelp}</small></span></label>
-        {external && <label className="confirmation-check transfer-warning"><input type="checkbox" disabled={completed} checked={draft.externalWarningAccepted} onChange={(event) => send({ type: "SET_TRANSFER_DRAFT", externalWarningAccepted: event.target.checked })} /><span>{t.confirmExternalBoundary}<small>{t.externalBoundaryHelp}</small></span></label>}
-        <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_TRANSFER_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmTransferSignature}<small>{t.signatureHelp}</small></span></label>
-        <div className="safety-note"><Tag size={18} />{t.transferNoVoucher}</div>
-        <div className="transaction-preview"><ArrowRight size={25} /><span><strong>{t.transferTitle} · {t.simulated}</strong><small>{context.world.artworkTitle} · {t.vouchersConsumed}: 0</small></span></div>
-        {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: !draft.recipientVerified ? "transfer_recipient_required" : external && !draft.externalWarningAccepted ? "transfer_external_warning_required" : "transfer_confirmation_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}
+          <label>{external ? t.transferExternalWallet : t.transferRecipientEmail}<input value={external ? "0xEXTERNAL-DEMO-0001" : "coleccionista.demo@ejemplo.test"} readOnly /></label>
+        </fieldset>}
+        {order === 5 && <><div className="wallet-preview"><WalletCards size={24} /><span><strong>{external ? "0xEXTERNAL...0001" : "WALLET-DEMO-COLLECTOR"}</strong><small>{transferDestinations[draft.destinationType][lang].description}</small></span><Check size={18} /></div><label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.recipientVerified} onChange={(event) => send({ type: "SET_TRANSFER_DRAFT", recipientVerified: event.target.checked })} /><span>{t.confirmTransferRecipient}<small>{t.transferVerifyHelp}</small></span></label></>}
+        {order === 6 && <><PracticeContextCard icon={KeyRound} title={stepCopy.title} body={stepCopy.body} /><label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.signatureConfirmed} onChange={(event) => send({ type: "SET_TRANSFER_DRAFT", signatureConfirmed: event.target.checked })} /><span>{t.confirmTransferSignature}<small>{t.signatureHelp}</small></span></label><div className="safety-note"><Tag size={18} />{t.transferNoVoucher}</div></>}
+        {order === 7 && (external ? <label data-practice-action className="confirmation-check transfer-warning"><input type="checkbox" disabled={completed} checked={draft.externalWarningAccepted} onChange={(event) => send({ type: "SET_TRANSFER_DRAFT", externalWarningAccepted: event.target.checked })} /><span>{t.confirmExternalBoundary}<small>{t.externalBoundaryHelp}</small></span></label> : <PracticeContextCard icon={CircleAlert} title={stepCopy.title} body={stepCopy.body} tone="managed" />)}
+        {order === 8 && <PracticeContextCard icon={BadgeCheck} title={stepCopy.title} body={stepCopy.body} tone="success" />}
+        {order === 9 && <div className="practice-receipt"><Fingerprint size={24} /><span><strong>{stepCopy.title}</strong><small>TOKEN-DEMO-255 · NFT-DEMO-255</small></span></div>}
+        {order === 10 && <div className="transaction-preview"><ArrowRight size={25} /><span><strong>{t.transferTitle} · {t.simulated}</strong><small>Token ID DEMO-255 · TX-DEMO-TRANSFER-001 · {t.vouchersConsumed}: 0</small></span></div>}
+        {order === 11 && <><PracticeContextCard icon={CircleAlert} title={stepCopy.title} body={stepCopy.body} tone="managed" /><button data-practice-action className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "transfer_recipient_required" })}><CircleAlert size={17} />{t.errorPractice}</button></>}
+        {order === 12 && <><PracticeContextCard icon={WalletCards} title={stepCopy.title} body={stepCopy.body} /><div className="safety-note"><ShieldCheck size={18} />{external ? t.externalBoundaryHelp : transferDestinations.tokenizart_user[lang].description}</div></>}
       </div>
     );
   }
@@ -874,12 +879,13 @@ function PrivacyCompletion({ context }: { context: DemoContext }) {
   );
 }
 
-function VoucherPractice({ context, send }: { context: DemoContext; send: (event: any) => void }) {
+function VoucherPractice({ context, step, send }: { context: DemoContext; step: ManualStep; send: (event: any) => void }) {
   const lang = context.language;
   const t = ui[lang];
   const draft = context.world.voucherDraft;
   const selected = voucherProducts[draft.productId];
   const completed = context.world.events.includes("vouchers.completed");
+  const stepCopy = step.copy[lang];
   const consumers = [
     { label: "Mint", copy: t.voucherMintConsumer },
     { label: "Certify", copy: t.voucherCertifyConsumer },
@@ -889,9 +895,10 @@ function VoucherPractice({ context, send }: { context: DemoContext; send: (event
 
   return (
     <div className="practice-fields voucher-practice">
-      <div className="voucher-explainer"><TicketCheck size={25} /><span><strong>{t.vouchersAreCredits}</strong><small>{t.vouchersNotGas}</small></span></div>
-      <VoucherBalances context={context} />
-      <fieldset>
+      {step.order === 1 && <><div className="voucher-explainer"><TicketCheck size={25} /><span><strong>{t.vouchersAreCredits}</strong><small>{t.vouchersNotGas}</small></span></div><section className="voucher-consumption compact">{consumers.map((item) => <div key={item.label}><strong>{item.label}</strong><span>{item.copy}</span></div>)}</section></>}
+      {step.order === 2 && <><PracticeContextCard icon={TicketCheck} title={stepCopy.title} body={stepCopy.body} /><VoucherBalances context={context} /></>}
+      {step.order === 3 && <><div className="voucher-price-list">{voucherProductIds.map((productId) => { const product = voucherProducts[productId]; return <div key={productId}><span><strong>{product[lang].name}</strong><small>{product[lang].description}</small></span><b>USD {product.priceUsd.toFixed(2)}</b></div>; })}</div><div className="voucher-snapshot"><strong>{t.voucherSnapshotLabel}: 2026-07-14</strong><span>{t.voucherPriceCanChange}</span></div><a className="shop-link" href="https://tokenizart.com/es/shop/" target="_blank" rel="noreferrer"><ShoppingCart size={18} />{t.openOfficialShop}<ExternalLink size={16} /></a></>}
+      {step.order === 4 && <><fieldset data-practice-action>
         <legend>{t.voucherChooseProduct}</legend>
         <div className="voucher-product-grid">
           {voucherProductIds.map((productId) => {
@@ -905,13 +912,10 @@ function VoucherPractice({ context, send }: { context: DemoContext; send: (event
             );
           })}
         </div>
-      </fieldset>
-      <div className="voucher-snapshot"><strong>{t.voucherSnapshotLabel}: 2026-07-14</strong><span>{t.voucherPriceCanChange}</span><small>+{selected.credited.mint} Mint · +{selected.credited.certify} Certify · +{selected.credited.nfc} NFC</small></div>
-      <section className="voucher-consumption"><h3>{t.voucherConsumptionTitle}</h3>{consumers.map((item) => <div key={item.label}><strong>{item.label}</strong><span>{item.copy}</span></div>)}</section>
-      <a className="shop-link" href="https://tokenizart.com/es/shop/" target="_blank" rel="noreferrer"><ShoppingCart size={18} />{t.openOfficialShop}<ExternalLink size={16} /></a>
-      <label className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.creditConfirmed} onChange={(event) => send({ type: "SET_VOUCHER_DRAFT", creditConfirmed: event.target.checked })} /><span>{t.voucherConfirm}<small>{t.voucherConfirmHelp}</small></span></label>
-      <div className="safety-note"><ShieldCheck size={18} />{t.voucherSafety}</div>
-      {!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "voucher_confirmation_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}
+      </fieldset><div className="voucher-snapshot"><strong>{selected[lang].name}</strong><span>+{selected.credited.mint} Mint · +{selected.credited.certify} Certify · +{selected.credited.nfc} NFC</span></div></>}
+      {step.order === 5 && <><PracticeContextCard icon={TicketCheck} title={stepCopy.title} body={stepCopy.body} /><VoucherBalances context={context} /></>}
+      {step.order === 6 && <><PracticeContextCard icon={UserRoundPlus} title={stepCopy.title} body={stepCopy.body} /><VoucherBalances context={context} /><div className="safety-note"><ShieldCheck size={18} />{t.voucherSafety}</div></>}
+      {step.order === 7 && <><section className="voucher-consumption"><h3>{t.voucherConsumptionTitle}</h3>{consumers.map((item) => <div key={item.label}><strong>{item.label}</strong><span>{item.copy}</span></div>)}</section><label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.creditConfirmed} onChange={(event) => send({ type: "SET_VOUCHER_DRAFT", creditConfirmed: event.target.checked })} /><span>{t.voucherConfirm}<small>{t.voucherConfirmHelp}</small></span></label>{!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "voucher_confirmation_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}</>}
     </div>
   );
 }
