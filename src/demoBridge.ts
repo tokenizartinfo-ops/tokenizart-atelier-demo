@@ -1,7 +1,7 @@
 import type { DemoContext, Language } from "./types";
 
 export const DEMO_BRIDGE_SCHEMA = "tokenizart.demo_atelier_message.v1";
-export const DEMO_BRIDGE_VERSION = "1.1.0";
+export const DEMO_BRIDGE_VERSION = "1.2.0";
 
 export const DEMO_BRIDGE_ALLOWED_ORIGINS = new Set([
   "https://companion.tokenizart.info",
@@ -26,10 +26,12 @@ export const COMPANION_BRIDGE_MESSAGE_TYPES = [
 export type DemoBridgeMessageType = typeof DEMO_BRIDGE_MESSAGE_TYPES[number];
 export type CompanionBridgeMessageType = typeof COMPANION_BRIDGE_MESSAGE_TYPES[number];
 
-export type DemoPracticeState =
-  | { kind: "navigation_filter"; value: "visitor" | "user" | "own.all" | "own.minted" | "own.to_mint" | "own.certified" | "own.pending_certify" | "managed.minted" | "managed.to_mint" | "managed.certified" | "managed.without_certify" | "received.pending" | "received.tagged" | "received.completed" | "received.rejected" | "requested.pending" | "requested.completed" }
-  | { kind: "gallery_endpoint"; value: "metadata" | "image" | "nft" | "transaction" }
-  | { kind: "action_focus"; value: "load" | "mint" | "chip" | "certify" | "transfer" | "privacy" };
+export type DemoPracticeKind = "navigation_filter" | "gallery_endpoint" | "action_focus" | "mint_actor" | "mint_mode" | "certify_actor" | "certify_type" | "certify_visibility" | "nfc_actor" | "nfc_tag_state" | "transfer_destination" | "privacy_gallery" | "privacy_audience" | "privacy_certify" | "voucher_product";
+
+export interface DemoPracticeState {
+  kind: DemoPracticeKind;
+  value: string;
+}
 
 export interface DemoBridgeMessage {
   schema: typeof DEMO_BRIDGE_SCHEMA;
@@ -58,12 +60,30 @@ const PRACTICE_VALUES = {
   navigation_filter: new Set(["visitor", "user", "own.all", "own.minted", "own.to_mint", "own.certified", "own.pending_certify", "managed.minted", "managed.to_mint", "managed.certified", "managed.without_certify", "received.pending", "received.tagged", "received.completed", "received.rejected", "requested.pending", "requested.completed"]),
   gallery_endpoint: new Set(["metadata", "image", "nft", "transaction"]),
   action_focus: new Set(["load", "mint", "chip", "certify", "transfer", "privacy"]),
+  mint_actor: new Set(["owner_artist", "authorized_manager"]),
+  mint_mode: new Set(["single", "batch"]),
+  certify_actor: new Set(["owner_artist", "expert", "gallery_museum"]),
+  certify_type: new Set(["authenticity", "condition", "exhibition", "additional_report"]),
+  certify_visibility: new Set(["public", "owner"]),
+  nfc_actor: new Set(["owner_artist", "authorized_certifier"]),
+  nfc_tag_state: new Set(["ready_to_link", "linked_artwork", "not_tokenizart"]),
+  transfer_destination: new Set(["tokenizart_user", "external_wallet"]),
+  privacy_gallery: new Set(["visible", "hidden"]),
+  privacy_audience: new Set(["owner", "visitor"]),
+  privacy_certify: new Set(["authenticity.public", "authenticity.owner", "exhibition.public", "exhibition.owner", "condition.public", "condition.owner"]),
+  voucher_product: new Set(["starter_kit", "mint", "certify", "nfc"]),
 } as const;
 
-const PRACTICE_KIND_BY_FLOW = {
-  atelier_navigation: "navigation_filter",
-  public_gallery_traceability: "gallery_endpoint",
-  action_overview: "action_focus",
+const PRACTICE_KINDS_BY_FLOW: Record<string, Set<DemoPracticeKind>> = {
+  atelier_navigation: new Set(["navigation_filter"]),
+  public_gallery_traceability: new Set(["gallery_endpoint"]),
+  action_overview: new Set(["action_focus"]),
+  mint: new Set(["mint_actor", "mint_mode"]),
+  certify: new Set(["certify_actor", "certify_type", "certify_visibility"]),
+  chip: new Set(["nfc_actor", "nfc_tag_state"]),
+  transferencia: new Set(["transfer_destination"]),
+  privacy: new Set(["privacy_gallery", "privacy_audience", "privacy_certify"]),
+  vouchers: new Set(["voucher_product"]),
 } as const;
 
 const PRACTICE_STATE_BY_SELECTION: Record<string, DemoPracticeState> = {
@@ -100,14 +120,38 @@ export function isDemoPracticeStateForFlow(flow: string, state: unknown): state 
   if (!state || typeof state !== "object" || Array.isArray(state)) return false;
   const value = state as Record<string, unknown>;
   if (Object.keys(value).length !== 2 || typeof value.kind !== "string" || typeof value.value !== "string") return false;
-  const expectedKind = PRACTICE_KIND_BY_FLOW[flow as keyof typeof PRACTICE_KIND_BY_FLOW];
-  if (!expectedKind || value.kind !== expectedKind) return false;
-  return PRACTICE_VALUES[expectedKind].has(value.value as never);
+  const kind = value.kind as DemoPracticeKind;
+  if (!Object.prototype.hasOwnProperty.call(PRACTICE_VALUES, kind)) return false;
+  if (!PRACTICE_KINDS_BY_FLOW[flow]?.has(kind)) return false;
+  return PRACTICE_VALUES[kind].has(value.value as never);
 }
 
 export function practiceStateForSelection(flow: string, selectionId: string): DemoPracticeState | null {
-  const state = PRACTICE_STATE_BY_SELECTION[selectionId];
+  const staticState = PRACTICE_STATE_BY_SELECTION[selectionId];
+  if (staticState && isDemoPracticeStateForFlow(flow, staticState)) return staticState;
+  const separator = selectionId.indexOf(":");
+  if (separator < 1) return null;
+  const state = { kind: selectionId.slice(0, separator), value: selectionId.slice(separator + 1) } as DemoPracticeState;
   return state && isDemoPracticeStateForFlow(flow, state) ? state : null;
+}
+
+export function practiceStateForContext(context: DemoContext, stepId: string): DemoPracticeState | null {
+  const selectionByStep: Record<string, string> = {
+    "gallery.choose-traceability-endpoint": "gallery.read-ipfs-metadata",
+    "mint.open-action": `mint_actor:${context.world.mintDraft.actorId}`,
+    "mint.batch-select-artworks": `mint_mode:${context.world.mintDraft.mode}`,
+    "certify.choose-certifier": `certify_actor:${context.world.certifyDraft.actorId}`,
+    "certify.choose-type": `certify_type:${context.world.certifyDraft.typeId}`,
+    "certify.review-request": `certify_visibility:${context.world.certifyDraft.visibility}`,
+    "chip.choose-certifier": `nfc_actor:${context.world.nfcDraft.actorId}`,
+    "chip.interpret-reading-states": `nfc_tag_state:${context.world.nfcDraft.tagState}`,
+    "transferencia.enter-recipient-email": `transfer_destination:${context.world.transferDraft.destinationType}`,
+    "privacy.toggle-gallery": `privacy_gallery:${context.world.privacyDraft.galleryVisible ? "visible" : "hidden"}`,
+    "privacy.review-certify-visibility": `privacy_certify:authenticity.${context.world.privacyDraft.certifyVisibility.authenticity ? "public" : "owner"}`,
+    "privacy.all-certify-visible": `privacy_audience:${context.world.privacyDraft.previewAudience}`,
+    "vouchers.compare-starter-kit": `voucher_product:${context.world.voucherDraft.productId}`,
+  };
+  return practiceStateForSelection(context.flow, selectionByStep[stepId] || stepId);
 }
 
 function originOf(value: string): string {

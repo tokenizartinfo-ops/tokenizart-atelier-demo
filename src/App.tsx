@@ -37,7 +37,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
-import { isCompanionBridgeMessage, postDemoBridgeMessage, practiceStateForSelection, resolveDemoBridgeOrigin } from "./demoBridge";
+import { isCompanionBridgeMessage, postDemoBridgeMessage, practiceStateForContext, practiceStateForSelection, resolveDemoBridgeOrigin } from "./demoBridge";
 import type { DemoPracticeState } from "./demoBridge";
 import { flowLabels, ui } from "./i18n";
 import { classifyVisualLayout, focusImageStyle, needsVisualDetail } from "./visualPresentation";
@@ -652,7 +652,7 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
   }
 
   if (context.flow === "vouchers") {
-    return <VoucherPractice context={context} step={step} send={send} />;
+    return <VoucherPractice context={context} step={step} send={send} onPracticeSelection={onPracticeSelection} />;
   }
 
   if (context.flow === "privacy") {
@@ -682,17 +682,26 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
       <div className="practice-fields privacy-controls">
         {step.order === 1 && <><PracticeContextCard icon={ShieldCheck} title={stepCopy.title} body={stepCopy.body} /><div className="safety-note"><ShieldCheck size={18} />{t.privacySafety}</div></>}
         {step.order === 2 && <><PracticeContextCard icon={UserRoundPlus} title={stepCopy.title} body={stepCopy.body} />{privacyPreview}</>}
-        {step.order === 3 && <><label data-practice-action className="privacy-toggle"><span><strong>{t.privacyGalleryToggle}</strong><small>{t.privacyGalleryHelp}</small></span><input type="checkbox" disabled={completed} checked={draft.galleryVisible} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", galleryVisible: event.target.checked, ownerConfirmed: false })} /></label>{privacyPreview}</>}
+        {step.order === 3 && <><label data-practice-action className="privacy-toggle"><span><strong>{t.privacyGalleryToggle}</strong><small>{t.privacyGalleryHelp}</small></span><input type="checkbox" disabled={completed} checked={draft.galleryVisible} onChange={(event) => {
+          send({ type: "SET_PRIVACY_DRAFT", galleryVisible: event.target.checked, ownerConfirmed: false });
+          onPracticeSelection(`privacy_gallery:${event.target.checked ? "visible" : "hidden"}`);
+        }} /></label>{privacyPreview}</>}
         {step.order === 4 && <><fieldset data-practice-action>
           <legend>{t.privacyCertifyControls}</legend>
           <div className="privacy-certify-controls">
-            {privacyCertifyIds.map((id) => <label key={id}><span><strong>{certifyTypes[id][lang].name}</strong><small>{draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></span><input type="checkbox" disabled={completed || !draft.galleryVisible} checked={draft.certifyVisibility[id]} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", certifyId: id, certifyVisible: event.target.checked, ownerConfirmed: false })} /></label>)}
+            {privacyCertifyIds.map((id) => <label key={id}><span><strong>{certifyTypes[id][lang].name}</strong><small>{draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></span><input type="checkbox" disabled={completed || !draft.galleryVisible} checked={draft.certifyVisibility[id]} onChange={(event) => {
+              send({ type: "SET_PRIVACY_DRAFT", certifyId: id, certifyVisible: event.target.checked, ownerConfirmed: false });
+              onPracticeSelection(`privacy_certify:${id}.${event.target.checked ? "public" : "owner"}`);
+            }} /></label>)}
           </div>
         </fieldset>{privacyPreview}</>}
         {step.order === 5 && <><fieldset data-practice-action>
           <legend>{t.privacyPreviewAs}</legend>
           <div className="visibility-selector">
-            {(["owner", "visitor"] as PrivacyPreviewAudience[]).map((previewAudience) => <button type="button" key={previewAudience} className={audience === previewAudience ? "selected" : ""} onClick={() => send({ type: "SET_PRIVACY_DRAFT", previewAudience })}><Eye size={17} />{previewAudience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</button>)}
+            {(["owner", "visitor"] as PrivacyPreviewAudience[]).map((previewAudience) => <button type="button" key={previewAudience} className={audience === previewAudience ? "selected" : ""} onClick={() => {
+              send({ type: "SET_PRIVACY_DRAFT", previewAudience });
+              onPracticeSelection(`privacy_audience:${previewAudience}`);
+            }}><Eye size={17} />{previewAudience === "owner" ? t.privacyOwnerView : t.privacyVisitorView}</button>)}
           </div>
         </fieldset>{privacyPreview}</>}
         {step.order === 6 && <>{privacyPreview}<label data-practice-action className="confirmation-check"><input type="checkbox" disabled={completed} checked={draft.ownerConfirmed} onChange={(event) => send({ type: "SET_PRIVACY_DRAFT", ownerConfirmed: event.target.checked })} /><span>{t.confirmPrivacy}<small>{t.confirmPrivacyHelp}</small></span></label>{!completed && <button className="text-action" onClick={() => send({ type: "INJECT_ERROR", code: "privacy_confirmation_required" })}><CircleAlert size={17} />{t.errorPractice}</button>}</>}
@@ -717,7 +726,10 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
           <div className="actor-selector">
             {(Object.keys(nfcActors) as NfcActorId[]).map((actorId) => {
               const actor = nfcActors[actorId][lang];
-              return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => send({ type: "SET_NFC_DRAFT", actorId })}><Nfc size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
+              return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => {
+                send({ type: "SET_NFC_DRAFT", actorId });
+                onPracticeSelection(`nfc_actor:${actorId}`);
+              }}><Nfc size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
             })}
           </div>
         </fieldset>}
@@ -736,7 +748,10 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
           <div className="nfc-state-selector">
             {(Object.keys(nfcTagStates) as NfcTagState[]).map((tagState) => {
               const tag = nfcTagStates[tagState][lang];
-              return <button type="button" key={tagState} disabled={completed} className={draft.tagState === tagState ? "selected" : ""} onClick={() => send({ type: "SET_NFC_DRAFT", tagState, scanConfirmed: false, signatureConfirmed: false })}><Nfc size={17} /><span><strong>{tag.name}</strong><small>{tag.description}</small></span></button>;
+              return <button type="button" key={tagState} disabled={completed} className={draft.tagState === tagState ? "selected" : ""} onClick={() => {
+                send({ type: "SET_NFC_DRAFT", tagState, scanConfirmed: false, signatureConfirmed: false });
+                onPracticeSelection(`nfc_tag_state:${tagState}`);
+              }}><Nfc size={17} /><span><strong>{tag.name}</strong><small>{tag.description}</small></span></button>;
             })}
           </div>
         </fieldset>}
@@ -762,20 +777,33 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
           <div className="actor-selector">
             {(Object.keys(certifyActors) as CertifyActorId[]).map((actorId) => {
               const actor = certifyActors[actorId][lang];
-              return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => send({ type: "SET_CERTIFY_DRAFT", actorId })}><BadgeCheck size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
+              return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => {
+                send({ type: "SET_CERTIFY_DRAFT", actorId });
+                onPracticeSelection(`certify_actor:${actorId}`);
+              }}><BadgeCheck size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
             })}
           </div>
         </fieldset>}
         {isType && <label>{t.certifyType}
-          <select disabled={completed} value={draft.typeId} onChange={(event) => send({ type: "SET_CERTIFY_DRAFT", typeId: event.target.value as CertifyTypeId })}>
+          <select disabled={completed} value={draft.typeId} onChange={(event) => {
+            const typeId = event.target.value as CertifyTypeId;
+            send({ type: "SET_CERTIFY_DRAFT", typeId });
+            onPracticeSelection(`certify_type:${typeId}`);
+          }}>
             {(Object.keys(certifyTypes) as CertifyTypeId[]).map((typeId) => <option key={typeId} value={typeId}>{certifyTypes[typeId][lang].name}</option>)}
           </select>
         </label>}
         {(isType || step.order === 5) && <fieldset>
           <legend>{t.visibilityLabel}</legend>
           <div className="visibility-selector">
-            <button type="button" disabled={completed} className={draft.visibility === "public" ? "selected" : ""} onClick={() => send({ type: "SET_CERTIFY_DRAFT", visibility: "public" })}><Eye size={17} />{t.publicVisibility}</button>
-            <button type="button" disabled={completed} className={draft.visibility === "owner" ? "selected" : ""} onClick={() => send({ type: "SET_CERTIFY_DRAFT", visibility: "owner" })}><ShieldCheck size={17} />{t.ownerVisibility}</button>
+            <button type="button" disabled={completed} className={draft.visibility === "public" ? "selected" : ""} onClick={() => {
+              send({ type: "SET_CERTIFY_DRAFT", visibility: "public" });
+              onPracticeSelection("certify_visibility:public");
+            }}><Eye size={17} />{t.publicVisibility}</button>
+            <button type="button" disabled={completed} className={draft.visibility === "owner" ? "selected" : ""} onClick={() => {
+              send({ type: "SET_CERTIFY_DRAFT", visibility: "owner" });
+              onPracticeSelection("certify_visibility:owner");
+            }}><ShieldCheck size={17} />{t.ownerVisibility}</button>
           </div>
         </fieldset>}
         {isRequest && <div className="practice-context-card request"><BadgeCheck size={24} /><span><strong>{stepCopy.title}</strong><small>{stepCopy.body}</small></span></div>}
@@ -800,7 +828,10 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
           <div className="actor-selector">
             {(Object.keys(mintActors) as MintActorId[]).map((actorId) => {
               const actor = mintActors[actorId][lang];
-              return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => send({ type: "SET_MINT_DRAFT", actorId })}><Fingerprint size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
+              return <button type="button" key={actorId} disabled={completed} className={draft.actorId === actorId ? "selected" : ""} onClick={() => {
+                send({ type: "SET_MINT_DRAFT", actorId });
+                onPracticeSelection(`mint_actor:${actorId}`);
+              }}><Fingerprint size={18} /><span><strong>{actor.name}</strong><small>{actor.description}</small></span></button>;
             })}
           </div>
         </fieldset>}
@@ -817,7 +848,10 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
           <div className="mode-selector">
             {(Object.keys(mintModes) as MintMode[]).map((mode) => {
               const option = mintModes[mode][lang];
-              return <button type="button" key={mode} disabled={completed} className={draft.mode === mode ? "selected" : ""} onClick={() => send({ type: "SET_MINT_DRAFT", mode })}><Blocks size={18} /><span><strong>{option.name}</strong><small>{option.description}</small></span></button>;
+              return <button type="button" key={mode} disabled={completed} className={draft.mode === mode ? "selected" : ""} onClick={() => {
+                send({ type: "SET_MINT_DRAFT", mode });
+                onPracticeSelection(`mint_mode:${mode}`);
+              }}><Blocks size={18} /><span><strong>{option.name}</strong><small>{option.description}</small></span></button>;
             })}
           </div>
         </fieldset>}
@@ -843,7 +877,10 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
           <div className="mode-selector">
             {(Object.keys(transferDestinations) as TransferDestinationType[]).map((destinationType) => {
               const destination = transferDestinations[destinationType][lang];
-              return <button type="button" key={destinationType} disabled={completed} className={draft.destinationType === destinationType ? "selected" : ""} onClick={() => send({ type: "SET_TRANSFER_DRAFT", destinationType, recipientVerified: false, externalWarningAccepted: false, signatureConfirmed: false })}><ArrowRight size={18} /><span><strong>{destination.name}</strong><small>{destination.description}</small></span></button>;
+              return <button type="button" key={destinationType} disabled={completed} className={draft.destinationType === destinationType ? "selected" : ""} onClick={() => {
+                send({ type: "SET_TRANSFER_DRAFT", destinationType, recipientVerified: false, externalWarningAccepted: false, signatureConfirmed: false });
+                onPracticeSelection(`transfer_destination:${destinationType}`);
+              }}><ArrowRight size={18} /><span><strong>{destination.name}</strong><small>{destination.description}</small></span></button>;
             })}
           </div>
           <label>{external ? t.transferExternalWallet : t.transferRecipientEmail}<input value={external ? "0xEXTERNAL-DEMO-0001" : "coleccionista.demo@ejemplo.test"} readOnly /></label>
@@ -1024,7 +1061,7 @@ function PrivacyCompletion({ context }: { context: DemoContext }) {
   );
 }
 
-function VoucherPractice({ context, step, send }: { context: DemoContext; step: ManualStep; send: (event: any) => void }) {
+function VoucherPractice({ context, step, send, onPracticeSelection }: { context: DemoContext; step: ManualStep; send: (event: any) => void; onPracticeSelection: (selectionId: string) => void }) {
   const lang = context.language;
   const t = ui[lang];
   const draft = context.world.voucherDraft;
@@ -1049,7 +1086,10 @@ function VoucherPractice({ context, step, send }: { context: DemoContext; step: 
           {voucherProductIds.map((productId) => {
             const product = voucherProducts[productId];
             return (
-              <button type="button" key={productId} disabled={completed} className={draft.productId === productId ? "selected" : ""} onClick={() => send({ type: "SET_VOUCHER_DRAFT", productId, creditConfirmed: false })}>
+              <button type="button" key={productId} disabled={completed} className={draft.productId === productId ? "selected" : ""} onClick={() => {
+                send({ type: "SET_VOUCHER_DRAFT", productId, creditConfirmed: false });
+                onPracticeSelection(`voucher_product:${productId}`);
+              }}>
                 {productId === "starter_kit" ? <PackageCheck size={21} /> : <TicketCheck size={21} />}
                 <span><strong>{product[lang].name}</strong><small>{product[lang].description}</small></span>
                 <b>USD {product.priceUsd.toFixed(2)}</b>
@@ -1181,12 +1221,22 @@ function App() {
   const flowCompleted = context.world.events.includes(`${context.flow}.completed`);
   const bridgeOrigin = useMemo(() => resolveDemoBridgeOrigin(window.location.search, document.referrer), []);
   const bridgeTarget = bridgeOrigin && window.parent !== window ? window.parent : null;
-  const defaultPracticeState = useMemo(() => {
-    const selectionId = context.flow === "public_gallery_traceability" && step.order === 4
-      ? flow.steps[4]?.step_id
-      : step.step_id;
-    return selectionId ? practiceStateForSelection(context.flow, selectionId) : null;
-  }, [context.flow, flow.steps, step.order, step.step_id]);
+  const defaultPracticeState = useMemo(() => practiceStateForContext(context, step.step_id), [
+    context.flow,
+    context.world.certifyDraft.actorId,
+    context.world.certifyDraft.typeId,
+    context.world.certifyDraft.visibility,
+    context.world.mintDraft.actorId,
+    context.world.mintDraft.mode,
+    context.world.nfcDraft.actorId,
+    context.world.nfcDraft.tagState,
+    context.world.privacyDraft.certifyVisibility.authenticity,
+    context.world.privacyDraft.galleryVisible,
+    context.world.privacyDraft.previewAudience,
+    context.world.transferDraft.destinationType,
+    context.world.voucherDraft.productId,
+    step.step_id,
+  ]);
   const [practiceState, setPracticeState] = useState<DemoPracticeState | null>(defaultPracticeState);
 
   function emitDemoMessage(type: Parameters<typeof postDemoBridgeMessage>[2], overridePracticeState: DemoPracticeState | null = practiceState ?? defaultPracticeState): boolean {

@@ -39,7 +39,7 @@ Allowlisted synthetic IDs -> exact-origin postMessage -> Companion A2UI bridge
 ## Companion bridge
 
 `/demo-atelier` on the Companion embeds this app and validates the versioned
-`tokenizart.demo_atelier_message.v1` contract, currently version `1.1.0`.
+`tokenizart.demo_atelier_message.v1` contract, currently version `1.2.0`.
 The Demo emits ready, step, synthetic-practice-selection, error, completion,
 reset and explanation-request events. The Companion returns
 transport acknowledgements and a grounded explanation-available signal; it
@@ -52,7 +52,8 @@ The bridge requires an allowlisted `return_origin` that matches the referrer
 origin, uses an exact `targetOrigin`, checks `event.source`, rejects unknown
 fields and fails closed. Messages contain only scenario, flow, step, language
 and synthetic fixture IDs, plus an allowlisted error code or a closed
-`practice_state` for a navigation filter, Gallery endpoint or action focus.
+`practice_state` for a navigation filter, Gallery endpoint, action focus or a
+closed synthetic choice in Mint, Certify, NFC, transfer, privacy or vouchers.
 No free text, identity, owner context or real asset reference crosses the
 bridge.
 
