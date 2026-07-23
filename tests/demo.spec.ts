@@ -486,8 +486,8 @@ test("exchanges metadata-only A2UI bridge messages with an allowlisted Companion
     : "https://demo-atelier-staging.tokenizart.info";
   const iframeUrl = new URL(runtimeDemoOrigin);
   iframeUrl.search = new URLSearchParams({
-    flow: "certify",
-    step: "certify.attach-evidence",
+    flow: "atelier_navigation",
+    step: "navigation.own-all",
     lang: "es",
     scenario: "first-artwork",
     fixture: "painting-river-001",
@@ -516,11 +516,20 @@ test("exchanges metadata-only A2UI bridge messages with an allowlisted Companion
         window.addEventListener("message", (event) => {
           if (event.origin !== ${JSON.stringify(runtimeDemoOrigin)}) return;
           window.demoEvents.push(event.data);
+          const acknowledgement = event.data && {
+            schema: event.data.schema,
+            version: event.data.version,
+            scenario_id: event.data.scenario_id,
+            flow: event.data.flow,
+            step_id: event.data.step_id,
+            language: event.data.language,
+            synthetic_fixture_id: event.data.synthetic_fixture_id,
+          };
           if (event.data && event.data.type === "demo.ready") {
-            event.source.postMessage({ ...event.data, type: "companion.bridge.ready" }, event.origin);
+            event.source.postMessage({ ...acknowledgement, type: "companion.bridge.ready" }, event.origin);
           }
           if (event.data && event.data.type === "demo.explain.requested") {
-            event.source.postMessage({ ...event.data, type: "companion.explanation.available" }, event.origin);
+            event.source.postMessage({ ...acknowledgement, type: "companion.explanation.available" }, event.origin);
           }
         });
       </script></body></html>`,
@@ -534,10 +543,17 @@ test("exchanges metadata-only A2UI bridge messages with an allowlisted Companion
   await expect.poll(async () => page.evaluate(() => (window as unknown as { demoEvents: Array<{ type?: string }> }).demoEvents.map((item) => item.type))).toContain("demo.step.changed");
   await expect(demoFrame.getByText("Companion conectado")).toBeVisible();
 
+  await demoFrame.getByRole("button", { name: /Filtrar Obras Propias minteadas/ }).click();
+  await expect.poll(async () => page.evaluate(() => {
+    const events = (window as unknown as { demoEvents: Array<{ type?: string; practice_state?: { kind?: string; value?: string } }> }).demoEvents;
+    return events.some((item) => item.type === "demo.practice.changed" && item.practice_state?.kind === "navigation_filter" && item.practice_state?.value === "own.minted");
+  })).toBe(true);
+
   await demoFrame.getByRole("button", { name: "Ampliar con el Companion" }).click();
   await expect.poll(async () => page.evaluate(() => (window as unknown as { demoEvents: Array<{ type?: string }> }).demoEvents.map((item) => item.type))).toContain("demo.explain.requested");
   await expect(demoFrame.getByText("Explicacion del Companion lista")).toBeVisible();
 
   const envelopes = await page.evaluate(() => (window as unknown as { demoEvents: Array<Record<string, unknown>> }).demoEvents);
   expect(envelopes.every((item) => !Object.hasOwn(item, "owner_context") && !Object.hasOwn(item, "real_email") && !Object.hasOwn(item, "real_wallet"))).toBe(true);
+  expect(envelopes.every((item) => !Object.hasOwn(item, "text") && !Object.hasOwn(item, "query"))).toBe(true);
 });

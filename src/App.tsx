@@ -37,7 +37,8 @@ import {
   ZoomIn,
 } from "lucide-react";
 import { contextFromSearch, demoMachine, initialContext, manualContract, safeRestore } from "./demoMachine";
-import { isCompanionBridgeMessage, postDemoBridgeMessage, resolveDemoBridgeOrigin } from "./demoBridge";
+import { isCompanionBridgeMessage, postDemoBridgeMessage, practiceStateForSelection, resolveDemoBridgeOrigin } from "./demoBridge";
+import type { DemoPracticeState } from "./demoBridge";
 import { flowLabels, ui } from "./i18n";
 import { classifyVisualLayout, focusImageStyle, needsVisualDetail } from "./visualPresentation";
 import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType, VoucherBalances as VoucherBalanceValues, VoucherProductId } from "./types";
@@ -439,21 +440,21 @@ function PracticeContextCard({ icon: Icon, title, body, tone = "" }: { icon: typ
 
 type PracticeOption = { id: string; label: string; description: string; count?: number };
 
-function PracticeOptionSelector({ legend, options, initialId }: { legend: string; options: PracticeOption[]; initialId: string }) {
+function PracticeOptionSelector({ legend, options, initialId, onChange }: { legend: string; options: PracticeOption[]; initialId: string; onChange?: (optionId: string) => void }) {
   const [selectedId, setSelectedId] = useState(initialId);
   const selected = options.find((option) => option.id === selectedId) ?? options[0];
   return (
     <fieldset data-practice-action className="practice-option-selector">
       <legend>{legend}</legend>
       <div className="practice-option-grid">
-        {options.map((option) => <button type="button" key={option.id} className={selected.id === option.id ? "selected" : ""} aria-pressed={selected.id === option.id} onClick={() => setSelectedId(option.id)}><ListFilter size={17} /><span>{option.label}</span>{typeof option.count === "number" && <b>{option.count}</b>}</button>)}
+        {options.map((option) => <button type="button" key={option.id} className={selected.id === option.id ? "selected" : ""} aria-pressed={selected.id === option.id} onClick={() => { setSelectedId(option.id); onChange?.(option.id); }}><ListFilter size={17} /><span>{option.label}</span>{typeof option.count === "number" && <b>{option.count}</b>}</button>)}
       </div>
       <div className="practice-selection-result"><Route size={22} /><span><strong>{selected.label}</strong><small>{selected.description}</small></span>{typeof selected.count === "number" && <b>{selected.count}</b>}</div>
     </fieldset>
   );
 }
 
-function AtelierNavigationPractice({ context, step }: { context: DemoContext; step: ManualStep }) {
+function AtelierNavigationPractice({ context, step, onPracticeSelection }: { context: DemoContext; step: ManualStep; onPracticeSelection: (selectionId: string) => void }) {
   const lang = context.language;
   const t = ui[lang];
   const copy = step.copy[lang];
@@ -471,7 +472,7 @@ function AtelierNavigationPractice({ context, step }: { context: DemoContext; st
   if (step.order === 1) return <div className="practice-fields navigation-practice"><PracticeContextCard icon={Route} title={copy.title} body={copy.body} /><div className="navigation-path"><span>Gallery</span><ArrowRight size={16} /><span>{sectionCopy.ownerOnly}</span><ArrowRight size={16} /><span>{t.simulated}</span></div></div>;
   if (step.order === 2 || step.order === 3) {
     const options = [option(2, 12), option(3, 8)];
-    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.mode} options={options} initialId={step.step_id} /><div className="safety-note"><ShieldCheck size={18} />{sectionCopy.synthetic}</div></div>;
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.mode} options={options} initialId={step.step_id} onChange={onPracticeSelection} /><div className="safety-note"><ShieldCheck size={18} />{sectionCopy.synthetic}</div></div>;
   }
   if (step.order === 4) return <div className="practice-fields navigation-practice"><PracticeContextCard icon={UserRoundPlus} title={copy.title} body={copy.body} /><div className="navigation-path"><span>{steps[2].copy[lang].title}</span><ArrowRight size={16} /><strong>{copy.title}</strong></div></div>;
   if (step.order === 5) {
@@ -480,24 +481,24 @@ function AtelierNavigationPractice({ context, step }: { context: DemoContext; st
   }
   if (step.order >= 6 && step.order <= 10) {
     const options = [option(6, 8), option(7, 5), option(8, 3), option(9, 4), option(10, 2)];
-    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.own} options={options} initialId={step.step_id} /></div>;
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.own} options={options} initialId={step.step_id} onChange={onPracticeSelection} /></div>;
   }
   if (step.order >= 11 && step.order <= 14) {
     const options = [option(11, 4), option(12, 2), option(13, 3), option(14, 1)];
-    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.managed} options={options} initialId={step.step_id} /></div>;
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.managed} options={options} initialId={step.step_id} onChange={onPracticeSelection} /></div>;
   }
   if (step.order >= 15 && step.order <= 18) {
     const options = [option(15, 3), option(16, 2), option(17, 7), option(18, 1)];
-    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.received} options={options} initialId={step.step_id} /></div>;
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.received} options={options} initialId={step.step_id} onChange={onPracticeSelection} /></div>;
   }
   if (step.order >= 19 && step.order <= 20) {
     const options = [option(19, 2), option(20, 6)];
-    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.requested} options={options} initialId={step.step_id} /></div>;
+    return <div className="practice-fields navigation-practice"><PracticeOptionSelector key={step.step_id} legend={sectionCopy.requested} options={options} initialId={step.step_id} onChange={onPracticeSelection} /></div>;
   }
   return <div className="practice-fields navigation-practice"><PracticeContextCard icon={step.order === 21 ? Users : UserRoundPlus} title={copy.title} body={copy.body} /><div className="directory-preview"><Users size={22} /><span><strong>{copy.title}</strong><small>{sectionCopy.synthetic} · 3</small></span><Search size={20} /></div></div>;
 }
 
-function GalleryTraceabilityPractice({ context, step }: { context: DemoContext; step: ManualStep }) {
+function GalleryTraceabilityPractice({ context, step, onPracticeSelection }: { context: DemoContext; step: ManualStep; onPracticeSelection: (selectionId: string) => void }) {
   const lang = context.language;
   const copy = step.copy[lang];
   const steps = manualContract.flows.public_gallery_traceability.steps;
@@ -522,7 +523,7 @@ function GalleryTraceabilityPractice({ context, step }: { context: DemoContext; 
   if (step.order === 3) return <div className="practice-fields gallery-practice"><PracticeContextCard icon={GalleryHorizontalEnd} title={c.technical} body={copy.body} /><dl className="gallery-facts"><div><dt>Autor</dt><dd>Alex Rivera</dd></div><div><dt>Técnica</dt><dd>Óleo sobre tela</dd></div><div><dt>Medidas</dt><dd>100 x 120 cm</dd></div><div><dt>Token ID</dt><dd>DEMO-255</dd></div></dl></div>;
   if (step.order === 4) {
     const options = [5, 6, 7, 8].map((order) => ({ id: steps[order - 1].step_id, label: steps[order - 1].copy[lang].title, description: steps[order - 1].copy[lang].body }));
-    return <div className="practice-fields gallery-practice"><PracticeOptionSelector key={step.step_id} legend={c.endpoints} options={options} initialId={options[0].id} /><div className="safety-note"><Globe2 size={18} />{c.publicBoundary}</div></div>;
+    return <div className="practice-fields gallery-practice"><PracticeOptionSelector key={step.step_id} legend={c.endpoints} options={options} initialId={options[0].id} onChange={onPracticeSelection} /><div className="safety-note"><Globe2 size={18} />{c.publicBoundary}</div></div>;
   }
   if (step.order === 10) return <div className="practice-fields gallery-practice"><h3 className="practice-section-title">{c.certify}</h3><div className="gallery-certify-grid"><div><BadgeCheck size={19} /><span><strong>Autenticidad</strong><small>CERT-DEMO-001</small></span></div><div><BadgeCheck size={19} /><span><strong>Exhibición</strong><small>CERT-DEMO-002</small></span></div><div><BadgeCheck size={19} /><span><strong>Estado</strong><small>CERT-DEMO-003</small></span></div></div><div className="safety-note"><Eye size={18} />{c.publicBoundary}</div></div>;
   const endpoint = endpointRefs[step.order];
@@ -573,14 +574,14 @@ function ActionOverviewPractice({ context, step }: { context: DemoContext; step:
   return <div className="practice-fields action-overview-practice"><div className="action-sequence">{manualContract.flows.action_overview.steps.map((item) => <div key={item.step_id} className={item.step_id === step.step_id ? "active" : ""}><FlowIconMark flowId={flowByAction[item.step_id]} size={18} /><span>{item.copy[lang].title}</span></div>)}</div><PracticeContextCard icon={Blocks} title={copy.title} body={copy.body} /><div className="practice-selection-result"><Route size={22} /><span><strong>{copy.title}</strong><small>{relation[step.step_id as keyof typeof relation]}</small></span></div></div>;
 }
 
-function PracticeFields({ context, step, send }: { context: DemoContext; step: ManualStep; send: (event: any) => void }) {
+function PracticeFields({ context, step, send, onPracticeSelection }: { context: DemoContext; step: ManualStep; send: (event: any) => void; onPracticeSelection: (selectionId: string) => void }) {
   const lang = context.language;
   const t = ui[lang];
   const stepCopy = step.copy[lang];
   const p = adaptivePracticeCopy[lang];
 
-  if (context.flow === "atelier_navigation") return <AtelierNavigationPractice context={context} step={step} />;
-  if (context.flow === "public_gallery_traceability") return <GalleryTraceabilityPractice context={context} step={step} />;
+  if (context.flow === "atelier_navigation") return <AtelierNavigationPractice context={context} step={step} onPracticeSelection={onPracticeSelection} />;
+  if (context.flow === "public_gallery_traceability") return <GalleryTraceabilityPractice context={context} step={step} onPracticeSelection={onPracticeSelection} />;
   if (context.flow === "action_overview") return <ActionOverviewPractice context={context} step={step} />;
 
   if (context.flow === "onboarding") {
@@ -1180,9 +1181,23 @@ function App() {
   const flowCompleted = context.world.events.includes(`${context.flow}.completed`);
   const bridgeOrigin = useMemo(() => resolveDemoBridgeOrigin(window.location.search, document.referrer), []);
   const bridgeTarget = bridgeOrigin && window.parent !== window ? window.parent : null;
+  const defaultPracticeState = useMemo(() => {
+    const selectionId = context.flow === "public_gallery_traceability" && step.order === 4
+      ? flow.steps[4]?.step_id
+      : step.step_id;
+    return selectionId ? practiceStateForSelection(context.flow, selectionId) : null;
+  }, [context.flow, flow.steps, step.order, step.step_id]);
+  const [practiceState, setPracticeState] = useState<DemoPracticeState | null>(defaultPracticeState);
 
-  function emitDemoMessage(type: Parameters<typeof postDemoBridgeMessage>[2]): boolean {
-    return postDemoBridgeMessage(bridgeTarget, bridgeOrigin, type, context, step.step_id);
+  function emitDemoMessage(type: Parameters<typeof postDemoBridgeMessage>[2], overridePracticeState: DemoPracticeState | null = practiceState ?? defaultPracticeState): boolean {
+    return postDemoBridgeMessage(bridgeTarget, bridgeOrigin, type, context, step.step_id, overridePracticeState);
+  }
+
+  function handlePracticeSelection(selectionId: string) {
+    const nextPracticeState = practiceStateForSelection(context.flow, selectionId);
+    if (!nextPracticeState) return;
+    setPracticeState(nextPracticeState);
+    postDemoBridgeMessage(bridgeTarget, bridgeOrigin, "demo.practice.changed", context, step.step_id, nextPracticeState);
   }
 
   useEffect(() => {
@@ -1203,7 +1218,8 @@ function App() {
   }, [bridgeOrigin]);
 
   useEffect(() => {
-    emitDemoMessage("demo.step.changed");
+    setPracticeState(defaultPracticeState);
+    emitDemoMessage("demo.step.changed", defaultPracticeState);
   }, [bridgeOrigin, context.flow, context.fixtureId, context.scenarioId, lang, step.step_id]);
 
   useEffect(() => {
@@ -1280,7 +1296,7 @@ function App() {
             <div className="practice-zone" data-flow={context.flow}>
               <div className="practice-title"><FlowIconMark flowId={context.flow} size={22} /><span className="practice-heading"><strong>{t.demoData}</strong><small>{flowLabels[context.flow][lang]}</small></span><span className="simulated-badge">{t.simulated}</span></div>
               <div className="practice-step-focus"><span>{step.order}</span><div><small>{t.currentStep}</small><strong>{step.copy[lang].title}</strong></div></div>
-              <PracticeFields context={context} step={step} send={send} />
+              <PracticeFields context={context} step={step} send={send} onPracticeSelection={handlePracticeSelection} />
               <MintCompletion context={context} />
               <CertifyCompletion context={context} />
               <NfcCompletion context={context} />
