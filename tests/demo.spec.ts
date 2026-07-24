@@ -101,11 +101,11 @@ test("adds a focused readable detail to a panoramic manual asset", async ({ page
       await route.fulfill({
         status: 200,
         contentType: "image/svg+xml",
-        body: '<svg xmlns="http://www.w3.org/2000/svg" width="1268" height="76"><rect width="1268" height="76" fill="#fff"/><rect x="1100" y="8" width="145" height="60" fill="#9ee8ef"/><text x="1108" y="48" font-size="25">Registrarse</text></svg>',
+        body: '<svg xmlns="http://www.w3.org/2000/svg" width="559" height="145"><rect width="559" height="145" fill="#fff"/><rect x="40" y="25" width="479" height="95" fill="#9ee8ef"/><text x="64" y="82" font-size="25">Datos copiados</text></svg>',
       });
     });
   }
-  await page.goto("/?flow=onboarding&step=onboarding.choose-registration&lang=es&scenario=first-artwork");
+  await page.goto("/?flow=account_wallet&step=account-wallet-copy-confirmed&lang=es&scenario=first-artwork");
   const manualVisual = page.locator(".manual-visual");
   await expect(manualVisual).toHaveAttribute("data-visual-layout", "panoramic");
   await manualVisual.locator(".visual-view-controls > button").nth(1).click();
@@ -206,6 +206,18 @@ test("configures a synthetic Certify actor and renders the completed provenance"
   await expect(result.getByText("Exhibición", { exact: true })).toBeVisible();
   await expect(result.getByText("CERT-DEMO-001", { exact: true })).toBeVisible();
   await expect(result.getByText("Simulación educativa: no se escribieron datos en Atelier, blockchain ni IPFS.")).toBeVisible();
+  const finalState = page.locator(".final-artwork-state");
+  await expect(finalState.getByText("museo@demo.invalid", { exact: true })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: /CERT-DEMO-001 · Archivo o evidencia IPFS/ })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: /CERT-DEMO-001 · Documentacion Certify en IPFS/ })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: /CERT-DEMO-001 · Comprobante de transaccion Certify/ })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: /CERT-DEMO-001 · Ver detalle del Certify/ })).toBeVisible();
+  await finalState.getByRole("button", { name: "Gallery pública" }).click();
+  await finalState.getByRole("tab", { name: "Certificaciones (0)" }).click();
+  await expect(finalState.getByText("Todavía no hay Certify visibles en esta vista.")).toBeVisible();
+  await finalState.getByRole("button", { name: "Administración" }).click();
+  await finalState.getByRole("tab", { name: "Certificaciones (1)" }).click();
+  await expect(finalState.getByText("museo@demo.invalid", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("certify-result.png"), fullPage: true });
 });
@@ -248,6 +260,16 @@ test("completes a synthetic batch Mint with deterministic references", async ({ 
   await expect(result.getByText("TOKEN-DEMO-001", { exact: true })).toBeVisible();
   await expect(result.getByText("TX-DEMO-MINT-001", { exact: true })).toBeVisible();
   await expect(result.getByText("IPFS-DEMO-001", { exact: true })).toBeVisible();
+  const finalState = page.locator(".final-artwork-state");
+  await expect(finalState.getByText("Curvas", { exact: true }).first()).toBeVisible();
+  await expect(finalState.getByRole("button", { name: "NFT / token" })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: "Imagen principal IPFS" })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: "Metadata IPFS" })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: "Comprobante blockchain" })).toBeVisible();
+  await finalState.getByRole("button", { name: "Comprobante blockchain" }).click();
+  await expect(finalState.getByText("TX-DEMO-MINT-001", { exact: true })).toBeVisible();
+  await finalState.getByRole("button", { name: "Gallery pública" }).click();
+  await expect(finalState.getByText("Así se proyecta en Gallery")).toBeVisible();
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("mint-result.png"), fullPage: true });
 });

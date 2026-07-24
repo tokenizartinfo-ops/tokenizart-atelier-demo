@@ -8,7 +8,9 @@ import {
   FileCheck2,
   Fingerprint,
   FolderOpen,
+  GalleryHorizontalEnd,
   Image as ImageIcon,
+  Info,
   KeyRound,
   ListChecks,
   LoaderCircle,
@@ -22,8 +24,10 @@ import {
   Users,
   WalletCards,
 } from "lucide-react";
+import { useState } from "react";
 import { artworkTypeLabel } from "./fixtures";
 import type { DemoEvent } from "./demoMachine";
+import iconAtlas from "./data/atelier-manual-native-icon-atlas.v1.json";
 import type {
   CertifyActorId,
   CertifyTypeId,
@@ -494,6 +498,128 @@ const operationCopy = {
   },
 } satisfies Record<Language, Record<string, string>>;
 
+const finalStateCopy = {
+  es: {
+    ownerView: "Administración",
+    galleryView: "Gallery pública",
+    artworkTab: "Obra",
+    certificationsTab: "Certificaciones",
+    finalState: "Resultado final simulado",
+    finalStateHelp: "Compara cómo queda la misma obra dentro de tu administración y qué se proyecta públicamente.",
+    ownerBoundary: "La vista owner conserva todos los datos y Certify de esta sesión sintética.",
+    galleryBoundary: "Gallery muestra solo lo que el owner mantiene visible. Cambiar la vista no publica nada real.",
+    galleryHidden: "Esta obra está oculta en Gallery",
+    galleryHiddenHelp: "Sigue disponible para el owner dentro de Administración, pero un visitante no la ve.",
+    publicProjection: "Así se proyecta en Gallery",
+    technicalSheet: "Ficha técnica",
+    technicalSheetHidden: "La ficha técnica está reservada para el owner.",
+    mintedToken: "Minteada · Token",
+    endpointInspector: "Referencia seleccionada",
+    endpointHint: "Selecciona un icono para entender qué abre y qué dato verificable muestra.",
+    noEndpoints: "Los endpoints aparecen después de completar el Mint simulado.",
+    noCertifications: "Todavía no hay Certify visibles en esta vista.",
+    performedBy: "Realizada por",
+    evidence: "Evidencia",
+    publicVisibility: "Público",
+    ownerVisibility: "Solo owner",
+    syntheticReference: "Referencia sintética, sin navegación externa",
+    iconInfo: "Ver detalle del Certify",
+    country: "País",
+    exhibition: "Exposición",
+    description: "Descripción",
+    notes: "Notas",
+  },
+  en: {
+    ownerView: "Administration",
+    galleryView: "Public Gallery",
+    artworkTab: "Artwork",
+    certificationsTab: "Certifications",
+    finalState: "Simulated final result",
+    finalStateHelp: "Compare how the same artwork appears in your administration and what is projected publicly.",
+    ownerBoundary: "The owner view keeps all data and Certify entries from this synthetic session.",
+    galleryBoundary: "Gallery shows only what the owner keeps visible. Switching views publishes nothing real.",
+    galleryHidden: "This artwork is hidden from Gallery",
+    galleryHiddenHelp: "It remains available to the owner in Administration, but visitors cannot see it.",
+    publicProjection: "This is how it appears in Gallery",
+    technicalSheet: "Technical sheet",
+    technicalSheetHidden: "The technical sheet is reserved for the owner.",
+    mintedToken: "Minted · Token",
+    endpointInspector: "Selected reference",
+    endpointHint: "Select an icon to understand what it opens and which verifiable data it displays.",
+    noEndpoints: "Endpoints appear after completing the simulated Mint.",
+    noCertifications: "There are no Certify entries visible in this view yet.",
+    performedBy: "Performed by",
+    evidence: "Evidence",
+    publicVisibility: "Public",
+    ownerVisibility: "Owner only",
+    syntheticReference: "Synthetic reference, no external navigation",
+    iconInfo: "View Certify details",
+    country: "Country",
+    exhibition: "Exhibition",
+    description: "Description",
+    notes: "Notes",
+  },
+  pt: {
+    ownerView: "Administração",
+    galleryView: "Gallery pública",
+    artworkTab: "Obra",
+    certificationsTab: "Certificações",
+    finalState: "Resultado final simulado",
+    finalStateHelp: "Compare como a mesma obra fica na sua administração e o que é projetado publicamente.",
+    ownerBoundary: "A vista owner conserva todos os dados e Certify desta sessão sintética.",
+    galleryBoundary: "A Gallery mostra somente o que o owner mantém visível. Trocar a vista não publica nada real.",
+    galleryHidden: "Esta obra está oculta na Gallery",
+    galleryHiddenHelp: "Ela continua disponível para o owner na Administração, mas um visitante não a vê.",
+    publicProjection: "Assim aparece na Gallery",
+    technicalSheet: "Ficha técnica",
+    technicalSheetHidden: "A ficha técnica está reservada ao owner.",
+    mintedToken: "Minteada · Token",
+    endpointInspector: "Referência selecionada",
+    endpointHint: "Selecione um ícone para entender o que ele abre e qual dado verificável apresenta.",
+    noEndpoints: "Os endpoints aparecem depois de concluir o Mint simulado.",
+    noCertifications: "Ainda não há Certify visíveis nesta vista.",
+    performedBy: "Realizado por",
+    evidence: "Evidência",
+    publicVisibility: "Público",
+    ownerVisibility: "Somente owner",
+    syntheticReference: "Referência sintética, sem navegação externa",
+    iconInfo: "Ver detalhes do Certify",
+    country: "País",
+    exhibition: "Exposição",
+    description: "Descrição",
+    notes: "Notas",
+  },
+} satisfies Record<Language, Record<string, string>>;
+
+type FinalStateTab = "artwork" | "certifications";
+type FinalStateView = "owner" | "gallery";
+
+const iconByAssetId = new Map(iconAtlas.icons.map((item) => [item.asset_id, item]));
+
+function nativeIconContent(assetId: string, language: Language) {
+  const icon = iconByAssetId.get(assetId);
+  return icon?.copy[language] ?? { title: assetId, body: "" };
+}
+
+function certifyActorEmail(actorId: CertifyActorId): string {
+  return {
+    owner_artist: "owner@demo.invalid",
+    expert: "perito@demo.invalid",
+    gallery_museum: "museo@demo.invalid",
+  }[actorId];
+}
+
+function NativePlatformIcon({ assetId, alt }: { assetId: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <span className="native-platform-icon" role="img" aria-label={alt}>
+      {failed
+        ? <ImageIcon size={22} aria-hidden="true" />
+        : <img src={`/api/manual-asset/${encodeURIComponent(assetId)}`} alt="" onError={() => setFailed(true)} />}
+    </span>
+  );
+}
+
 const mintActorCopy: Record<MintActorId, Record<Language, { name: string; help: string }>> = {
   owner_artist: {
     es: { name: operationCopy.es.ownerArtist, help: operationCopy.es.ownerArtistMintHelp },
@@ -805,6 +931,240 @@ function OperationArtworkCard({
   );
 }
 
+interface FinalReference {
+  key: string;
+  assetId?: string;
+  label: string;
+  body: string;
+  value: string;
+}
+
+function ArtworkFinalStateSurface({
+  context,
+  defaultTab = "artwork",
+  initialView = "owner",
+}: {
+  context: DemoContext;
+  defaultTab?: FinalStateTab;
+  initialView?: FinalStateView;
+}) {
+  const { language, world } = context;
+  const artwork = world.artwork;
+  const c = copy[language];
+  const f = finalStateCopy[language];
+  const mintReceipt = world.mintReceipts.at(-1);
+  const [tab, setTab] = useState<FinalStateTab>(defaultTab);
+  const [view, setView] = useState<FinalStateView>(initialView);
+  const [activeImageId, setActiveImageId] = useState(artwork.images[0].imageId);
+  const activeImage = artwork.images.find((image) => image.imageId === activeImageId) ?? artwork.images[0];
+  const privacyReceipt = world.privacyReceipts.at(-1);
+  const galleryVisible = privacyReceipt?.galleryVisible ?? artwork.galleryVisible;
+  const visibleArtwork = view === "owner" || galleryVisible;
+  const technicalSheetVisible = view === "owner" || (privacyReceipt?.technicalSheetVisible ?? true);
+  const visibleCertifications = view === "owner"
+    ? world.certifications
+    : world.certifications.filter((item) => {
+      if (item.visibility !== "public") return false;
+      if (!privacyReceipt || item.typeId === "additional_report") return true;
+      return privacyReceipt.publicCertifyIds.includes(item.typeId);
+    });
+  const isMinted = Boolean(mintReceipt) || ["minted", "certified", "tagged", "transferred"].includes(world.artworkStatus);
+  const statusIcons = [
+    artwork.exhibited && { assetId: "manual-native-icon-status-exhibited", label: nativeIconContent("manual-native-icon-status-exhibited", language).title },
+    isMinted && { assetId: "manual-native-icon-status-minted", label: nativeIconContent("manual-native-icon-status-minted", language).title },
+    world.certifications.length > 0 && { assetId: "manual-native-icon-status-provenance", label: nativeIconContent("manual-native-icon-status-provenance", language).title },
+    world.nfcReceipts.length > 0 && { assetId: "manual-native-icon-status-nfc", label: nativeIconContent("manual-native-icon-status-nfc", language).title },
+  ].filter(Boolean) as Array<{ assetId: string; label: string }>;
+  const artworkReferences: FinalReference[] = mintReceipt ? [
+    {
+      key: "artwork-nft",
+      assetId: "manual-native-icon-endpoint-nft",
+      ...nativeIconContent("manual-native-icon-endpoint-nft", language),
+      value: mintReceipt.tokenRef,
+    },
+    {
+      key: "artwork-image-ipfs",
+      assetId: "manual-native-icon-endpoint-image-ipfs",
+      ...nativeIconContent("manual-native-icon-endpoint-image-ipfs", language),
+      value: `IPFS-DEMO-IMAGE-${mintReceipt.receiptId.slice(-3)}`,
+    },
+    {
+      key: "artwork-metadata-ipfs",
+      assetId: "manual-native-icon-endpoint-metadata-ipfs",
+      ...nativeIconContent("manual-native-icon-endpoint-metadata-ipfs", language),
+      value: mintReceipt.metadataRef,
+    },
+    {
+      key: "artwork-transaction",
+      assetId: "manual-native-icon-endpoint-transaction",
+      ...nativeIconContent("manual-native-icon-endpoint-transaction", language),
+      value: mintReceipt.transactionRef,
+    },
+  ].map(({ title, ...item }) => ({ ...item, label: title })) : [];
+  const certificationReferences = visibleCertifications.flatMap((certification) => {
+    const sequence = certification.certificationId.slice(-3);
+    const nativeReference = (key: string, assetId: string, value: string): FinalReference => {
+      const content = nativeIconContent(assetId, language);
+      return { key, assetId, label: content.title, body: content.body, value };
+    };
+    return [
+      nativeReference(`${certification.certificationId}-file`, "manual-native-icon-certify-file-ipfs", certification.evidenceAssetId),
+      nativeReference(`${certification.certificationId}-documentation`, "manual-native-icon-certify-documentation-ipfs", `IPFS-DEMO-CERTIFY-${sequence}`),
+      nativeReference(`${certification.certificationId}-transaction`, "manual-native-icon-certify-transaction", certification.transactionRef),
+      {
+        key: `${certification.certificationId}-info`,
+        label: f.iconInfo,
+        body: certification.description,
+        value: certification.certificationId,
+      },
+    ];
+  });
+  const references = [...artworkReferences, ...certificationReferences];
+  const [selectedReferenceKey, setSelectedReferenceKey] = useState<string | null>(
+    defaultTab === "certifications" ? certificationReferences[0]?.key ?? null : artworkReferences[0]?.key ?? null,
+  );
+  const selectedReference = references.find((item) => item.key === selectedReferenceKey) ?? artworkReferences[0] ?? certificationReferences[0];
+
+  function changeView(nextView: FinalStateView) {
+    setView(nextView);
+    setTab("artwork");
+    setSelectedReferenceKey(artworkReferences[0]?.key ?? null);
+  }
+
+  function changeTab(nextTab: FinalStateTab) {
+    setTab(nextTab);
+    setSelectedReferenceKey(nextTab === "certifications" ? certificationReferences[0]?.key ?? null : artworkReferences[0]?.key ?? null);
+  }
+
+  if (!visibleArtwork) {
+    return (
+      <section className="final-artwork-state">
+        <div className="final-state-toolbar">
+          <div><small>{f.finalState}</small><strong>{artwork.title}</strong></div>
+          <div className="final-view-switch" role="group" aria-label={f.finalState}>
+            <button type="button" onClick={() => changeView("owner")}>{f.ownerView}</button>
+            <button type="button" className="active" aria-pressed="true">{f.galleryView}</button>
+          </div>
+        </div>
+        <div className="atelier-hidden-state">
+          <EyeOff size={34} />
+          <strong>{f.galleryHidden}</strong>
+          <p>{f.galleryHiddenHelp}</p>
+          <button type="button" className="final-state-return" onClick={() => changeView("owner")}>{f.ownerView}</button>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="final-artwork-state" aria-label={f.finalState}>
+      <div className="final-state-toolbar">
+        <div><small>{view === "gallery" ? f.publicProjection : f.finalState}</small><strong>{artwork.title}</strong><span>{f.finalStateHelp}</span></div>
+        <div className="final-view-switch" role="group" aria-label={f.finalState}>
+          <button type="button" className={view === "owner" ? "active" : ""} aria-pressed={view === "owner"} onClick={() => changeView("owner")}><ShieldCheck size={16} />{f.ownerView}</button>
+          <button type="button" className={view === "gallery" ? "active" : ""} aria-pressed={view === "gallery"} onClick={() => changeView("gallery")}><GalleryHorizontalEnd size={16} />{f.galleryView}</button>
+        </div>
+      </div>
+      <div className="final-state-boundary"><Info size={17} />{view === "owner" ? f.ownerBoundary : f.galleryBoundary}</div>
+      <div className="final-state-main">
+        <div className="final-artwork-media">
+          <img src={activeImage.assetPath} alt={`${artwork.title} · ${activeImage.role}`} style={{ objectPosition: activeImage.objectPosition }} />
+          <div className="final-image-strip" aria-label={c.supportingImages}>
+            {artwork.images.map((image, index) => (
+              <button type="button" key={image.imageId} className={image.imageId === activeImage.imageId ? "active" : ""} aria-label={`${c.supportingImages} ${index + 1}`} onClick={() => setActiveImageId(image.imageId)}>
+                <img src={image.assetPath} alt="" style={{ objectPosition: image.objectPosition }} />
+                <span>{index + 1}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="final-artwork-panel">
+          <div className="final-state-tabs" role="tablist">
+            <button type="button" role="tab" aria-selected={tab === "artwork"} className={tab === "artwork" ? "active" : ""} onClick={() => changeTab("artwork")}>{f.artworkTab}</button>
+            <button type="button" role="tab" aria-selected={tab === "certifications"} className={tab === "certifications" ? "active" : ""} onClick={() => changeTab("certifications")}>{f.certificationsTab} ({visibleCertifications.length})</button>
+          </div>
+          {tab === "artwork" ? (
+            <div className="final-artwork-tab" role="tabpanel">
+              <div className="final-artwork-heading">
+                <div><h3>{artwork.title}</h3><p>{artwork.author}</p><small>{artworkTypeLabel(artwork.type, language)} · {artwork.countryName[language]} · {artwork.exhibited ? c.exhibited : c.preload}</small></div>
+                <div className="final-status-icons">
+                  {statusIcons.map((item) => <span key={item.assetId} title={item.label}><NativePlatformIcon assetId={item.assetId} alt={item.label} /><small>{item.label}</small></span>)}
+                </div>
+              </div>
+              {technicalSheetVisible ? (
+                <details className="final-technical-sheet" open>
+                  <summary>{f.technicalSheet}</summary>
+                  <dl>
+                    <div><dt>{c.popularName}</dt><dd>{artwork.popularName}</dd></div>
+                    <div><dt>{c.style}</dt><dd>{artwork.style[language]}</dd></div>
+                    <div><dt>{c.theme}</dt><dd>{artwork.theme[language]}</dd></div>
+                    <div><dt>{c.technique}</dt><dd>{artwork.technique[language]} · {artwork.support[language]}</dd></div>
+                    <div><dt>{c.dimensions}</dt><dd>{artwork.widthCm} × {artwork.heightCm}{artwork.depthCm ? ` × ${artwork.depthCm}` : ""} cm</dd></div>
+                    <div><dt>{c.year}</dt><dd>{artwork.creationYear}</dd></div>
+                    <div><dt>{c.creationPlace}</dt><dd>{artwork.creationPlace}</dd></div>
+                    <div><dt>{c.period}</dt><dd>{artwork.period[language]}</dd></div>
+                    <div><dt>{c.series}</dt><dd>{artwork.series[language]}</dd></div>
+                    <div><dt>{f.country}</dt><dd>{artwork.countryName[language]}</dd></div>
+                    <div><dt>{f.exhibition}</dt><dd>{artwork.exhibitionPlace}</dd></div>
+                    <div className="wide"><dt>{f.description}</dt><dd>{artwork.description[language]}</dd></div>
+                    <div className="wide"><dt>{f.notes}</dt><dd>{artwork.notes[language]}</dd></div>
+                  </dl>
+                </details>
+              ) : <div className="final-private-note"><EyeOff size={18} />{f.technicalSheetHidden}</div>}
+              {mintReceipt && <div className="final-mint-state"><Fingerprint size={18} /><strong>{f.mintedToken}: {mintReceipt.tokenRef}</strong></div>}
+              <section className="final-endpoints">
+                <h4>{f.endpointInspector}</h4>
+                {artworkReferences.length ? (
+                  <div className="final-endpoint-buttons">
+                    {artworkReferences.map((reference) => (
+                      <button type="button" key={reference.key} className={selectedReference?.key === reference.key ? "active" : ""} aria-label={reference.label} title={reference.label} onClick={() => setSelectedReferenceKey(reference.key)}>
+                        <NativePlatformIcon assetId={reference.assetId!} alt={reference.label} />
+                      </button>
+                    ))}
+                  </div>
+                ) : <p>{f.noEndpoints}</p>}
+              </section>
+            </div>
+          ) : (
+            <div className="final-certifications-tab" role="tabpanel">
+              {visibleCertifications.length ? visibleCertifications.map((certification) => {
+                const actor = certifyActorCopy[certification.actorId][language];
+                const rowReferences = certificationReferences.filter((item) => item.key.startsWith(certification.certificationId));
+                return (
+                  <article key={certification.certificationId}>
+                    <div className="final-certify-copy">
+                      <span><small>{operationCopy[language].certifyType}</small><strong>{certifyTypeLabel(certification.typeId, language)}</strong></span>
+                      <span><small>{f.performedBy}</small><strong>{certifyActorEmail(certification.actorId)}</strong><em>{actor.name}</em></span>
+                      <p>{certification.description}</p>
+                      <time dateTime={certification.completedAt}>{certification.completedAt.slice(0, 10)} · {certification.visibility === "public" ? f.publicVisibility : f.ownerVisibility}</time>
+                    </div>
+                    <div className="final-certify-endpoints" aria-label={`${f.evidence} · ${certification.certificationId}`}>
+                      {rowReferences.map((reference) => (
+                        <button type="button" key={reference.key} className={selectedReference?.key === reference.key ? "active" : ""} aria-label={`${certification.certificationId} · ${reference.label}`} title={reference.label} onClick={() => setSelectedReferenceKey(reference.key)}>
+                          {reference.assetId ? <NativePlatformIcon assetId={reference.assetId} alt={reference.label} /> : <Info size={18} />}
+                        </button>
+                      ))}
+                    </div>
+                  </article>
+                );
+              }) : <div className="final-empty-certify"><BadgeCheck size={25} /><p>{f.noCertifications}</p></div>}
+            </div>
+          )}
+          <div className="final-reference-inspector" aria-live="polite">
+            {selectedReference ? (
+              <>
+                <div>{selectedReference.assetId ? <NativePlatformIcon assetId={selectedReference.assetId} alt="" /> : <Info size={20} />}<span><strong>{selectedReference.label}</strong><small>{f.syntheticReference}</small></span></div>
+                <p>{selectedReference.body}</p>
+                <code>{selectedReference.value}</code>
+              </>
+            ) : <p>{f.endpointHint}</p>}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function OperationFrame({
   context,
   step,
@@ -1019,7 +1379,7 @@ function MintSurface({
   } else if (step.order === 14) {
     content = <section className="operation-summary"><h4><Fingerprint size={20} />{o.finalConfirmation}</h4><dl><div><dt>{o.batch}</dt><dd>2</dd></div><div><dt>{o.required}</dt><dd>2 Mint</dd></div><div><dt>{o.credential}</dt><dd>{draft.credentialPrepared ? o.credentialReady : o.prepareCredential}</dd></div></dl></section>;
   } else {
-    content = <><OperationArtworkCard context={context} status={receipt ? o.mintedStatus : c.preload} /><MintReceiptPanel context={context} receipt={receipt} /></>;
+    content = <><MintReceiptPanel context={context} receipt={receipt} /><ArtworkFinalStateSurface context={context} defaultTab="artwork" initialView="owner" /></>;
   }
 
   return <OperationFrame context={context} step={step} section="Mint">{content}</OperationFrame>;
@@ -1164,7 +1524,7 @@ function CertifySurface({
   } else if (step.order === 14) {
     content = <section className="operation-success"><BadgeCheck size={44} /><strong>{o.certifySuccess}</strong><p>{o.traceability}</p></section>;
   } else {
-    content = <><OperationArtworkCard context={context} status={certification ? c.certified : c.minted} /><CertifyReceiptPanel context={context} certification={certification} /></>;
+    content = <><CertifyReceiptPanel context={context} certification={certification} /><ArtworkFinalStateSurface context={context} defaultTab="certifications" initialView="owner" /></>;
   }
 
   return <OperationFrame context={context} step={step} section="Certify">{content}</OperationFrame>;

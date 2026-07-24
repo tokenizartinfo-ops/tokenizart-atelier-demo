@@ -23,6 +23,8 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Provides a stage-aware load simulation: own/managed mode, opening the form, main data, technical sheet, completed review and preloaded-artwork list.
 - Renders Mint as a full Atelier-like operation: artwork review, actor, single/batch mode, voucher requirement, synthetic credential, explicit confirmation, processing, result verification, controlled errors and receipt.
 - Renders Certify as a two-actor operation: request, certifier handoff, type, visibility, localized fact description, synthetic evidence, voucher/credential, explicit confirmation and provenance receipt.
+- Reproduces the final Atelier artwork detail after Mint and Certify: image navigation, native status icons, expandable technical sheet, NFT/IPFS/transaction endpoints and per-Certify evidence/documentation/receipt/detail controls.
+- Lets the user switch the same synthetic result between owner Administration and public Gallery. Owner-only Certify entries and hidden technical data stay out of the public projection.
 - Starts with the coherent public Manual fixture `Curvas`, by Jorge Norberto Leporace. Its complete technical sheet and explanatory copy are localized in Spanish, English and Portuguese.
 
 ## What it never does
@@ -97,6 +99,7 @@ Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `
 - Explicit request, acceptance, credential and final-confirmation gates.
 - Deterministic voucher consumption and idempotent completion.
 - Final receipt and provenance timeline in Spanish, English and Portuguese.
+- Final Administration view with the synthetic performer email, three read-only Certify endpoint icons plus details, and a privacy-aware Gallery projection.
 
 `Mint` includes:
 
@@ -108,6 +111,7 @@ Specialized actor/result verticals are available for `Certify`, `Mint`, `NFC`, `
 - Explicit review, voucher, synthetic-credential and final-confirmation gates.
 - Deterministic Gnosis, token, transaction, and IPFS references that are clearly marked as simulations.
 - Idempotent voucher consumption and a final digital-identity timeline in Spanish, English and Portuguese.
+- Final artwork view with native Mint/provenance status icons, four read-only NFT/IPFS/transaction endpoint controls and an expandable localized technical sheet.
 
 `NFC` includes:
 
@@ -170,8 +174,8 @@ npm run deploy:staging
 
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
-Validated staging Worker for the interactive Mint and Certify release:
-`53d683a5-793a-44be-9378-056b2fe4a41a`. Production was not changed.
+Validated staging Worker for the final Mint/Certify artwork-state release:
+`2d08bcc5-6eb3-4314-96b5-f11da2b8f64e`. Production was not changed.
 
 ## Source synchronization
 
@@ -192,4 +196,4 @@ The optional `display_asset_id` keeps the native PPTX-derived `asset_id` as the 
 
 `eval:human-journeys:staging` walks all twelve active flows from start to finish on desktop and mobile. The 2026-07-24 staging run covered 24 journeys and 326 rendered states with zero missing images or primary surfaces, step mismatches, adjacent duplicate explanations, typography failures, horizontal overflow, multi-action steps or step-count failures.
 
-The production build separates React, XState and Lucide into stable vendor chunks. The interactive Mint/Certify release produces a 456 kB main JavaScript chunk, 109 kB gzip. A prior staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.
+The production build separates React, XState and Lucide into stable vendor chunks. The final-state release produces a 470 kB main JavaScript chunk, 112 kB gzip. A prior staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.
