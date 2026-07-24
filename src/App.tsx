@@ -43,6 +43,20 @@ import { classifyVisualLayout, focusImageStyle, needsVisualDetail } from "./visu
 import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType, VoucherBalances as VoucherBalanceValues, VoucherProductId } from "./types";
 
 const SESSION_KEY = "tokenizart.demo-atelier.session.v1";
+export const DEMO_LANGUAGE_STORAGE_KEY = "tokenizart.preferred-language.v1";
+export const DEMO_REFERENCE_VIEW_STORAGE_KEY = "tokenizart.demo-atelier.reference-view.v1";
+
+type ReferenceView = "both" | "practice" | "reference";
+
+function supportedLanguage(value: string | null | undefined): Language | null {
+  const normalized = String(value || "").toLowerCase().split("-")[0];
+  return normalized === "es" || normalized === "en" || normalized === "pt" ? normalized : null;
+}
+
+function initialReferenceView(): ReferenceView {
+  const value = sessionStorage.getItem(DEMO_REFERENCE_VIEW_STORAGE_KEY);
+  return value === "practice" || value === "reference" ? value : "both";
+}
 
 const flowIcons: Record<string, typeof Blocks> = {
   onboarding: UserRoundPlus,
@@ -1296,11 +1310,19 @@ function ManualVisual({ step, language, onZoom }: { step: ManualStep; language: 
 
 function App() {
   const initial = useMemo(() => {
-    const restored = safeRestore(sessionStorage.getItem(SESSION_KEY)) ?? structuredClone(initialContext);
-    return contextFromSearch(window.location.search, restored);
+    const restored = safeRestore(sessionStorage.getItem(SESSION_KEY));
+    const base = restored ?? structuredClone(initialContext);
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("lang")) {
+      const preferred = supportedLanguage(localStorage.getItem(DEMO_LANGUAGE_STORAGE_KEY))
+        ?? (!restored ? supportedLanguage(navigator.language) : null);
+      if (preferred) base.language = preferred;
+    }
+    return contextFromSearch(window.location.search, base);
   }, []);
   const [snapshot, send] = useMachine(demoMachine, { input: initial });
   const [zoomed, setZoomed] = useState(false);
+  const [referenceView, setReferenceView] = useState<ReferenceView>(initialReferenceView);
   const [bridgeStatus, setBridgeStatus] = useState<"disconnected" | "connected" | "explanation_ready">("disconnected");
   const context = snapshot.context;
   const lang = context.language;
@@ -1350,8 +1372,13 @@ function App() {
 
   useEffect(() => {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(context));
+    localStorage.setItem(DEMO_LANGUAGE_STORAGE_KEY, lang);
     document.documentElement.lang = lang;
   }, [context, lang]);
+
+  useEffect(() => {
+    sessionStorage.setItem(DEMO_REFERENCE_VIEW_STORAGE_KEY, referenceView);
+  }, [referenceView]);
 
   useEffect(() => {
     if (!window.matchMedia("(max-width: 860px)").matches) return;
@@ -1460,14 +1487,31 @@ function App() {
           <section className={interactiveSurface ? "simulation-grid interactive-surface" : "simulation-grid"}>
             <div className="screen-zone">
               {interactiveSurface ? (
-                <>
-                  <AtelierSurface context={context} step={step} send={send} onPracticeSelection={handlePracticeSelection} />
-                  <details className="manual-reference">
-                    <summary>{lang === "en" ? "Compare with the verified manual" : lang === "pt" ? "Comparar com o manual verificado" : "Comparar con el manual verificado"}</summary>
-                    <ManualVisual step={step} language={lang} onZoom={() => setZoomed(true)} />
-                    <div className="visual-meta"><span>{t.source}: Manual Atelier 2026</span><span>{t.slide} {step.source_slide}</span><span>{step.step_id}</span></div>
-                  </details>
-                </>
+                <div className="atelier-comparison">
+                  <div className="atelier-view-controls" aria-label={t.verifiedAtelierView}>
+                    <span>{t.verifiedAtelierHint}</span>
+                    <div>
+                      <button type="button" className={referenceView === "practice" ? "active" : ""} onClick={() => setReferenceView("practice")}>{t.practiceView}</button>
+                      <button type="button" className={referenceView === "both" ? "active" : ""} onClick={() => setReferenceView("both")}>{t.bothViews}</button>
+                      <button type="button" className={referenceView === "reference" ? "active" : ""} onClick={() => setReferenceView("reference")}>{t.verifiedAtelierView}</button>
+                    </div>
+                  </div>
+                  <div className={`atelier-comparison-grid view-${referenceView}`}>
+                    {referenceView !== "reference" && (
+                      <section className="atelier-comparison-pane practice-pane" aria-label={t.practiceView}>
+                        <header><Blocks size={17} /><strong>{t.practiceView}</strong><span>{t.simulated}</span></header>
+                        <AtelierSurface context={context} step={step} send={send} onPracticeSelection={handlePracticeSelection} />
+                      </section>
+                    )}
+                    {referenceView !== "practice" && (
+                      <section className="atelier-comparison-pane reference-pane" aria-label={t.verifiedAtelierView}>
+                        <header><Eye size={17} /><strong>{t.verifiedAtelierView}</strong><span>{t.slide} {step.source_slide}</span></header>
+                        <ManualVisual step={step} language={lang} onZoom={() => setZoomed(true)} />
+                        <div className="visual-meta"><span>{t.source}: Manual Atelier 2026</span><span>{step.step_id}</span></div>
+                      </section>
+                    )}
+                  </div>
+                </div>
               ) : (
                 <>
                   <ManualVisual step={step} language={lang} onZoom={() => setZoomed(true)} />

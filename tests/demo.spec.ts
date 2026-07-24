@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 const localDemo = !process.env.DEMO_BASE_URL || /^https?:\/\/(127\.0\.0\.1|localhost)/.test(process.env.DEMO_BASE_URL);
 
 test("opens the dynamic artwork flow and keeps one coherent artwork across actions", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/?lang=es");
   await expect(page.getByRole("heading", { name: "Demo Atelier" })).toBeVisible();
   await expect(page.getByText("Nada de esto ejecuta acciones reales.")).toBeVisible();
 
@@ -124,7 +124,7 @@ test("adds focused navigation to a standard manual asset with multiple fields", 
     });
   }
   await page.goto("/?flow=carga_obra&step=carga-obra.choose-country-type&lang=es&scenario=first-artwork");
-  await page.getByText("Comparar con el manual verificado", { exact: true }).click();
+  await page.getByRole("button", { name: /As[ií] se ve en Atelier/ }).click();
   const manualVisual = page.locator(".manual-visual");
   await expect(manualVisual).toHaveAttribute("data-visual-layout", "standard");
   const controls = manualVisual.locator(".visual-view-controls");

@@ -709,9 +709,23 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .surface-control-note > span { display: grid; gap: 3px; }
 .surface-control-note strong { font-size: 13px; }
 .surface-control-note small { color: var(--muted); font-size: 11px; line-height: 1.45; }
-.manual-reference { border-top: 1px solid var(--line); background: white; }
-.manual-reference > summary { min-height: 44px; padding: 11px 14px; cursor: pointer; color: #40505c; font-size: 12px; font-weight: 750; }
-.manual-reference .manual-visual { min-height: 420px; border-top: 1px solid var(--line); }
+.atelier-comparison { display: grid; min-width: 0; background: #eef2f4; }
+.atelier-view-controls { min-height: 58px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line); background: white; }
+.atelier-view-controls > span { max-width: 640px; color: var(--muted); font-size: 11px; line-height: 1.4; }
+.atelier-view-controls > div { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+.atelier-view-controls button { min-height: 34px; padding: 0 10px; border: 1px solid #c7d5da; background: white; color: #344d58; font-size: 11px; font-weight: 720; }
+.atelier-view-controls button.active { border-color: var(--aqua); background: var(--aqua-soft); color: var(--aqua-dark); }
+.atelier-comparison-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(420px, .92fr); align-items: start; min-width: 0; }
+.atelier-comparison-grid.view-practice, .atelier-comparison-grid.view-reference { grid-template-columns: minmax(0, 1fr); }
+.atelier-comparison-pane { min-width: 0; overflow: hidden; background: white; }
+.atelier-comparison-pane + .atelier-comparison-pane { border-left: 1px solid var(--line); }
+.atelier-comparison-pane > header { min-height: 42px; padding: 8px 12px; display: flex; align-items: center; gap: 7px; border-bottom: 1px solid var(--line); background: #f9fbfc; color: #314854; }
+.atelier-comparison-pane > header strong { font-size: 12px; }
+.atelier-comparison-pane > header span { margin-left: auto; color: var(--muted); font-size: 10px; font-weight: 700; }
+.atelier-comparison-pane .atelier-surface { min-height: 610px; }
+.atelier-comparison-pane .manual-visual { min-height: 610px; }
+.atelier-comparison-pane .visual-stage { min-height: 566px; }
+.atelier-comparison-pane .visual-meta { min-height: 42px; }
 
 .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(18, 27, 34, .92); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: 18px; }
 .lightbox > button { justify-self: end; background: transparent; color: white; border-color: #71808a; }
@@ -723,6 +737,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .workspace { grid-template-columns: 220px minmax(0, 1fr); }
   .simulation-grid { grid-template-columns: minmax(0, 1.15fr) minmax(340px, .85fr); }
   .simulation-grid.interactive-surface { grid-template-columns: minmax(0, 1fr); }
+  .atelier-comparison-grid { grid-template-columns: minmax(0, 1fr); }
+  .atelier-comparison-pane + .atelier-comparison-pane { border-left: 0; border-top: 1px solid var(--line); }
+  .atelier-comparison-pane .manual-visual { min-height: 520px; }
+  .atelier-comparison-pane .visual-stage { min-height: 476px; }
   .atelier-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -763,6 +781,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .step-navigation.compact { width: 100%; }
   .step-navigation.compact button { width: 100%; justify-content: center; }
   .visual-stage { min-height: 270px; }
+  .atelier-view-controls { align-items: stretch; flex-direction: column; }
+  .atelier-view-controls > div { display: grid; grid-template-columns: 1fr; }
+  .atelier-view-controls button { width: 100%; }
+  .atelier-comparison-pane .manual-visual { min-height: 350px; }
+  .atelier-comparison-pane .visual-stage { min-height: 306px; }
   .practice-zone { padding: 16px; }
   .fixture-selector { grid-template-columns: 1fr; }
   .practice-comparison, .mode-selector { grid-template-columns: 1fr; }

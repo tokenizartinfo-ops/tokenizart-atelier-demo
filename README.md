@@ -20,6 +20,8 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Uses native action icons from Manual Atelier 2026 and changes the practice controls with the current step instead of repeating one form throughout the flow.
 - Applies that focused practice pattern to the complete 163-step visual contract, including navigation, public Gallery traceability and the six-action map, with at most one contextual decision cluster per step.
 - Uses one versioned `DemoArtwork` state as the source of truth across load, review, Mint, Certify, NFC, privacy, Gallery and transfer. Titles, authors, images and technical data cannot silently switch between flows.
+- Shares `tokenizart.preferred-language.v1` with Companion and Copilot so the Demo opens in the same Spanish, English or Portuguese preference.
+- Places the deterministic practice screen beside the verified Manual-derived Atelier reference on wide screens, with explicit controls to show the simulation, the real reference or both.
 - Provides a stage-aware load simulation: own/managed mode, opening the form, main data, technical sheet, completed review and preloaded-artwork list.
 - Renders Mint as a full Atelier-like operation: artwork review, actor, single/batch mode, voucher requirement, synthetic credential, explicit confirmation, processing, result verification, controlled errors and receipt.
 - Renders Certify as a two-actor operation: request, certifier handoff, type, visibility, localized fact description, synthetic evidence, voucher/credential, explicit confirmation and provenance receipt.
@@ -51,7 +53,9 @@ Allowlisted synthetic IDs -> exact-origin postMessage -> Companion A2UI bridge
 The verified Manual remains the auditable reference for sequence and meaning,
 but it is not used as a static substitute for the product. The primary
 practice surface renders editable React controls from the current
-`DemoArtwork` state. Manual images stay collapsed as an optional comparison.
+`DemoArtwork` state. The same step also exposes a verified Manual-derived
+Atelier view. On wide screens both can be compared side by side; on compact
+screens they stack and the user can show either view to reduce density.
 
 The first fixture deliberately uses one artwork everywhere:
 
