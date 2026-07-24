@@ -49,6 +49,7 @@ export const initialContext: DemoContext = {
       actorId: "owner_artist",
       mode: "single",
       reviewConfirmed: false,
+      credentialPrepared: false,
       signatureConfirmed: false,
     },
     mintReceipts: [],
@@ -87,6 +88,17 @@ export const initialContext: DemoContext = {
       actorId: "expert",
       typeId: "authenticity",
       visibility: "public",
+      requestConfirmed: false,
+      certifierAccepted: false,
+      description: {
+        es: "Informe de autenticidad de práctica referido a la obra Curvas.",
+        en: "Practice authenticity report concerning the artwork Curvas.",
+        pt: "Relatório de autenticidade de prática referente à obra Curvas.",
+      },
+      evidenceAttached: false,
+      evidenceFileName: "informe-autenticidad-demo.pdf",
+      credentialPrepared: false,
+      signatureConfirmed: false,
     },
     certifications: [],
     vouchers: { mint: 2, certify: 2, nfc: 1 },
@@ -102,12 +114,24 @@ export type DemoEvent =
   | { type: "SET_FIXTURE"; fixtureId: string }
   | { type: "UPDATE_ARTWORK"; patch: Partial<DemoArtwork> }
   | { type: "SET_LOAD_DRAFT"; mode?: "own" | "managed"; delegatingOwnerDisplayName?: string }
-  | { type: "SET_MINT_DRAFT"; actorId?: MintActorId; mode?: MintMode; reviewConfirmed?: boolean; signatureConfirmed?: boolean }
+  | { type: "SET_MINT_DRAFT"; actorId?: MintActorId; mode?: MintMode; reviewConfirmed?: boolean; credentialPrepared?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_NFC_DRAFT"; actorId?: NfcActorId; tagState?: NfcTagState; scanConfirmed?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_TRANSFER_DRAFT"; destinationType?: TransferDestinationType; recipientVerified?: boolean; externalWarningAccepted?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_PRIVACY_DRAFT"; galleryVisible?: boolean; technicalSheetVisible?: boolean; certifyId?: PrivacyCertifyId; certifyVisible?: boolean; previewAudience?: PrivacyPreviewAudience; ownerConfirmed?: boolean }
   | { type: "SET_VOUCHER_DRAFT"; productId?: VoucherProductId; creditConfirmed?: boolean }
-  | { type: "SET_CERTIFY_DRAFT"; actorId?: CertifyActorId; typeId?: CertifyTypeId; visibility?: CertifyVisibility }
+  | {
+    type: "SET_CERTIFY_DRAFT";
+    actorId?: CertifyActorId;
+    typeId?: CertifyTypeId;
+    visibility?: CertifyVisibility;
+    requestConfirmed?: boolean;
+    certifierAccepted?: boolean;
+    description?: Record<Language, string>;
+    evidenceAttached?: boolean;
+    evidenceFileName?: string;
+    credentialPrepared?: boolean;
+    signatureConfirmed?: boolean;
+  }
   | { type: "INJECT_ERROR"; code: string }
   | { type: "RESOLVE_ERROR" }
   | { type: "COMPLETE_STEP" }
@@ -142,8 +166,15 @@ function completionError(context: DemoContext): string | null {
   }
   if (flow === "mint" && !world.mintDraft.reviewConfirmed) return "mint_review_required";
   if (flow === "mint" && world.vouchers.mint < mintVoucherRequirement(context)) return "missing_voucher";
+  if (flow === "mint" && !world.mintDraft.credentialPrepared) return "mint_credential_required";
   if (flow === "mint" && !world.mintDraft.signatureConfirmed) return "mint_confirmation_required";
+  if (flow === "certify" && !world.certifyDraft.requestConfirmed) return "certify_request_required";
+  if (flow === "certify" && !world.certifyDraft.certifierAccepted) return "certify_acceptance_required";
+  if (flow === "certify" && !world.certifyDraft.description[context.language]?.trim()) return "certify_description_required";
+  if (flow === "certify" && !world.certifyDraft.evidenceAttached) return "certify_evidence_required";
   if (flow === "certify" && world.vouchers.certify <= 0) return "missing_voucher";
+  if (flow === "certify" && !world.certifyDraft.credentialPrepared) return "certify_credential_required";
+  if (flow === "certify" && !world.certifyDraft.signatureConfirmed) return "certify_confirmation_required";
   if (flow === "chip" && world.nfcDraft.tagState === "not_tokenizart") return "nfc_not_tokenizart";
   if (flow === "chip" && world.nfcDraft.tagState === "linked_artwork") return "nfc_already_linked";
   if (flow === "chip" && !world.nfcDraft.scanConfirmed) return "nfc_scan_required";
@@ -197,10 +228,16 @@ function completeFlow(context: DemoContext): DemoContext {
     world.vouchers.certify -= 1;
     const certification: DemoCertification = {
       certificationId: `CERT-DEMO-${String(world.certifications.length + 1).padStart(3, "0")}`,
+      requestRef: `REQUEST-DEMO-${String(world.certifications.length + 1).padStart(3, "0")}`,
       actorId: world.certifyDraft.actorId,
       typeId: world.certifyDraft.typeId,
       visibility: world.certifyDraft.visibility,
+      description: world.certifyDraft.description[context.language],
+      language: context.language,
+      evidenceFileName: world.certifyDraft.evidenceFileName,
       evidenceAssetId: `evidence-${world.certifyDraft.typeId}-demo`,
+      vouchersConsumed: 1,
+      transactionRef: `TX-DEMO-CERTIFY-${String(world.certifications.length + 1).padStart(3, "0")}`,
       completedAt: "2026-07-17T12:00:00.000Z",
     };
     world.certifications = [...world.certifications, certification];
@@ -351,6 +388,7 @@ export const demoMachine = setup({
                 actorId: event.actorId ?? context.world.mintDraft.actorId,
                 mode: event.mode ?? context.world.mintDraft.mode,
                 reviewConfirmed: event.reviewConfirmed ?? context.world.mintDraft.reviewConfirmed,
+                credentialPrepared: event.credentialPrepared ?? context.world.mintDraft.credentialPrepared,
                 signatureConfirmed: event.signatureConfirmed ?? context.world.mintDraft.signatureConfirmed,
               },
             },
@@ -422,6 +460,13 @@ export const demoMachine = setup({
                 actorId: event.actorId ?? context.world.certifyDraft.actorId,
                 typeId: event.typeId ?? context.world.certifyDraft.typeId,
                 visibility: event.visibility ?? context.world.certifyDraft.visibility,
+                requestConfirmed: event.requestConfirmed ?? context.world.certifyDraft.requestConfirmed,
+                certifierAccepted: event.certifierAccepted ?? context.world.certifyDraft.certifierAccepted,
+                description: event.description ?? context.world.certifyDraft.description,
+                evidenceAttached: event.evidenceAttached ?? context.world.certifyDraft.evidenceAttached,
+                evidenceFileName: event.evidenceFileName ?? context.world.certifyDraft.evidenceFileName,
+                credentialPrepared: event.credentialPrepared ?? context.world.certifyDraft.credentialPrepared,
+                signatureConfirmed: event.signatureConfirmed ?? context.world.certifyDraft.signatureConfirmed,
               },
             },
           })),
@@ -523,6 +568,7 @@ function normalizeContext(context: DemoContext): DemoContext {
     actorId: mintActorIds.includes(mintDraft?.actorId) ? mintDraft.actorId : "owner_artist",
     mode: mintModes.includes(mintDraft?.mode) ? mintDraft.mode : "single",
     reviewConfirmed: mintDraft?.reviewConfirmed === true,
+    credentialPrepared: mintDraft?.credentialPrepared === true,
     signatureConfirmed: mintDraft?.signatureConfirmed === true,
   };
   next.world.mintReceipts = Array.isArray(next.world.mintReceipts)
@@ -607,6 +653,18 @@ function normalizeContext(context: DemoContext): DemoContext {
     actorId: actorIds.includes(draft?.actorId) ? draft.actorId : "expert",
     typeId: typeIds.includes(draft?.typeId) ? draft.typeId : "authenticity",
     visibility: visibilities.includes(draft?.visibility) ? draft.visibility : "public",
+    requestConfirmed: draft?.requestConfirmed === true,
+    certifierAccepted: draft?.certifierAccepted === true,
+    description: {
+      ...initialContext.world.certifyDraft.description,
+      ...(draft?.description ?? {}),
+    },
+    evidenceAttached: draft?.evidenceAttached === true,
+    evidenceFileName: typeof draft?.evidenceFileName === "string" && draft.evidenceFileName
+      ? draft.evidenceFileName
+      : initialContext.world.certifyDraft.evidenceFileName,
+    credentialPrepared: draft?.credentialPrepared === true,
+    signatureConfirmed: draft?.signatureConfirmed === true,
   };
   next.world.certifications = Array.isArray(next.world.certifications)
     ? next.world.certifications.filter((item) => (
@@ -614,6 +672,9 @@ function normalizeContext(context: DemoContext): DemoContext {
       && actorIds.includes(item.actorId)
       && typeIds.includes(item.typeId)
       && visibilities.includes(item.visibility)
+      && typeof item.description === "string"
+      && typeof item.evidenceFileName === "string"
+      && item.vouchersConsumed === 1
     ))
     : [];
   return next;

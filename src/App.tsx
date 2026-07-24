@@ -143,6 +143,41 @@ const errors: Record<string, Record<Language, { title: string; body: string }>> 
     en: { title: "Simulated confirmation is missing", body: "Confirm the simulated wallet signature. This is a learning control: do not enter a real key or password." },
     pt: { title: "Falta a confirmação simulada", body: "Confirme a assinatura simulada da wallet. É um controle didático: não insira chave nem senha real." },
   },
+  mint_credential_required: {
+    es: { title: "Prepara la credencial sintética", body: "Usa el control de práctica dentro de la pantalla Mint. La demo no solicita ni conserva una clave real." },
+    en: { title: "Prepare the synthetic credential", body: "Use the practice control inside the Mint screen. The demo never requests or stores a real password." },
+    pt: { title: "Prepare a credencial sintética", body: "Use o controle de prática na tela Mint. A demo não solicita nem armazena uma senha real." },
+  },
+  certify_request_required: {
+    es: { title: "Falta confirmar la solicitud", body: "Revisa obra, tipo y certificador antes de simular el envío de la solicitud Certify." },
+    en: { title: "The request is not confirmed", body: "Review the artwork, type, and certifier before simulating the Certify request submission." },
+    pt: { title: "Falta confirmar a solicitação", body: "Revise obra, tipo e certificador antes de simular o envio da solicitação Certify." },
+  },
+  certify_acceptance_required: {
+    es: { title: "El certificador aún no aceptó", body: "En Certificaciones recibidas, confirma que el actor elegido acepta trabajar sobre la solicitud." },
+    en: { title: "The certifier has not accepted yet", body: "In Received certifications, confirm that the selected actor accepts the request." },
+    pt: { title: "O certificador ainda não aceitou", body: "Em Certificações recebidas, confirme que o ator selecionado aceita a solicitação." },
+  },
+  certify_description_required: {
+    es: { title: "Describe el hecho certificado", body: "Explica de manera concreta qué hecho respalda el Certify y cuál es su alcance." },
+    en: { title: "Describe the certified fact", body: "Explain clearly which fact Certify supports and its scope." },
+    pt: { title: "Descreva o fato certificado", body: "Explique claramente qual fato o Certify respalda e qual é o seu alcance." },
+  },
+  certify_evidence_required: {
+    es: { title: "Falta adjuntar evidencia", body: "Agrega el archivo sintético de práctica que respalda la descripción antes de confirmar Certify." },
+    en: { title: "Evidence is missing", body: "Attach the synthetic practice file supporting the description before confirming Certify." },
+    pt: { title: "Falta anexar evidência", body: "Anexe o arquivo sintético de prática que respalda a descrição antes de confirmar Certify." },
+  },
+  certify_credential_required: {
+    es: { title: "Prepara la credencial del certificador", body: "Usa únicamente la credencial sintética de práctica. El actor que ejecuta Certify es quien firma y consume su voucher." },
+    en: { title: "Prepare the certifier credential", body: "Use only the synthetic practice credential. The actor performing Certify signs and consumes their voucher." },
+    pt: { title: "Prepare a credencial do certificador", body: "Use somente a credencial sintética de prática. O ator que executa Certify assina e consome seu voucher." },
+  },
+  certify_confirmation_required: {
+    es: { title: "Falta la confirmación final de Certify", body: "Confirma el registro sintético después de revisar descripción, evidencia, actor y voucher." },
+    en: { title: "Final Certify confirmation is missing", body: "Confirm the synthetic registration after reviewing description, evidence, actor, and voucher." },
+    pt: { title: "Falta a confirmação final do Certify", body: "Confirme o registro sintético depois de revisar descrição, evidência, ator e voucher." },
+  },
   missing_required_field: {
     es: { title: "Falta un dato requerido", body: "La demo marca el campo sin perder lo que ya completaste. Puedes volver, corregir y continuar." },
     en: { title: "A required field is missing", body: "The demo marks the field without losing your progress. Go back, fix it, and continue." },
@@ -1214,6 +1249,7 @@ function App() {
   const activeError = context.errorCode ? errors[context.errorCode]?.[lang] : null;
   const flowCompleted = context.world.events.includes(`${context.flow}.completed`);
   const interactiveSurface = usesInteractiveAtelierSurface(context.flow);
+  const surfaceOwnsControls = context.flow === "mint" || context.flow === "certify";
   const bridgeOrigin = useMemo(() => resolveDemoBridgeOrigin(window.location.search, document.referrer), []);
   const bridgeTarget = bridgeOrigin && window.parent !== window ? window.parent : null;
   const defaultPracticeState = useMemo(() => practiceStateForContext(context, step.step_id), [
@@ -1358,7 +1394,7 @@ function App() {
             <div className="screen-zone">
               {interactiveSurface ? (
                 <>
-                  <AtelierSurface context={context} step={step} send={send} />
+                  <AtelierSurface context={context} step={step} send={send} onPracticeSelection={handlePracticeSelection} />
                   <details className="manual-reference">
                     <summary>{lang === "en" ? "Compare with the verified manual" : lang === "pt" ? "Comparar com o manual verificado" : "Comparar con el manual verificado"}</summary>
                     <ManualVisual step={step} language={lang} onZoom={() => setZoomed(true)} />
@@ -1375,9 +1411,19 @@ function App() {
             <div className="practice-zone" data-flow={context.flow}>
               <div className="practice-title"><FlowIconMark flowId={context.flow} size={22} /><span className="practice-heading"><strong>{t.demoData}</strong><small>{flowLabels[context.flow][lang]}</small></span><span className="simulated-badge">{t.simulated}</span></div>
               <div className="practice-step-focus"><span>{step.order}</span><div><small>{t.currentStep}</small><strong>{step.copy[lang].title}</strong></div></div>
-              <PracticeFields context={context} step={step} send={send} onPracticeSelection={handlePracticeSelection} />
-              <MintCompletion context={context} />
-              <CertifyCompletion context={context} />
+              {surfaceOwnsControls ? (
+                <div className="surface-control-note">
+                  <ShieldCheck size={20} />
+                  <span>
+                    <strong>{lang === "en" ? "Practice controls are inside Atelier" : lang === "pt" ? "Os controles de prática estão dentro do Atelier" : "Los controles de práctica están dentro de Atelier"}</strong>
+                    <small>{lang === "en" ? "Use the central simulated screen; this panel only reports blocks or errors." : lang === "pt" ? "Use a tela simulada central; este painel apenas informa bloqueios ou erros." : "Usa la pantalla simulada central; este panel solo informa bloqueos o errores."}</small>
+                  </span>
+                </div>
+              ) : (
+                <PracticeFields context={context} step={step} send={send} onPracticeSelection={handlePracticeSelection} />
+              )}
+              {!surfaceOwnsControls && <MintCompletion context={context} />}
+              {!surfaceOwnsControls && <CertifyCompletion context={context} />}
               <NfcCompletion context={context} />
               <TransferCompletion context={context} />
               <PrivacyCompletion context={context} />

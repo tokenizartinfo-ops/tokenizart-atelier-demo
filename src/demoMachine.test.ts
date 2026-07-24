@@ -114,6 +114,7 @@ describe("Demo Atelier contracts", () => {
     context.world.walletStatus = "backed_up";
     context.world.artworkStatus = "loaded";
     context.world.mintDraft.reviewConfirmed = true;
+    context.world.mintDraft.credentialPrepared = true;
     context.world.mintDraft.signatureConfirmed = true;
     const actor = createActor(demoMachine, { input: context }).start();
     actor.send({ type: "COMPLETE_STEP" });
@@ -141,6 +142,7 @@ describe("Demo Atelier contracts", () => {
     context.world.walletStatus = "backed_up";
     context.world.artworkStatus = "loaded";
     context.world.mintDraft.reviewConfirmed = true;
+    context.world.mintDraft.credentialPrepared = true;
     context.world.mintDraft.signatureConfirmed = true;
     const actor = createActor(demoMachine, { input: context }).start();
     actor.send({ type: "COMPLETE_STEP" });
@@ -162,6 +164,9 @@ describe("Demo Atelier contracts", () => {
     expect(actor.getSnapshot().context.errorCode).toBe("mint_review_required");
     actor.send({ type: "SET_MINT_DRAFT", reviewConfirmed: true });
     actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("mint_credential_required");
+    actor.send({ type: "SET_MINT_DRAFT", credentialPrepared: true });
+    actor.send({ type: "COMPLETE_STEP" });
     expect(actor.getSnapshot().context.errorCode).toBe("mint_confirmation_required");
     expect(actor.getSnapshot().context.world.artworkStatus).toBe("loaded");
   });
@@ -177,6 +182,7 @@ describe("Demo Atelier contracts", () => {
       actorId: "authorized_manager",
       mode: "batch",
       reviewConfirmed: true,
+      credentialPrepared: true,
       signatureConfirmed: true,
     };
     const actor = createActor(demoMachine, { input: context }).start();
@@ -211,6 +217,7 @@ describe("Demo Atelier contracts", () => {
       actorId: "owner_artist",
       mode: "batch",
       reviewConfirmed: true,
+      credentialPrepared: true,
       signatureConfirmed: true,
     };
     const actor = createActor(demoMachine, { input: context }).start();
@@ -242,6 +249,7 @@ describe("Demo Atelier contracts", () => {
       actorId: "owner_artist",
       mode: "single",
       reviewConfirmed: false,
+      credentialPrepared: false,
       signatureConfirmed: false,
     });
     expect(restored?.world.mintReceipts).toEqual([]);
@@ -270,7 +278,22 @@ describe("Demo Atelier contracts", () => {
     expect(restored?.world.privacyReceipts).toEqual([]);
     expect(restored?.world.voucherDraft).toEqual({ productId: "starter_kit", creditConfirmed: false });
     expect(restored?.world.voucherReceipts).toEqual([]);
-    expect(restored?.world.certifyDraft).toEqual({ actorId: "expert", typeId: "authenticity", visibility: "public" });
+    expect(restored?.world.certifyDraft).toEqual({
+      actorId: "expert",
+      typeId: "authenticity",
+      visibility: "public",
+      requestConfirmed: false,
+      certifierAccepted: false,
+      description: {
+        es: "Informe de autenticidad de práctica referido a la obra Curvas.",
+        en: "Practice authenticity report concerning the artwork Curvas.",
+        pt: "Relatório de autenticidade de prática referente à obra Curvas.",
+      },
+      evidenceAttached: false,
+      evidenceFileName: "informe-autenticidad-demo.pdf",
+      credentialPrepared: false,
+      signatureConfirmed: false,
+    });
     expect(restored?.world.certifications).toEqual([]);
   });
 
@@ -285,6 +308,17 @@ describe("Demo Atelier contracts", () => {
       actorId: "gallery_museum",
       typeId: "exhibition",
       visibility: "owner",
+      requestConfirmed: true,
+      certifierAccepted: true,
+      description: {
+        es: "La obra Curvas participó en la exhibición sintética de práctica.",
+        en: "The artwork Curvas participated in the synthetic practice exhibition.",
+        pt: "A obra Curvas participou da exposição sintética de prática.",
+      },
+      evidenceAttached: true,
+      evidenceFileName: "constancia-exhibicion-demo.pdf",
+      credentialPrepared: true,
+      signatureConfirmed: true,
     };
     const actor = createActor(demoMachine, { input: context }).start();
     actor.send({ type: "COMPLETE_STEP" });
@@ -299,8 +333,39 @@ describe("Demo Atelier contracts", () => {
       actorId: "gallery_museum",
       typeId: "exhibition",
       visibility: "owner",
+      description: "La obra Curvas participó en la exhibición sintética de práctica.",
+      evidenceFileName: "constancia-exhibicion-demo.pdf",
       evidenceAssetId: "evidence-exhibition-demo",
+      vouchersConsumed: 1,
+      transactionRef: "TX-DEMO-CERTIFY-001",
     })]);
+  });
+
+  it("requires the complete two-actor Certify sequence before creating provenance", () => {
+    const context = structuredClone(initialContext);
+    context.flow = "certify";
+    context.stepIndex = manualContract.flows.certify.steps.length - 1;
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.artworkStatus = "minted";
+    const actor = createActor(demoMachine, { input: context }).start();
+
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("certify_request_required");
+    actor.send({ type: "SET_CERTIFY_DRAFT", requestConfirmed: true });
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("certify_acceptance_required");
+    actor.send({ type: "SET_CERTIFY_DRAFT", certifierAccepted: true, evidenceAttached: true });
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("certify_credential_required");
+    actor.send({ type: "SET_CERTIFY_DRAFT", credentialPrepared: true });
+    actor.send({ type: "COMPLETE_STEP" });
+    expect(actor.getSnapshot().context.errorCode).toBe("certify_confirmation_required");
+    actor.send({ type: "SET_CERTIFY_DRAFT", signatureConfirmed: true });
+    actor.send({ type: "COMPLETE_STEP" });
+
+    expect(actor.getSnapshot().context.world.artworkStatus).toBe("certified");
+    expect(actor.getSnapshot().context.world.certifications).toHaveLength(1);
   });
 
   it("requires a mobile scan and simulated signature before NFC linking", () => {

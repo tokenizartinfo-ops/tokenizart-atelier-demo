@@ -19,8 +19,8 @@ test("opens the dynamic artwork flow and keeps one coherent artwork across actio
 
   await page.getByLabel("Nombre de la obra").fill("Curvas del Sur");
   await page.getByRole("button", { name: /^Mint/ }).click();
-  await expect(page.locator(".atelier-operation-copy").getByRole("heading", { name: "Curvas del Sur" })).toBeVisible();
-  await expect(page.locator(".atelier-operation-copy").getByText("Jorge Norberto Leporace", { exact: true })).toBeVisible();
+  await expect(page.locator(".operation-artwork-card").getByText("Curvas del Sur", { exact: true })).toBeVisible();
+  await expect(page.locator(".operation-artwork-card").getByText("Jorge Norberto Leporace", { exact: true })).toBeVisible();
 });
 
 test("renders the complete technical sheet in the selected language", async ({ page }) => {
@@ -90,7 +90,7 @@ test("renders onboarding, Smart Wallet and voucher phases with decision states",
 
 test("opens an allowlisted deep link from Companion", async ({ page }) => {
   await page.goto("/?flow=certify&step=certify.attach-evidence&lang=en&scenario=first-artwork&fixture=painting-river-001");
-  await expect(page.getByRole("heading", { name: "Attach relevant evidence" })).toBeVisible();
+  await expect(page.locator(".simulation-header").getByRole("heading", { name: "Attach relevant evidence" })).toBeVisible();
   await expect(page.getByText("11 / 15")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Atelier Demo" })).toBeVisible();
 });
@@ -153,7 +153,22 @@ test("configures a synthetic Certify actor and renders the completed provenance"
         artworkType: "painting",
         galleryVisible: false,
         certifyVisible: true,
-        certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
+        certifyDraft: {
+          actorId: "expert",
+          typeId: "authenticity",
+          visibility: "public",
+          requestConfirmed: false,
+          certifierAccepted: false,
+          description: {
+            es: "Informe de autenticidad de práctica referido a la obra Curvas.",
+            en: "Practice authenticity report concerning the artwork Curvas.",
+            pt: "Relatório de autenticidade de prática referente à obra Curvas.",
+          },
+          evidenceAttached: false,
+          evidenceFileName: "informe-autenticidad-demo.pdf",
+          credentialPrepared: false,
+          signatureConfirmed: false,
+        },
         certifications: [],
         vouchers: { mint: 1, certify: 2, nfc: 1 },
         events: ["onboarding.completed", "account_wallet.completed", "carga_obra.completed", "mint.completed"],
@@ -162,21 +177,35 @@ test("configures a synthetic Certify actor and renders the completed provenance"
   });
 
   await page.goto("/?flow=certify&step=certify.choose-certifier&lang=es&scenario=first-artwork");
-  await page.getByRole("button", { name: /Museo Demo/ }).click();
+  await page.getByRole("button", { name: /Galería \/ museo/ }).click();
   await page.getByRole("button", { name: "Siguiente", exact: true }).click();
   await page.getByLabel("¿Qué hecho respalda?").selectOption("exhibition");
   await page.getByRole("button", { name: /Solo owner/ }).click();
-  for (let index = 0; index < 11; index += 1) {
-    await page.getByRole("button", { name: "Siguiente", exact: true }).click();
-  }
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByLabel("Confirmo el envío de esta solicitud sintética.").check();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByLabel("El certificador acepta trabajar sobre esta solicitud.").check();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByLabel("Descripción del hecho certificado").fill("La obra Curvas participó en la exhibición sintética de práctica.");
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByRole("button", { name: "Adjuntar evidencia sintética" }).click();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByRole("button", { name: "Usar credencial sintética de práctica" }).click();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByLabel("Confirmo el registro Certify simulado.").check();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
+  await page.getByRole("button", { name: "Siguiente", exact: true }).click();
   await page.getByRole("button", { name: /Completar paso/ }).click();
 
-  const result = page.locator(".completion-result");
+  const result = page.locator(".certify-result");
   await expect(result.getByText("Certify agregado a la historia de la obra")).toBeVisible();
-  await expect(result.getByText("Museo Demo", { exact: true })).toBeVisible();
+  await expect(result.getByText("Galería / museo", { exact: true })).toBeVisible();
   await expect(result.getByText("Exhibición", { exact: true })).toBeVisible();
   await expect(result.getByText("CERT-DEMO-001", { exact: true })).toBeVisible();
-  await expect(result.getByText("Resultado didáctico: no se escribió en blockchain ni IPFS.")).toBeVisible();
+  await expect(result.getByText("Simulación educativa: no se escribieron datos en Atelier, blockchain ni IPFS.")).toBeVisible();
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("certify-result.png"), fullPage: true });
 });
@@ -199,7 +228,7 @@ test("completes a synthetic batch Mint with deterministic references", async ({ 
         artworkType: "painting",
         galleryVisible: false,
         certifyVisible: true,
-        mintDraft: { actorId: "authorized_manager", mode: "batch", reviewConfirmed: true, signatureConfirmed: true },
+        mintDraft: { actorId: "authorized_manager", mode: "batch", reviewConfirmed: true, credentialPrepared: true, signatureConfirmed: true },
         mintReceipts: [],
         certifyDraft: { actorId: "expert", typeId: "authenticity", visibility: "public" },
         certifications: [],
@@ -213,9 +242,9 @@ test("completes a synthetic batch Mint with deterministic references", async ({ 
   await page.getByRole("button", { name: /Completar paso/ }).click();
 
   const result = page.locator(".mint-result");
-  await expect(result.getByText("Identidad digital simulada creada")).toBeVisible();
-  await expect(result.getByText("Gestor Demo autorizado", { exact: true })).toBeVisible();
-  await expect(result.getByText("Lote de 2 obras", { exact: true })).toBeVisible();
+  await expect(result.getByText("Mint simulado finalizado")).toBeVisible();
+  await expect(result.getByText("Gestor autorizado", { exact: true })).toBeVisible();
+  await expect(result.getByText("Lote de dos obras", { exact: true })).toBeVisible();
   await expect(result.getByText("TOKEN-DEMO-001", { exact: true })).toBeVisible();
   await expect(result.getByText("TX-DEMO-MINT-001", { exact: true })).toBeVisible();
   await expect(result.getByText("IPFS-DEMO-001", { exact: true })).toBeVisible();
@@ -298,8 +327,8 @@ test("keeps every adaptive practice surface focused on the current microstep", a
 
   const cases = [
     { url: "/?flow=account_wallet&step=account-wallet.distinguish-access-wallet&lang=es", text: "Acceso a Atelier", actions: 0 },
-    { url: "/?flow=mint&step=mint.review-voucher&lang=es", text: "Voucher Mint disponible", actions: 0 },
-    { url: "/?flow=mint&step=mint.batch-select-artworks&lang=es", text: "Modalidad", actions: 1 },
+    { url: "/?flow=mint&step=mint.review-voucher&lang=es", text: "Disponibles", actions: 0 },
+    { url: "/?flow=mint&step=mint.batch-select-artworks&lang=es", text: "Obras seleccionadas para el lote", actions: 0 },
     { url: "/?flow=chip&step=chip.scan-tag&lang=es", text: "Ready to link", actions: 1 },
     { url: "/?flow=chip&step=chip.review-wallet-voucher&lang=es", text: "Voucher NFC disponible", actions: 0 },
     { url: "/?flow=transferencia&step=transferencia.enter-recipient-email&lang=es", text: "Destino de la transferencia", actions: 1 },

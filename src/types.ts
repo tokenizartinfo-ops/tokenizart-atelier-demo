@@ -117,10 +117,16 @@ export interface ManualContract {
 
 export interface DemoCertification {
   certificationId: string;
+  requestRef: string;
   actorId: CertifyActorId;
   typeId: CertifyTypeId;
   visibility: CertifyVisibility;
+  description: string;
+  language: Language;
+  evidenceFileName: string;
   evidenceAssetId: string;
+  vouchersConsumed: 1;
+  transactionRef: string;
   completedAt: string;
 }
 
@@ -200,6 +206,7 @@ export interface DemoWorld {
     actorId: MintActorId;
     mode: MintMode;
     reviewConfirmed: boolean;
+    credentialPrepared: boolean;
     signatureConfirmed: boolean;
   };
   mintReceipts: DemoMintReceipt[];
@@ -234,6 +241,13 @@ export interface DemoWorld {
     actorId: CertifyActorId;
     typeId: CertifyTypeId;
     visibility: CertifyVisibility;
+    requestConfirmed: boolean;
+    certifierAccepted: boolean;
+    description: Record<Language, string>;
+    evidenceAttached: boolean;
+    evidenceFileName: string;
+    credentialPrepared: boolean;
+    signatureConfirmed: boolean;
   };
   certifications: DemoCertification[];
   vouchers: VoucherBalances;
