@@ -23,7 +23,7 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Provides a stage-aware load simulation: own/managed mode, opening the form, main data, technical sheet, completed review and preloaded-artwork list.
 - Renders Mint as a full Atelier-like operation: artwork review, actor, single/batch mode, voucher requirement, synthetic credential, explicit confirmation, processing, result verification, controlled errors and receipt.
 - Renders Certify as a two-actor operation: request, certifier handoff, type, visibility, localized fact description, synthetic evidence, voucher/credential, explicit confirmation and provenance receipt.
-- Reproduces the final Atelier artwork detail after Mint and Certify: image navigation, native status icons, expandable technical sheet, NFT/IPFS/transaction endpoints and per-Certify evidence/documentation/receipt/detail controls.
+- Reproduces the final Atelier artwork detail after Mint, Certify, NFC, transfer and privacy: image navigation, native status icons, expandable technical sheet, NFT/IPFS/transaction endpoints, NFC inside Certifications, ownership transition and owner-versus-Gallery visibility.
 - Lets the user switch the same synthetic result between owner Administration and public Gallery. Owner-only Certify entries and hidden technical data stay out of the public projection.
 - Starts with the coherent public Manual fixture `Curvas`, by Jorge Norberto Leporace. Its complete technical sheet and explanatory copy are localized in Spanish, English and Portuguese.
 

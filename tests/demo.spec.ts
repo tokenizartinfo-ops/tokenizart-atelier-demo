@@ -313,6 +313,15 @@ test("completes a safe synthetic NFC link", async ({ page }, testInfo) => {
   await expect(result.getByText("TAG-DEMO-001", { exact: true })).toBeVisible();
   await expect(result.getByText("CERT-NFC-DEMO-001", { exact: true })).toBeVisible();
   await expect(result.getByText("TX-DEMO-NFC-001", { exact: true })).toBeVisible();
+  const finalState = page.getByTestId("final-artwork-state");
+  await expect(finalState.getByRole("tab", { name: "Certificaciones (1)" })).toHaveAttribute("aria-selected", "true");
+  await expect(finalState.getByText("Vinculación NFC", { exact: true })).toBeVisible();
+  await expect(finalState.getByText("certificador@demo.invalid", { exact: true })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: /CERT-NFC-DEMO-001 · Documentacion Certify en IPFS/ })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: /CERT-NFC-DEMO-001 · Comprobante de transaccion Certify/ })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: /CERT-NFC-DEMO-001 · Identificador del tag vinculado/ })).toBeVisible();
+  await finalState.getByRole("button", { name: /CERT-NFC-DEMO-001 · Identificador del tag vinculado/ }).click();
+  await expect(finalState.getByText("TAG-DEMO-001", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("nfc-result.png"), fullPage: true });
 });
@@ -432,6 +441,14 @@ test("transfers synthetic ownership to an external wallet without vouchers", asy
   await expect(result.getByText("Fuera de la gestión de Atelier", { exact: true })).toBeVisible();
   await expect(result.getByText("TX-DEMO-TRANSFER-001", { exact: true })).toBeVisible();
   await expect(result.getByText("0", { exact: true })).toBeVisible();
+  const finalState = page.getByTestId("final-artwork-state");
+  const transferState = finalState.getByTestId("final-transfer-state");
+  await expect(transferState.getByText("Historial de titularidad", { exact: true })).toBeVisible();
+  await expect(transferState.getByText("OWNER-DEMO-GABRIEL", { exact: true })).toBeVisible();
+  await expect(transferState.getByText("OWNER-DEMO-EXTERNAL", { exact: true })).toBeVisible();
+  await expect(transferState.getByText("La transferencia no consume vouchers.", { exact: true })).toBeVisible();
+  await finalState.getByRole("button", { name: "Comprobante de transferencia" }).click();
+  await expect(finalState.getByText("TX-DEMO-TRANSFER-001", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("transfer-result.png"), fullPage: true });
 });
@@ -496,6 +513,13 @@ test("compares owner and visitor privacy before applying a partial public view",
   await expect(result.getByText("2", { exact: true })).toBeVisible();
   await expect(result.getByText("1", { exact: true })).toBeVisible();
   await expect(result.getByText(/privacidad de ninguna obra real/)).toBeVisible();
+  const finalState = page.getByTestId("final-artwork-state");
+  const privacyState = finalState.getByTestId("final-privacy-state");
+  await expect(privacyState.getByText("Política de visibilidad aplicada", { exact: true })).toBeVisible();
+  await expect(privacyState.getByText("PRIVACY-DEMO-001", { exact: true })).toBeVisible();
+  await expect(privacyState.getByText("Certify públicos", { exact: true })).toBeVisible();
+  await finalState.getByRole("button", { name: "Gallery pública" }).click();
+  await expect(finalState.getByText("Así se proyecta en Gallery", { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("privacy-owner-visitor-result.png"), fullPage: true });
 });
 
