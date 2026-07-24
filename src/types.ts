@@ -174,6 +174,8 @@ export interface DemoPrivacyReceipt {
   receiptId: string;
   galleryVisible: boolean;
   technicalSheetVisible: boolean;
+  mintVisible: boolean;
+  nfcVisible: boolean;
   publicCertifyIds: PrivacyCertifyId[];
   ownerOnlyCertifyIds: PrivacyCertifyId[];
   completedAt: string;
@@ -227,6 +229,8 @@ export interface DemoWorld {
   privacyDraft: {
     galleryVisible: boolean;
     technicalSheetVisible: boolean;
+    mintVisible: boolean;
+    nfcVisible: boolean;
     certifyVisibility: Record<PrivacyCertifyId, boolean>;
     previewAudience: PrivacyPreviewAudience;
     ownerConfirmed: boolean;

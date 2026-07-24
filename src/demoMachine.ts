@@ -70,6 +70,8 @@ export const initialContext: DemoContext = {
     privacyDraft: {
       galleryVisible: true,
       technicalSheetVisible: true,
+      mintVisible: true,
+      nfcVisible: true,
       certifyVisibility: {
         authenticity: true,
         exhibition: true,
@@ -117,7 +119,7 @@ export type DemoEvent =
   | { type: "SET_MINT_DRAFT"; actorId?: MintActorId; mode?: MintMode; reviewConfirmed?: boolean; credentialPrepared?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_NFC_DRAFT"; actorId?: NfcActorId; tagState?: NfcTagState; scanConfirmed?: boolean; signatureConfirmed?: boolean }
   | { type: "SET_TRANSFER_DRAFT"; destinationType?: TransferDestinationType; recipientVerified?: boolean; externalWarningAccepted?: boolean; signatureConfirmed?: boolean }
-  | { type: "SET_PRIVACY_DRAFT"; galleryVisible?: boolean; technicalSheetVisible?: boolean; certifyId?: PrivacyCertifyId; certifyVisible?: boolean; previewAudience?: PrivacyPreviewAudience; ownerConfirmed?: boolean }
+  | { type: "SET_PRIVACY_DRAFT"; galleryVisible?: boolean; technicalSheetVisible?: boolean; mintVisible?: boolean; nfcVisible?: boolean; certifyId?: PrivacyCertifyId; certifyVisible?: boolean; previewAudience?: PrivacyPreviewAudience; ownerConfirmed?: boolean }
   | { type: "SET_VOUCHER_DRAFT"; productId?: VoucherProductId; creditConfirmed?: boolean }
   | {
     type: "SET_CERTIFY_DRAFT";
@@ -292,6 +294,8 @@ function completeFlow(context: DemoContext): DemoContext {
       receiptId: `PRIVACY-DEMO-${sequence}`,
       galleryVisible: world.privacyDraft.galleryVisible,
       technicalSheetVisible: world.privacyDraft.galleryVisible && world.privacyDraft.technicalSheetVisible,
+      mintVisible: world.privacyDraft.galleryVisible && world.privacyDraft.mintVisible,
+      nfcVisible: world.privacyDraft.galleryVisible && world.privacyDraft.nfcVisible,
       publicCertifyIds,
       ownerOnlyCertifyIds: certifyIds.filter((id) => !publicCertifyIds.includes(id)),
       completedAt: "2026-07-17T12:00:00.000Z",
@@ -430,6 +434,8 @@ export const demoMachine = setup({
               privacyDraft: {
                 galleryVisible: event.galleryVisible ?? context.world.privacyDraft.galleryVisible,
                 technicalSheetVisible: event.technicalSheetVisible ?? context.world.privacyDraft.technicalSheetVisible,
+                mintVisible: event.mintVisible ?? context.world.privacyDraft.mintVisible,
+                nfcVisible: event.nfcVisible ?? context.world.privacyDraft.nfcVisible,
                 certifyVisibility: event.certifyId
                   ? { ...context.world.privacyDraft.certifyVisibility, [event.certifyId]: event.certifyVisible ?? context.world.privacyDraft.certifyVisibility[event.certifyId] }
                   : context.world.privacyDraft.certifyVisibility,
@@ -619,6 +625,8 @@ function normalizeContext(context: DemoContext): DemoContext {
   next.world.privacyDraft = {
     galleryVisible: privacyDraft ? privacyDraft.galleryVisible === true : legacyGalleryVisible,
     technicalSheetVisible: privacyDraft?.technicalSheetVisible !== false,
+    mintVisible: privacyDraft?.mintVisible !== false,
+    nfcVisible: privacyDraft?.nfcVisible !== false,
     certifyVisibility: {
       authenticity: privacyDraft ? privacyDraft.certifyVisibility?.authenticity === true : legacyCertifyVisible,
       exhibition: privacyDraft ? privacyDraft.certifyVisibility?.exhibition === true : legacyCertifyVisible,
@@ -634,7 +642,11 @@ function normalizeContext(context: DemoContext): DemoContext {
       && item.publicCertifyIds.every((id) => privacyCertifyIds.includes(id))
       && Array.isArray(item.ownerOnlyCertifyIds)
       && item.ownerOnlyCertifyIds.every((id) => privacyCertifyIds.includes(id))
-    ))
+    )).map((item) => ({
+      ...item,
+      mintVisible: item.galleryVisible === true && item.mintVisible !== false,
+      nfcVisible: item.galleryVisible === true && item.nfcVisible !== false,
+    }))
     : [];
   const voucherDraft = next.world.voucherDraft;
   next.world.voucherDraft = {

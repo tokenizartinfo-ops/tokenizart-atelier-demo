@@ -546,6 +546,8 @@ const finalStateCopy = {
     privacyPolicy: "Política de visibilidad aplicada",
     privacyGallery: "Obra en Gallery",
     privacyTechnicalSheet: "Ficha técnica pública",
+    privacyMint: "Identidad Mint pública",
+    privacyNfc: "Vinculación NFC pública",
     privacyPublicCertify: "Certify públicos",
     privacyOwnerCertify: "Certify solo owner",
     visibleState: "Visible",
@@ -597,6 +599,8 @@ const finalStateCopy = {
     privacyPolicy: "Visibility policy applied",
     privacyGallery: "Artwork in Gallery",
     privacyTechnicalSheet: "Public technical sheet",
+    privacyMint: "Public Mint identity",
+    privacyNfc: "Public NFC link",
     privacyPublicCertify: "Public Certify entries",
     privacyOwnerCertify: "Owner-only Certify entries",
     visibleState: "Visible",
@@ -648,6 +652,8 @@ const finalStateCopy = {
     privacyPolicy: "Política de visibilidade aplicada",
     privacyGallery: "Obra na Gallery",
     privacyTechnicalSheet: "Ficha técnica pública",
+    privacyMint: "Identidade Mint pública",
+    privacyNfc: "Vinculação NFC pública",
     privacyPublicCertify: "Certify públicos",
     privacyOwnerCertify: "Certify somente owner",
     visibleState: "Visível",
@@ -1047,6 +1053,8 @@ function ArtworkFinalStateSurface({
   const galleryVisible = privacyReceipt?.galleryVisible ?? artwork.galleryVisible;
   const visibleArtwork = view === "owner" || galleryVisible;
   const technicalSheetVisible = view === "owner" || (privacyReceipt?.technicalSheetVisible ?? true);
+  const mintVisible = view === "owner" || (privacyReceipt?.mintVisible ?? true);
+  const nfcVisible = view === "owner" || (privacyReceipt?.nfcVisible ?? true);
   const visibleCertifications = view === "owner"
     ? world.certifications
     : world.certifications.filter((item) => {
@@ -1054,17 +1062,17 @@ function ArtworkFinalStateSurface({
       if (!privacyReceipt || item.typeId === "additional_report") return true;
       return privacyReceipt.publicCertifyIds.includes(item.typeId);
     });
-  const visibleNfcReceipts = view === "owner" || galleryVisible ? world.nfcReceipts : [];
+  const visibleNfcReceipts = nfcVisible && (view === "owner" || galleryVisible) ? world.nfcReceipts : [];
   const visibleCertificationCount = visibleCertifications.length + visibleNfcReceipts.length;
   const isMinted = Boolean(mintReceipt) || ["minted", "certified", "tagged", "transferred"].includes(world.artworkStatus);
-  const displayedTokenRef = mintReceipt?.tokenRef ?? world.nfcReceipts.at(-1)?.tokenRef ?? transferReceipt?.tokenRef;
+  const displayedTokenRef = mintVisible ? mintReceipt?.tokenRef ?? world.nfcReceipts.at(-1)?.tokenRef ?? transferReceipt?.tokenRef : undefined;
   const statusIcons = [
     artwork.exhibited && { assetId: "manual-native-icon-status-exhibited", label: nativeIconContent("manual-native-icon-status-exhibited", language).title },
-    isMinted && { assetId: "manual-native-icon-status-minted", label: nativeIconContent("manual-native-icon-status-minted", language).title },
-    (world.certifications.length > 0 || world.nfcReceipts.length > 0) && { assetId: "manual-native-icon-status-provenance", label: nativeIconContent("manual-native-icon-status-provenance", language).title },
-    world.nfcReceipts.length > 0 && { assetId: "manual-native-icon-status-nfc", label: nativeIconContent("manual-native-icon-status-nfc", language).title },
+    isMinted && mintVisible && { assetId: "manual-native-icon-status-minted", label: nativeIconContent("manual-native-icon-status-minted", language).title },
+    (visibleCertifications.length > 0 || visibleNfcReceipts.length > 0) && { assetId: "manual-native-icon-status-provenance", label: nativeIconContent("manual-native-icon-status-provenance", language).title },
+    visibleNfcReceipts.length > 0 && { assetId: "manual-native-icon-status-nfc", label: nativeIconContent("manual-native-icon-status-nfc", language).title },
   ].filter(Boolean) as Array<{ assetId: string; label: string }>;
-  const mintArtworkReferences: FinalReference[] = mintReceipt ? [
+  const mintArtworkReferences: FinalReference[] = mintReceipt && mintVisible ? [
     {
       key: "artwork-nft",
       assetId: "manual-native-icon-endpoint-nft",
@@ -1090,7 +1098,7 @@ function ArtworkFinalStateSurface({
       value: mintReceipt.transactionRef,
     },
   ].map(({ title, ...item }) => ({ ...item, label: title })) : [];
-  const transferArtworkReferences: FinalReference[] = transferReceipt ? [
+  const transferArtworkReferences: FinalReference[] = transferReceipt && mintVisible ? [
     {
       key: `${transferReceipt.receiptId}-token`,
       assetId: "manual-native-icon-endpoint-nft",
@@ -1266,6 +1274,8 @@ function ArtworkFinalStateSurface({
                   <dl>
                     <div><dt>{f.privacyGallery}</dt><dd>{privacyReceipt.galleryVisible ? f.visibleState : f.hiddenState}</dd></div>
                     <div><dt>{f.privacyTechnicalSheet}</dt><dd>{privacyReceipt.technicalSheetVisible ? f.visibleState : f.hiddenState}</dd></div>
+                    <div><dt>{f.privacyMint}</dt><dd>{privacyReceipt.mintVisible ? f.visibleState : f.hiddenState}</dd></div>
+                    <div><dt>{f.privacyNfc}</dt><dd>{privacyReceipt.nfcVisible ? f.visibleState : f.hiddenState}</dd></div>
                     <div><dt>{f.privacyPublicCertify}</dt><dd>{privacyReceipt.publicCertifyIds.length}</dd></div>
                     <div><dt>{f.privacyOwnerCertify}</dt><dd>{privacyReceipt.ownerOnlyCertifyIds.length}</dd></div>
                   </dl>

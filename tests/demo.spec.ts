@@ -475,6 +475,8 @@ test("compares owner and visitor privacy before applying a partial public view",
         privacyDraft: {
           galleryVisible: true,
           technicalSheetVisible: true,
+          mintVisible: true,
+          nfcVisible: true,
           certifyVisibility: { authenticity: true, exhibition: true, condition: false },
           previewAudience: "visitor",
           ownerConfirmed: false,
@@ -521,6 +523,119 @@ test("compares owner and visitor privacy before applying a partial public view",
   await finalState.getByRole("button", { name: "Gallery pública" }).click();
   await expect(finalState.getByText("Así se proyecta en Gallery", { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("privacy-owner-visitor-result.png"), fullPage: true });
+});
+
+test("keeps one artwork and its public policy coherent across the complete lifecycle", async ({ page }, testInfo) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    sessionStorage.setItem("tokenizart.demo-atelier.session.v1", JSON.stringify({
+      language: "es",
+      flow: "carga_obra",
+      stepIndex: 0,
+      scenarioId: "first-artwork",
+      fixtureId: "painting-river-001",
+      errorCode: null,
+      world: {
+        accountStatus: "active",
+        walletStatus: "backed_up",
+        artworkStatus: "none",
+        currentOwnerRef: "OWNER-DEMO-GABRIEL",
+        galleryVisible: false,
+        certifyVisible: true,
+        mintDraft: {
+          actorId: "owner_artist",
+          mode: "single",
+          reviewConfirmed: true,
+          credentialPrepared: true,
+          signatureConfirmed: true,
+        },
+        nfcDraft: {
+          actorId: "owner_artist",
+          tagState: "ready_to_link",
+          scanConfirmed: true,
+          signatureConfirmed: true,
+        },
+        transferDraft: {
+          destinationType: "tokenizart_user",
+          recipientVerified: true,
+          externalWarningAccepted: false,
+          signatureConfirmed: true,
+        },
+        privacyDraft: {
+          galleryVisible: true,
+          technicalSheetVisible: true,
+          mintVisible: true,
+          nfcVisible: true,
+          certifyVisibility: { authenticity: true, exhibition: false, condition: false },
+          previewAudience: "visitor",
+          ownerConfirmed: true,
+        },
+        certifyDraft: {
+          actorId: "expert",
+          typeId: "authenticity",
+          visibility: "public",
+          requestConfirmed: true,
+          certifierAccepted: true,
+          description: {
+            es: "Informe de autenticidad de práctica referido a la obra Curvas.",
+            en: "Practice authenticity report concerning the artwork Curvas.",
+            pt: "Relatório de autenticidade de prática referente à obra Curvas.",
+          },
+          evidenceAttached: true,
+          evidenceFileName: "informe-autenticidad-demo.pdf",
+          credentialPrepared: true,
+          signatureConfirmed: true,
+        },
+        vouchers: { mint: 2, certify: 2, nfc: 1 },
+        events: [],
+      },
+    }));
+  });
+
+  const flows = [
+    ["carga_obra", "carga-obra.manager-owner-continuity"],
+    ["mint", "mint.batch-verify-statuses"],
+    ["certify", "certify.open-receipt"],
+    ["chip", "chip.interpret-reading-states"],
+    ["privacy", "privacy.partial-restriction"],
+    ["transferencia", "transferencia.external-wallet-boundary"],
+  ] as const;
+
+  for (const [flow, step] of flows) {
+    if (flow === "privacy") {
+      await page.goto("/?flow=privacy&step=privacy.review-certify-visibility&lang=es&scenario=first-artwork");
+      await expect(page.getByLabel(/Mostrar identidad Mint/)).toBeChecked();
+      await page.getByLabel(/Mostrar vinculación NFC/).uncheck();
+      await page.waitForFunction(() => {
+        const raw = sessionStorage.getItem("tokenizart.demo-atelier.session.v1");
+        return raw ? JSON.parse(raw).world.privacyDraft.nfcVisible === false : false;
+      });
+    }
+    await page.goto(`/?flow=${flow}&step=${step}&lang=es&scenario=first-artwork`);
+    await expect(page.getByText("Curvas", { exact: true }).first()).toBeVisible();
+    if (flow === "privacy") await page.getByLabel(/Confirmo esta/).check();
+    await page.getByRole("button", { name: /Completar paso/ }).click();
+    await expect(page.getByRole("button", { name: /Completado/ })).toBeDisabled();
+    await page.waitForFunction((completedFlow) => {
+      const raw = sessionStorage.getItem("tokenizart.demo-atelier.session.v1");
+      return raw ? JSON.parse(raw).world.events.includes(`${completedFlow}.completed`) : false;
+    }, flow);
+  }
+
+  const finalState = page.getByTestId("final-artwork-state");
+  await expect(finalState.getByText("Curvas", { exact: true }).first()).toBeVisible();
+  await expect(finalState.getByText("Jorge Norberto Leporace", { exact: true })).toBeVisible();
+  await expect(finalState.getByText("OWNER-DEMO-COLLECTOR", { exact: true })).toBeVisible();
+  await expect(finalState.getByText("PRIVACY-DEMO-001", { exact: true })).toBeVisible();
+  await expect(finalState.getByText("Identidad Mint pública", { exact: true })).toBeVisible();
+  await expect(finalState.getByText("Vinculación NFC pública", { exact: true })).toBeVisible();
+
+  await finalState.getByRole("button", { name: "Gallery pública" }).click();
+  await expect(finalState.getByText("TOKEN-DEMO-001", { exact: true }).first()).toBeVisible();
+  await finalState.getByRole("tab", { name: /Certificaciones \(1\)/ }).click();
+  await expect(finalState.getByRole("button", { name: /CERT-DEMO-001 · Archivo o evidencia IPFS/ })).toBeVisible();
+  await expect(finalState.getByRole("button", { name: /CERT-NFC-DEMO-001/ })).toHaveCount(0);
+  await page.screenshot({ path: testInfo.outputPath("complete-lifecycle-gallery-policy.png"), fullPage: true });
 });
 
 test("credits a synthetic Starter Kit and explains voucher consumption boundaries", async ({ page }, testInfo) => {

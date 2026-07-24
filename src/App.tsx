@@ -688,6 +688,8 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
     const draft = context.world.privacyDraft;
     const completed = context.world.events.includes("privacy.completed");
     const audience = draft.previewAudience;
+    const hasMint = context.world.mintReceipts.length > 0 || ["minted", "certified", "tagged", "transferred"].includes(context.world.artworkStatus);
+    const hasNfc = context.world.nfcReceipts.length > 0 || ["tagged", "transferred"].includes(context.world.artworkStatus);
     const effectivePublicCertify = draft.galleryVisible
       ? privacyCertifyIds.filter((id) => draft.certifyVisibility[id])
       : [];
@@ -700,6 +702,8 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
           <>
             {(audience === "owner" || draft.technicalSheetVisible) && <div className="privacy-technical"><strong>{t.privacyTechnicalSheet}</strong><span>{context.world.artwork.author} · {context.world.artwork.widthCm} × {context.world.artwork.heightCm} cm · {t.simulated}</span></div>}
             <div className="privacy-certify-list">
+              {hasMint && (audience === "owner" || draft.mintVisible) && <div><Fingerprint size={17} /><span>{t.privacyMintToggle}</span><small>{draft.galleryVisible && draft.mintVisible ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></div>}
+              {hasNfc && (audience === "owner" || draft.nfcVisible) && <div><Nfc size={17} /><span>{t.privacyNfcToggle}</span><small>{draft.galleryVisible && draft.nfcVisible ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></div>}
               {privacyCertifyIds.filter((id) => audience === "owner" || effectivePublicCertify.includes(id)).map((id) => <div key={id}><BadgeCheck size={17} /><span>{certifyTypes[id][lang].name}</span><small>{draft.galleryVisible && draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></div>)}
               {audience === "visitor" && effectivePublicCertify.length === 0 && <p>{t.privacyNoPublicCertify}</p>}
             </div>
@@ -716,7 +720,18 @@ function PracticeFields({ context, step, send, onPracticeSelection }: { context:
           onPracticeSelection(`privacy_gallery:${event.target.checked ? "visible" : "hidden"}`);
         }} /></label>{privacyPreview}</>}
         {step.order === 4 && <><fieldset data-practice-action>
-          <legend>{t.privacyCertifyControls}</legend>
+          <legend>{t.privacyMintToggle} · NFC · Certify</legend>
+          <div className="privacy-certify-controls">
+            <label><span><strong>{t.privacyMintToggle}</strong><small>{t.privacyMintHelp}</small></span><input type="checkbox" disabled={completed || !draft.galleryVisible || !hasMint} checked={draft.mintVisible} onChange={(event) => {
+              send({ type: "SET_PRIVACY_DRAFT", mintVisible: event.target.checked, ownerConfirmed: false });
+              onPracticeSelection(`privacy_mint:${event.target.checked ? "public" : "owner"}`);
+            }} /></label>
+            <label><span><strong>{t.privacyNfcToggle}</strong><small>{t.privacyNfcHelp}</small></span><input type="checkbox" disabled={completed || !draft.galleryVisible || !hasNfc} checked={draft.nfcVisible} onChange={(event) => {
+              send({ type: "SET_PRIVACY_DRAFT", nfcVisible: event.target.checked, ownerConfirmed: false });
+              onPracticeSelection(`privacy_nfc:${event.target.checked ? "public" : "owner"}`);
+            }} /></label>
+          </div>
+          <h4 className="privacy-control-subtitle">{t.privacyCertifyControls}</h4>
           <div className="privacy-certify-controls">
             {privacyCertifyIds.map((id) => <label key={id}><span><strong>{certifyTypes[id][lang].name}</strong><small>{draft.certifyVisibility[id] ? t.privacyPublicBadge : t.privacyOwnerBadge}</small></span><input type="checkbox" disabled={completed || !draft.galleryVisible} checked={draft.certifyVisibility[id]} onChange={(event) => {
               send({ type: "SET_PRIVACY_DRAFT", certifyId: id, certifyVisible: event.target.checked, ownerConfirmed: false });
@@ -1081,6 +1096,8 @@ function PrivacyCompletion({ context }: { context: DemoContext }) {
       <dl>
         <div><dt>{t.privacyGalleryToggle}</dt><dd>{receipt.galleryVisible ? t.privacyVisible : t.privacyHidden}</dd></div>
         <div><dt>{t.privacyTechnicalSheet}</dt><dd>{receipt.technicalSheetVisible ? t.privacyVisible : t.privacyHidden}</dd></div>
+        <div><dt>{t.privacyMintToggle}</dt><dd>{receipt.mintVisible ? t.privacyVisible : t.privacyHidden}</dd></div>
+        <div><dt>{t.privacyNfcToggle}</dt><dd>{receipt.nfcVisible ? t.privacyVisible : t.privacyHidden}</dd></div>
         <div><dt>{t.privacyPublicCertifyCount}</dt><dd>{receipt.publicCertifyIds.length}</dd></div>
         <div><dt>{t.privacyOwnerCertifyCount}</dt><dd>{receipt.ownerOnlyCertifyIds.length}</dd></div>
       </dl>
@@ -1263,6 +1280,8 @@ function App() {
     context.world.nfcDraft.tagState,
     context.world.privacyDraft.certifyVisibility.authenticity,
     context.world.privacyDraft.galleryVisible,
+    context.world.privacyDraft.mintVisible,
+    context.world.privacyDraft.nfcVisible,
     context.world.privacyDraft.previewAudience,
     context.world.transferDraft.destinationType,
     context.world.voucherDraft.productId,

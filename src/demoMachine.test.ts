@@ -271,6 +271,8 @@ describe("Demo Atelier contracts", () => {
     expect(restored?.world.privacyDraft).toEqual({
       galleryVisible: false,
       technicalSheetVisible: true,
+      mintVisible: true,
+      nfcVisible: true,
       certifyVisibility: { authenticity: true, exhibition: true, condition: true },
       previewAudience: "visitor",
       ownerConfirmed: false,
@@ -295,6 +297,36 @@ describe("Demo Atelier contracts", () => {
       signatureConfirmed: false,
     });
     expect(restored?.world.certifications).toEqual([]);
+  });
+
+  it("migrates historical privacy receipts with Mint and NFC visible only when Gallery was visible", () => {
+    const legacy = structuredClone(initialContext) as any;
+    legacy.world.privacyReceipts = [{
+      receiptId: "PRIVACY-DEMO-001",
+      galleryVisible: true,
+      technicalSheetVisible: true,
+      publicCertifyIds: ["authenticity"],
+      ownerOnlyCertifyIds: ["exhibition", "condition"],
+      completedAt: "2026-07-17T12:00:00.000Z",
+    }, {
+      receiptId: "PRIVACY-DEMO-002",
+      galleryVisible: false,
+      technicalSheetVisible: false,
+      publicCertifyIds: [],
+      ownerOnlyCertifyIds: ["authenticity", "exhibition", "condition"],
+      completedAt: "2026-07-17T12:00:00.000Z",
+    }];
+
+    const restored = safeRestore(JSON.stringify(legacy));
+
+    expect(restored?.world.privacyReceipts[0]).toEqual(expect.objectContaining({
+      mintVisible: true,
+      nfcVisible: true,
+    }));
+    expect(restored?.world.privacyReceipts[1]).toEqual(expect.objectContaining({
+      mintVisible: false,
+      nfcVisible: false,
+    }));
   });
 
   it("records a synthetic Certify actor, evidence and owner visibility exactly once", () => {
@@ -513,6 +545,8 @@ describe("Demo Atelier contracts", () => {
     context.world.privacyDraft = {
       galleryVisible: true,
       technicalSheetVisible: true,
+      mintVisible: true,
+      nfcVisible: false,
       certifyVisibility: { authenticity: true, exhibition: true, condition: false },
       previewAudience: "visitor",
       ownerConfirmed: true,
@@ -528,6 +562,8 @@ describe("Demo Atelier contracts", () => {
       receiptId: "PRIVACY-DEMO-001",
       galleryVisible: true,
       technicalSheetVisible: true,
+      mintVisible: true,
+      nfcVisible: false,
       publicCertifyIds: ["authenticity", "exhibition"],
       ownerOnlyCertifyIds: ["condition"],
     })]);
@@ -549,6 +585,90 @@ describe("Demo Atelier contracts", () => {
     expect(receipt.publicCertifyIds).toEqual([]);
     expect(receipt.ownerOnlyCertifyIds).toEqual(["authenticity", "exhibition", "condition"]);
     expect(receipt.technicalSheetVisible).toBe(false);
+    expect(receipt.mintVisible).toBe(false);
+    expect(receipt.nfcVisible).toBe(false);
+  });
+
+  it("keeps one artwork coherent through Load, Mint, Certify, NFC, Privacy and Transfer", () => {
+    const context = structuredClone(initialContext);
+    context.world.accountStatus = "active";
+    context.world.walletStatus = "backed_up";
+    context.world.mintDraft = {
+      actorId: "owner_artist",
+      mode: "single",
+      reviewConfirmed: true,
+      credentialPrepared: true,
+      signatureConfirmed: true,
+    };
+    context.world.certifyDraft = {
+      ...context.world.certifyDraft,
+      requestConfirmed: true,
+      certifierAccepted: true,
+      evidenceAttached: true,
+      credentialPrepared: true,
+      signatureConfirmed: true,
+    };
+    context.world.nfcDraft = {
+      actorId: "owner_artist",
+      tagState: "ready_to_link",
+      scanConfirmed: true,
+      signatureConfirmed: true,
+    };
+    context.world.privacyDraft = {
+      galleryVisible: true,
+      technicalSheetVisible: true,
+      mintVisible: true,
+      nfcVisible: false,
+      certifyVisibility: { authenticity: true, exhibition: false, condition: false },
+      previewAudience: "visitor",
+      ownerConfirmed: true,
+    };
+    context.world.transferDraft = {
+      destinationType: "tokenizart_user",
+      recipientVerified: true,
+      externalWarningAccepted: false,
+      signatureConfirmed: true,
+    };
+    const actor = createActor(demoMachine, { input: context }).start();
+
+    for (const flow of ["carga_obra", "mint", "certify", "chip", "privacy", "transferencia"]) {
+      actor.send({ type: "SELECT_FLOW", flow });
+      for (let index = 1; index < manualContract.flows[flow].steps.length; index += 1) {
+        actor.send({ type: "NEXT" });
+      }
+      actor.send({ type: "COMPLETE_STEP" });
+      expect(actor.getSnapshot().context.errorCode).toBeNull();
+    }
+
+    const result = actor.getSnapshot().context.world;
+    expect(result.artwork.title).toBe("Curvas");
+    expect(result.artwork.author).toBe("Jorge Norberto Leporace");
+    expect(result.artworkStatus).toBe("transferred");
+    expect(result.vouchers).toEqual({ mint: 1, certify: 1, nfc: 0 });
+    expect(result.mintReceipts).toHaveLength(1);
+    expect(result.certifications).toHaveLength(1);
+    expect(result.nfcReceipts).toHaveLength(1);
+    expect(result.privacyReceipts).toEqual([expect.objectContaining({
+      mintVisible: true,
+      nfcVisible: false,
+      publicCertifyIds: ["authenticity"],
+      ownerOnlyCertifyIds: ["exhibition", "condition"],
+    })]);
+    expect(result.transferReceipts).toEqual([expect.objectContaining({
+      previousOwnerRef: "OWNER-DEMO-GABRIEL",
+      newOwnerRef: "OWNER-DEMO-COLLECTOR",
+      atelierManagement: "inside_atelier",
+      vouchersConsumed: 0,
+    })]);
+    expect(result.currentOwnerRef).toBe("OWNER-DEMO-COLLECTOR");
+    expect(result.events).toEqual(expect.arrayContaining([
+      "carga_obra.completed",
+      "mint.completed",
+      "certify.completed",
+      "chip.completed",
+      "privacy.completed",
+      "transferencia.completed",
+    ]));
   });
 
   it("requires an active account and explicit confirmation before simulated voucher credit", () => {

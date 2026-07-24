@@ -10,7 +10,7 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Shows controlled failure scenarios and recovery guidance.
 - Lets the user configure a synthetic Certify actor, supported fact, evidence and owner/public visibility, then renders the completed provenance state.
 - Teaches four verified NFC readings, the mobile scan, voucher/signature gates and the final linked-tag receipt without touching a physical tag.
-- Lets an owner compare Level 4 and visitor Level 5 views before simulating Gallery, technical-sheet and per-Certify visibility.
+- Lets an owner compare Level 4 and visitor Level 5 views before simulating Gallery, technical-sheet, Mint, NFC and per-Certify visibility.
 - Shows the dated public Shop snapshot, who consumes each voucher, and a synthetic credit receipt without performing a purchase.
 - Keeps state only in browser `sessionStorage`.
 - Opens through a Companion bridge that keeps the current synthetic step synchronized with an A2UI card.
@@ -24,7 +24,8 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Renders Mint as a full Atelier-like operation: artwork review, actor, single/batch mode, voucher requirement, synthetic credential, explicit confirmation, processing, result verification, controlled errors and receipt.
 - Renders Certify as a two-actor operation: request, certifier handoff, type, visibility, localized fact description, synthetic evidence, voucher/credential, explicit confirmation and provenance receipt.
 - Reproduces the final Atelier artwork detail after Mint, Certify, NFC, transfer and privacy: image navigation, native status icons, expandable technical sheet, NFT/IPFS/transaction endpoints, NFC inside Certifications, ownership transition and owner-versus-Gallery visibility.
-- Lets the user switch the same synthetic result between owner Administration and public Gallery. Owner-only Certify entries and hidden technical data stay out of the public projection.
+- Lets the user switch the same synthetic result between owner Administration and public Gallery. Hidden Mint references, NFC links, owner-only Certify entries and technical data stay out of the public projection while remaining available to the synthetic owner.
+- Verifies one cumulative lifecycle over the same artwork: Load -> Mint -> Certify -> NFC -> Privacy -> Transfer, preserving identifiers, balances, receipts, visibility policy and ownership history.
 - Starts with the coherent public Manual fixture `Curvas`, by Jorge Norberto Leporace. Its complete technical sheet and explanatory copy are localized in Spanish, English and Portuguese.
 
 ## What it never does
@@ -174,8 +175,8 @@ npm run deploy:staging
 
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
-Validated staging Worker for the final Mint/Certify artwork-state release:
-`2d08bcc5-6eb3-4314-96b5-f11da2b8f64e`. Production was not changed.
+Validated staging Worker for the cumulative lifecycle and granular privacy release:
+`0fd252e9-27b2-417e-81ea-419177248ea2`. Production was not changed.
 
 ## Source synchronization
 
@@ -194,6 +195,6 @@ The optional `display_asset_id` keeps the native PPTX-derived `asset_id` as the 
 
 `audit:visual:staging` checks all 163 active visual steps, records deployed image dimensions and payload hashes, flags panoramas, small sources and missing focus hotspots, and writes a filterable local report to `output/visual-qa/index.html`. Editorial decisions are versioned in `src/data/atelier-visual-qa-decisions.v1.json`: automatic geometry flags remain visible, but inspected atomic crops can be accepted without pretending that their original dimensions changed. QA decisions `1.6.0` leave zero pending and 84 accepted assets, with zero unavailable resources and zero steps without a focus hotspot. All active visual flows have completed human visual QA; geometry flags remain observable but no longer represent unresolved editorial work.
 
-`eval:human-journeys:staging` walks all twelve active flows from start to finish on desktop and mobile. The 2026-07-24 staging run covered 24 journeys and 326 rendered states with zero missing images or primary surfaces, step mismatches, adjacent duplicate explanations, typography failures, horizontal overflow, multi-action steps or step-count failures.
+`eval:human-journeys:staging` walks all twelve active flows from start to finish on desktop and mobile. The 2026-07-24 staging run covered 24 journeys and 326 rendered states with zero missing images or primary surfaces, step mismatches, adjacent duplicate explanations, typography failures, horizontal overflow, multi-action steps or step-count failures. Playwright additionally verifies the cumulative lifecycle and its owner/Gallery boundary in both viewports; the current suite contains 34 passing browser tests.
 
-The production build separates React, XState and Lucide into stable vendor chunks. The final-state release produces a 470 kB main JavaScript chunk, 112 kB gzip. A prior staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.
+The production build separates React, XState and Lucide into stable vendor chunks. The current release produces a 482 kB main JavaScript chunk, 115 kB gzip. A prior staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.

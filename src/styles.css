@@ -289,6 +289,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .privacy-toggle > span, .privacy-certify-controls label > span { display: grid; gap: 2px; }
 .privacy-toggle small, .privacy-certify-controls small { color: var(--muted); font-size: 12px; line-height: 1.45; font-weight: 400; }
 .privacy-certify-controls { display: grid; gap: 5px; }
+.privacy-control-subtitle { margin: 12px 0 4px; font-size: 13px; }
 .privacy-result dl { gap: 5px; }
 .voucher-practice { display: grid; gap: 10px; }
 .voucher-explainer { display: flex; align-items: center; gap: 9px; padding: 10px; border-left: 4px solid var(--aqua); background: #eefafa; }
