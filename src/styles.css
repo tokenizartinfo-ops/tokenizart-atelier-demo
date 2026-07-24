@@ -255,6 +255,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .provenance-timeline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); }
 .provenance-timeline span { min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 6px; color: #236c60; background: #eaf7f3; font-size: 11px; line-height: 1.35; text-align: center; }
 .provenance-timeline span + span { border-left: 1px solid #b9dcd2; }
+.lifecycle-continue { margin-top: 14px; display: grid; gap: 10px; padding: 12px; border: 1px solid #a9d9e3; border-left: 4px solid var(--aqua); background: #f1fbfd; }
+.lifecycle-continue > div { display: flex; align-items: center; gap: 9px; }
+.lifecycle-continue > div span { display: grid; gap: 3px; }
+.lifecycle-continue > div strong { font-size: 14px; }
+.lifecycle-continue > div small { color: var(--muted); font-size: 12px; line-height: 1.45; }
+.lifecycle-continue > button { min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--ink); background: var(--ink); color: white; font-weight: 750; }
 .fixture-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .fixture-selector button { min-height: 56px; border: 1px solid var(--line); background: white; display: grid; place-items: center; gap: 4px; font-size: 13px; }
 .fixture-selector button.selected { border-color: var(--aqua); color: #087b87; background: var(--aqua-soft); }

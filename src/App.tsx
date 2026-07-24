@@ -83,6 +83,8 @@ const flowOrder = [
   "action_overview",
 ];
 
+const cumulativeLifecycle = ["carga_obra", "mint", "certify", "chip", "privacy", "transferencia"];
+
 function FlowIconMark({ flowId, size = 20 }: { flowId: string; size?: number }) {
   const assetId = nativeFlowIconAssets[flowId];
   const FallbackIcon = flowIcons[flowId] ?? Blocks;
@@ -1179,6 +1181,52 @@ function VoucherCompletion({ context }: { context: DemoContext }) {
   );
 }
 
+function LifecycleContinue({ context, send }: { context: DemoContext; send: (event: any) => void }) {
+  const currentIndex = cumulativeLifecycle.indexOf(context.flow);
+  const finalStep = manualContract.flows[context.flow]?.steps.length - 1;
+  if (
+    currentIndex < 0
+    || context.stepIndex !== finalStep
+    || !context.world.events.includes(`${context.flow}.completed`)
+  ) return null;
+
+  const nextFlow = cumulativeLifecycle[currentIndex + 1];
+  const copy = {
+    es: {
+      title: "La misma obra continúa",
+      body: "La sesión conserva obra, vouchers, comprobantes y decisiones. Puedes seguir sin volver a cargar los datos.",
+      action: "Continuar con",
+      done: "Recorrido acumulativo completo",
+      doneBody: "La misma obra recorrió Carga, Mint, Certify, NFC, Privacidad y Transferencia dentro de esta sesión sintética.",
+    },
+    en: {
+      title: "The same artwork continues",
+      body: "The session keeps the artwork, vouchers, receipts and decisions. You can continue without entering the data again.",
+      action: "Continue with",
+      done: "Cumulative journey complete",
+      doneBody: "The same artwork completed Load, Mint, Certify, NFC, Privacy and Transfer inside this synthetic session.",
+    },
+    pt: {
+      title: "A mesma obra continua",
+      body: "A sessão mantém obra, vouchers, comprovantes e decisões. Você pode continuar sem preencher os dados novamente.",
+      action: "Continuar com",
+      done: "Percurso acumulativo completo",
+      doneBody: "A mesma obra percorreu Carga, Mint, Certify, NFC, Privacidade e Transferência nesta sessão sintética.",
+    },
+  }[context.language];
+
+  return (
+    <section className="lifecycle-continue" data-testid={nextFlow ? "lifecycle-continue" : "lifecycle-complete"}>
+      <div><Route size={22} /><span><strong>{nextFlow ? copy.title : copy.done}</strong><small>{nextFlow ? copy.body : copy.doneBody}</small></span></div>
+      {nextFlow && (
+        <button type="button" onClick={() => send({ type: "SELECT_FLOW", flow: nextFlow })}>
+          {copy.action} {flowLabels[nextFlow][context.language]}<ArrowRight size={17} />
+        </button>
+      )}
+    </section>
+  );
+}
+
 function VoucherBalances({ context, compact = false }: { context: DemoContext; compact?: boolean }) {
   return (
     <div className={compact ? "voucher-row compact" : "voucher-row"}>
@@ -1447,6 +1495,7 @@ function App() {
               <TransferCompletion context={context} />
               <PrivacyCompletion context={context} />
               <VoucherCompletion context={context} />
+              <LifecycleContinue context={context} send={send} />
               {activeError && <div className="error-panel"><CircleAlert size={22} /><div><strong>{activeError.title}</strong><p>{activeError.body}</p><button onClick={() => send({ type: "RESOLVE_ERROR" })}><Check size={17} />{t.resolve}</button></div></div>}
             </div>
           </section>

@@ -601,7 +601,7 @@ test("keeps one artwork and its public policy coherent across the complete lifec
     ["transferencia", "transferencia.external-wallet-boundary"],
   ] as const;
 
-  for (const [flow, step] of flows) {
+  for (const [flowIndex, [flow, step]] of flows.entries()) {
     if (flow === "privacy") {
       await page.goto("/?flow=privacy&step=privacy.review-certify-visibility&lang=es&scenario=first-artwork");
       await expect(page.getByLabel(/Mostrar identidad Mint/)).toBeChecked();
@@ -620,9 +620,22 @@ test("keeps one artwork and its public policy coherent across the complete lifec
       const raw = sessionStorage.getItem("tokenizart.demo-atelier.session.v1");
       return raw ? JSON.parse(raw).world.events.includes(`${completedFlow}.completed`) : false;
     }, flow);
+    const nextFlow = flows[flowIndex + 1]?.[0];
+    if (nextFlow) {
+      const nextLabel = {
+        mint: "Mint",
+        certify: "Certify",
+        chip: "Vincular NFC",
+        privacy: "Privacidad",
+        transferencia: "Transferencia",
+      }[nextFlow];
+      await page.getByTestId("lifecycle-continue").getByRole("button", { name: `Continuar con ${nextLabel}` }).click();
+      await expect(page.locator(".flow-rail nav button.active")).toContainText(nextLabel);
+    }
   }
 
   const finalState = page.getByTestId("final-artwork-state");
+  await expect(page.getByTestId("lifecycle-complete").getByText("Recorrido acumulativo completo", { exact: true })).toBeVisible();
   await expect(finalState.getByText("Curvas", { exact: true }).first()).toBeVisible();
   await expect(finalState.getByText("Jorge Norberto Leporace", { exact: true })).toBeVisible();
   await expect(finalState.getByText("OWNER-DEMO-COLLECTOR", { exact: true })).toBeVisible();

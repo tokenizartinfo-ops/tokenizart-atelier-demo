@@ -26,6 +26,7 @@ Public, synthetic and multilingual simulator for learning Atelier without using 
 - Reproduces the final Atelier artwork detail after Mint, Certify, NFC, transfer and privacy: image navigation, native status icons, expandable technical sheet, NFT/IPFS/transaction endpoints, NFC inside Certifications, ownership transition and owner-versus-Gallery visibility.
 - Lets the user switch the same synthetic result between owner Administration and public Gallery. Hidden Mint references, NFC links, owner-only Certify entries and technical data stay out of the public projection while remaining available to the synthetic owner.
 - Verifies one cumulative lifecycle over the same artwork: Load -> Mint -> Certify -> NFC -> Privacy -> Transfer, preserving identifiers, balances, receipts, visibility policy and ownership history.
+- After each completion, offers a direct continuation to the next lifecycle flow; Transfer closes with an explicit cumulative-journey result.
 - Starts with the coherent public Manual fixture `Curvas`, by Jorge Norberto Leporace. Its complete technical sheet and explanatory copy are localized in Spanish, English and Portuguese.
 
 ## What it never does
@@ -176,7 +177,7 @@ npm run deploy:staging
 Expected staging host: `https://demo-atelier-staging.tokenizart.info`.
 
 Validated staging Worker for the cumulative lifecycle and granular privacy release:
-`0fd252e9-27b2-417e-81ea-419177248ea2`. Production was not changed.
+`5a1ec194-145a-49b5-8c88-1bd9bee7626e`. Production was not changed.
 
 ## Source synchronization
 
@@ -197,4 +198,4 @@ The optional `display_asset_id` keeps the native PPTX-derived `asset_id` as the 
 
 `eval:human-journeys:staging` walks all twelve active flows from start to finish on desktop and mobile. The 2026-07-24 staging run covered 24 journeys and 326 rendered states with zero missing images or primary surfaces, step mismatches, adjacent duplicate explanations, typography failures, horizontal overflow, multi-action steps or step-count failures. Playwright additionally verifies the cumulative lifecycle and its owner/Gallery boundary in both viewports; the current suite contains 34 passing browser tests.
 
-The production build separates React, XState and Lucide into stable vendor chunks. The current release produces a 482 kB main JavaScript chunk, 115 kB gzip. A prior staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.
+The production build separates React, XState and Lucide into stable vendor chunks. The current release produces a 484 kB main JavaScript chunk, 115 kB gzip. A prior staging Chrome trace measured 372 ms LCP, 0.00 CLS and 38 ms TTFB without network throttling; these are lab observations, not field data.
