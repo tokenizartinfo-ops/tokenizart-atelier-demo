@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMachine } from "@xstate/react";
 import {
   ArrowLeft,
@@ -40,6 +40,8 @@ import { isCompanionBridgeMessage, postDemoBridgeMessage, practiceStateForContex
 import type { DemoPracticeState } from "./demoBridge";
 import { flowLabels, ui } from "./i18n";
 import { classifyVisualLayout, focusImageStyle, needsVisualDetail } from "./visualPresentation";
+import { registerDemoWebMcpTools } from "./webMcpDemo";
+import type { DemoModelContext } from "./webMcpDemo";
 import type { CertifyActorId, CertifyTypeId, DemoContext, Language, ManualStep, MintActorId, MintMode, NfcActorId, NfcTagState, PrivacyCertifyId, PrivacyPreviewAudience, TransferDestinationType, VoucherBalances as VoucherBalanceValues, VoucherProductId } from "./types";
 
 const SESSION_KEY = "tokenizart.demo-atelier.session.v1";
@@ -1325,6 +1327,8 @@ function App() {
   const [referenceView, setReferenceView] = useState<ReferenceView>(initialReferenceView);
   const [bridgeStatus, setBridgeStatus] = useState<"disconnected" | "connected" | "explanation_ready">("disconnected");
   const context = snapshot.context;
+  const webMcpContext = useRef(context);
+  webMcpContext.current = context;
   const lang = context.language;
   const t = ui[lang];
   const flow = manualContract.flows[context.flow];
@@ -1358,6 +1362,11 @@ function App() {
     step.step_id,
   ]);
   const [practiceState, setPracticeState] = useState<DemoPracticeState | null>(defaultPracticeState);
+
+  useEffect(() => {
+    const modelContext = (document as Document & { modelContext?: DemoModelContext }).modelContext;
+    return registerDemoWebMcpTools(modelContext, () => webMcpContext.current);
+  }, []);
 
   function emitDemoMessage(type: Parameters<typeof postDemoBridgeMessage>[2], overridePracticeState: DemoPracticeState | null = practiceState ?? defaultPracticeState): boolean {
     return postDemoBridgeMessage(bridgeTarget, bridgeOrigin, type, context, step.step_id, overridePracticeState);
